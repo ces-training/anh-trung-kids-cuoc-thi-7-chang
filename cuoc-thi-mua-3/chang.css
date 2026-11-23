@@ -1,0 +1,9 @@
+/* Mùa 3 · 99 ngày: dải 7 chặng ở trang chủ (chang.js, changDai() trong index.html) */
+.chang-dai{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:6px 0 2px}
+.chang-dai .cd{display:flex;flex-direction:column;align-items:center;min-width:76px;padding:4px 10px;border-radius:12px;background:#fff;color:#3a2a1a;text-decoration:none;
+  box-shadow:0 3px 0 rgba(58,42,26,.18);font-size:clamp(11px,1.7vh,14px);line-height:1.15}
+.chang-dai .cd b{font-weight:800}
+.chang-dai .cd small{font-size:.82em;opacity:.75}
+.chang-dai .cd.on{background:var(--red);color:#fff;box-shadow:0 3px 0 var(--red-dark)}
+.chang-dai .cd.off{opacity:.55}
+@media (max-width:640px){.chang-dai .cd{min-width:0;flex:1 1 22%;padding:4px 6px}}

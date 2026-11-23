@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cuộc thi Anh – Trung – Kids mùa 3</title>
+<meta property="og:title" content="Cuộc thi Anh – Trung – Kids mùa 3 · 99 ngày, 7 chặng">
+<meta property="og:description" content="Học một lần, được hai ngôn ngữ. Mỗi chặng 14 ngày, có buổi Zoom và buổi Tổng kết cùng cô giáo.">
+<meta property="og:image" content="https://ces-training.github.io/anh-trung-kids-cuoc-thi-7-chang/xem-truoc/tai-nguyen/trang/the_gioi_seed.webp">
+<style>
+:root{--red:#E3262E;--red-dark:#B51A21;--ink:#3a2a1a;--bg:#BFE6F7;--card:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#f3ead9;--bg:#13303d;--card:#1f4252}}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Nunito",system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+main{max-width:860px;margin:0 auto;padding:28px 16px 40px}
+.kick{display:inline-block;background:var(--red);color:#fff;border-radius:999px;padding:3px 14px;font-weight:800;font-size:14px}
+h1{font-size:clamp(26px,5vw,40px);margin:10px 0 4px;line-height:1.1}
+p.lead{margin:0 0 20px;font-size:17px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+a.c{display:block;background:var(--card);color:inherit;text-decoration:none;border-radius:16px;padding:14px 16px;box-shadow:0 4px 0 rgba(58,42,26,.18)}
+a.c b{display:block;font-size:20px}
+a.c small{opacity:.75}
+a.c.now{outline:3px solid var(--red)}
+.foot{margin-top:24px;font-size:14px;opacity:.8}
+.foot a{color:inherit}
+</style></head>
+<body><main>
+<span class="kick">Học một lần, được hai ngôn ngữ</span>
+<h1>Cuộc thi Anh – Trung – Kids mùa 3</h1>
+<p class="lead">99 ngày, 7 chặng. Mỗi chặng 14 ngày: 6 buổi → Zoom cùng cô → 6 buổi → Tổng kết chặng → 2 buổi cuối.</p>
+<div class="grid" id="g"></div>
+<p class="foot">Đội CES: <a href="cuoc-thi-mua-3/quan-tri/">Trang quản trị</a> · Hotline 0974.840.845</p>
+</main>
+<script>
+(function(){
+  var t0=new Date('2026-11-30T00:00:00+07:00').getTime(), now=Date.now(), html='';
+  for(var n=1;n<=7;n++){
+    var t=t0+(n-1)*14*864e5, d=new Date(t+7*36e5), a=(n-1)*14+1, b=n===7?99:n*14;
+    var ngay=('0'+d.getUTCDate()).slice(-2)+'/'+('0'+(d.getUTCMonth()+1)).slice(-2)+'/'+d.getUTCFullYear();
+    var cur=now>=t && now<t+14*864e5;
+    html+='<a class="c'+(cur?' now':'')+'" href="chang-'+n+'/"><b>Chặng '+n+'</b><small>Ngày '+a+'–'+b+' · mở '+ngay+(n>1&&now<t?' 🔒':'')+'</small></a>';
+  }
+  document.getElementById('g').innerHTML=html;
+})();
+</script>
+</body></html>
