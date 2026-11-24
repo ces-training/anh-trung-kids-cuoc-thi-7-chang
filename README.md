@@ -30,7 +30,7 @@ git switch -c cap-nhat-bai-<ngày>
 python3 cuoc-thi-mua-3/cong-cu/lay_bai_tu_web_offline.py /tmp/nguon --thu   # xem trước sẽ đổi gì
 python3 cuoc-thi-mua-3/cong-cu/lay_bai_tu_web_offline.py /tmp/nguon         # chép thật
 ```
-Rồi mở Pull Request để chị Duyên duyệt. Kho web lớp offline chỉ đọc, không sửa.
+Kiểm tra xong thì commit, đẩy thẳng lên `main` (không cần Pull Request từ 24/11/2026). Kho web lớp offline chỉ đọc, không sửa.
 
-## Khoá nội dung
-Xem `CLAUDE.md`. Nội dung bài và khung web chỉ đổi qua Pull Request được chị Duyên duyệt. Quyền quản trị, mã, giá, ngày, dữ liệu học sửa ở Sheet và trang quản trị.
+## Quy tắc sửa
+Xem `CLAUDE.md`. Từ 24/11/2026 chị Duyên yêu cầu trong chat, Claude sửa, chạy thử rồi đẩy thẳng lên `main`; mỗi yêu cầu một commit để hoàn tác được. Quyền quản trị, mã, giá, ngày, dữ liệu học sửa ở Sheet và trang quản trị.
