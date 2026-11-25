@@ -269,3 +269,13 @@ body.is-demo:not(.in-step) .toast{bottom:calc(max(10px,env(safe-area-inset-botto
 .demo-rb.kh b{background:#fff;color:#B8141C}
 .demo-rb.kh span{color:#FFE3A3}
 .demo-rb.kh i{color:#fff}
+
+/* Hướng dẫn nộp bài sau mỗi buổi (mùa 3, 25/11/2026) */
+.mi-steps{margin:8px 0 0;padding-left:22px;font-size:14.5px;color:#2E4A3A;font-weight:600;display:grid;gap:8px}
+.mi-steps b{color:#1E7A4B}
+.mi-cap{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px}
+.mi-cap code{font-family:inherit;font-weight:800;background:#fff;border:2px dashed #7CC79B;border-radius:8px;padding:2px 8px;word-break:break-word}
+.mi-cap .kh-chep{margin-left:0}
+.mission .mi-note,.ls-cele .mission p.mi-note{margin:8px 0 0;font-size:13px;color:#4F6B5B;font-weight:600}
+/* Bảng kích hoạt đóng phí (sau buổi 2) và bảng mời đăng ký phải nổi trên màn chúc mừng (.ls-cele z-index 9000) */
+.overlay.kh,.overlay.demo{z-index:9500}

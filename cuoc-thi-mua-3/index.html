@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="canopy.css">
 <link rel="stylesheet" href="ls.css">
-<link rel="stylesheet" href="bo-sung.css">
+<link rel="stylesheet" href="bo-sung.css?v=20261125a">
 <link rel="stylesheet" href="bo-cuc.css">
 <link rel="stylesheet" href="qua.css">
 <link rel="stylesheet" href="khen.css">
@@ -1849,13 +1849,29 @@ function missionHTML(g,i){
   if(TEACHER && !KID) return '';
   const s=st(g,i), sent=!!s.clipSent, cg=clipGuide(g,i);
   const say=(cg&&cg.say&&cg.say[0]) || (typeof olSay==='function'?olSay(g,i):null);   // MÙA 3: câu từ tên bài
+  const sayHTML=say?`<div class="mi-say"><span>🇬🇧 ${esc(say[0])}</span><span class="zh">🇨🇳 ${esc(say[1])}</span></div>`:'';
+  const doneBtn=sent?MI_OK():`<button class="btn y sm mi-done">Ba mẹ đã gửi clip ✓</button>`;
+  if(!cg){   /* MÙA 3 (25/11/2026): hướng dẫn nộp bài từng bước, có dòng ghi chú để cô ghi điểm */
+    const grp=GROUPS[g], cap=`Bé ${KID&&KID.name&&!KID.temp?KID.name:'…'} · ${grp?grp.name:''} · Chặng ${CHANG} – Buổi ${lessonNo(i)}`;
+    return `<div class="mission ${sent?'sent':''}">
+    <div class="mi-h"><span class="mi-ic">📤</span><div><b>Hướng dẫn nộp bài (+${PTS.clip} điểm)</b>
+      <small>Nộp bài buổi ${lessonNo(i)} bằng một clip ngắn gửi vào nhóm Zalo của cuộc thi.</small></div></div>
+    <ol class="mi-steps">
+      <li><b>Quay clip 15–30 giây</b> con nói câu hôm nay bằng tiếng Anh và tiếng Trung. Con nói 1 từ hay chỉ làm động tác cũng được tính.${sayHTML}</li>
+      <li><b>Mở nhóm Zalo</b>, gửi clip kèm dòng này để cô ghi điểm cho con:
+        <span class="mi-cap"><code>${esc(cap)}</code><button type="button" class="kh-chep mi-chep" data-t="${esc(cap)}">Chép</button></span></li>
+      <li>Gửi xong, ba mẹ bấm <b>Ba mẹ đã gửi clip ✓</b> để con nhận +${PTS.clip} điểm.</li>
+    </ol>
+    <p class="mi-note">🔒 Quay dọc, đủ sáng; không để lộ tên trường, đồng phục, địa chỉ nhà.</p>
+    <div class="row mi-row"><a class="btn g sm" href="${ZALO_LINK}" target="_blank" rel="noopener">📤 Mở nhóm Zalo</a>${doneBtn}</div></div>`;
+  }
   return `<div class="mission ${sent?'sent':''}">
     <div class="mi-h"><span class="mi-ic">🎥</span><div><b>Nhiệm vụ chia sẻ (+${PTS.clip} điểm)</b>
-      <small>Ba mẹ quay một clip ngắn (15–30 giây) con nói câu hôm nay bằng tiếng Anh và tiếng Trung, rồi gửi vào nhóm Zalo của thử thách.${cg?' Đã có sẵn 2 cách quay và lời thoại cho ba mẹ.':''}</small></div></div>
-    ${say?`<div class="mi-say"><span>🇬🇧 ${esc(say[0])}</span><span class="zh">🇨🇳 ${esc(say[1])}</span></div>`:''}
-    ${cg?`<button class="btn sm mi-guide" type="button">🎬 Hướng dẫn quay clip <small>· 2 cách</small></button>`:''}
+      <small>Ba mẹ quay một clip ngắn (15–30 giây) con nói câu hôm nay bằng tiếng Anh và tiếng Trung, rồi gửi vào nhóm Zalo của thử thách. Đã có sẵn 2 cách quay và lời thoại cho ba mẹ.</small></div></div>
+    ${sayHTML}
+    <button class="btn sm mi-guide" type="button">🎬 Hướng dẫn quay clip <small>· 2 cách</small></button>
     <div class="row mi-row"><a class="btn g sm" href="${ZALO_LINK}" target="_blank" rel="noopener">📤 Mở nhóm Zalo</a>
-      ${sent?MI_OK():`<button class="btn y sm mi-done">Ba mẹ đã gửi clip ✓</button>`}</div></div>`;
+      ${doneBtn}</div></div>`;
 }
 function clipMarkSent(g,i,b){
   const s=st(g,i); if(s.clipSent) return;
@@ -1866,6 +1882,7 @@ function clipMarkSent(g,i,b){
 function missionWire(root,g,i){
   root.querySelectorAll('.mi-done').forEach(b=>b.onclick=()=>clipMarkSent(g,i,b));
   root.querySelectorAll('.mi-guide').forEach(b=>b.onclick=()=>{ sfx.pop&&sfx.pop(); clipGuideOpen(g,i); });
+  root.querySelectorAll('.mi-chep').forEach(b=>b.onclick=()=>{ chep(b.dataset.t||'').then(ok=>{ b.textContent=ok?'Đã chép ✓':'Chép'; if(ok) toast('Đã chép. Ba mẹ dán dòng này khi gửi clip vào nhóm Zalo nhé.'); }); });
 }
 
 /* ---------- hướng dẫn quay clip: ba mẹ chọn 1 trong 2 cách (nội dung trong huong-dan-clip.js) ---------- */
