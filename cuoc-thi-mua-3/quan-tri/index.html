@@ -627,7 +627,9 @@ function lanBadge(f){ if(!['Đang dùng thử','Mời đăng ký'].includes(f.tr
 const NHOM_TEN={A:'Tích cực',B:'Học đều',C:'Tụt nhịp',D:'Học thử',E:'Nuôi dưỡng'};
 function nhomBadge(f){ return f.nhom?`<span class="badge nh" title="Nhóm ${f.nhom}: ${NHOM_TEN[f.nhom]||''}">${f.nhom} · ${NHOM_TEN[f.nhom]||''}</span>`:''; }
 function aiBadge(v){ return v.ai&&XEM_HET()?`<span class="badge ai-${v.ai}">${VT_TEN[v.ai]||v.ai}</span>`:''; }
-function famLine(f){ return `${esc(f.phuHuynh||'(chưa có tên)')} – bé ${esc(f.tenCon||'?')}${f.tuoi?`, ${esc(f.tuoi)} tuổi`:''}${f.khoa?` · ${esc(f.khoa)}`:''}`; }
+/* Khoá "Canopy" của cuộc thi là bài Seedling: dữ liệu vẫn lưu mã cũ 'Canopy', chỉ đổi chữ hiện ra (chị chốt 25/11/2026) */
+function KH(k){ return k==='Canopy'?'Seedling':(k||''); }
+function famLine(f){ return `${esc(f.phuHuynh||'(chưa có tên)')} – bé ${esc(f.tenCon||'?')}${f.tuoi?`, ${esc(f.tuoi)} tuổi`:''}${f.khoa?` · ${esc(KH(f.khoa))}`:''}`; }
 function callBtns(f, tin, viec){
   const p=f.zalo&&/^0\d{9,10}$/.test(f.zalo)?f.zalo:'', so=String(f.zalo||'').replace(/[^\d+]/g,''), ctv=CAP()==='ctv';
   return `${p&&!ctv?`<a class="act pri" href="tel:${p}">📞 Gọi</a>`:''}${p?`<a class="act" href="https://zalo.me/${p}" target="_blank" rel="noopener">💬 Zalo</a>`:''}
@@ -736,7 +738,7 @@ function rG3(){
         <div class="acts">${callBtns(f,'goi_t1','goi_3b')}</div>
         <details class="g3ct" data-g3ct="${esc(f.code)}" ${G3_MO.has(f.code)?'open':''}><summary>Chi tiết theo 4H và câu hỏi thêm</summary>
           <div class="g3h">
-            ${g3Box('H1 – Thái độ học tập',[['Ngày học',b.ngayHoc+' / '+nq],['Ngày chưa học',b.chuaHoc],['Học gần nhất',b.cuoi],['Bài Little Seed xong',b.seed],['Bài Canopy xong',b.canopy],['Câu Canopy đã làm',b.canopyCau],['Đang học',b.khoaHoc],['Ba mẹ kể',g.h1||'—']],'Con tự đòi học hay mẹ phải nhắc thì hỏi ba mẹ.')}
+            ${g3Box('H1 – Thái độ học tập',[['Ngày học',b.ngayHoc+' / '+nq],['Ngày chưa học',b.chuaHoc],['Học gần nhất',b.cuoi],['Bài Little Seed xong',b.seed],['Bài Seedling xong',b.canopy],['Câu Canopy đã làm',b.canopyCau],['Đang học',b.khoaHoc],['Ba mẹ kể',g.h1||'—']],'Con tự đòi học hay mẹ phải nhắc thì hỏi ba mẹ.')}
             ${g3Box('H2 – Cảm xúc khi học',[['Nhân vật con chọn',b.nhanVat],['Thú cưng',b.thuCung],['Quái vật',b.quaiVat],['Sao đã đổi quà',b.saoDoi],['Điểm đã nhận',b.diem],['Ba mẹ kể',g.h2||'—']],'Mở lời: "Con thích bạn nào nhất ạ?"')}
             ${g3Box('H3 – Tương tác với mẹ',[['Clip ba mẹ đã gửi',b.clip],['Huy hiệu',b.huyHieu],['Ba mẹ kể',g.h3||'—']],'Con có rủ mẹ chơi, kể lại cho mẹ không thì hỏi ba mẹ.')}
             ${g3Box('H4 – Mang ngôn ngữ về nhà',[['Lượt nói với micro',b.noi],['Lượt theo bước (bài Seed đã xong)',b.buoc],['Số tài khoản học',b.taiKhoan],['Ba mẹ kể',g.h4||'—']],'Bài Canopy chưa ghi lượt nói. Con tự nói ở nhà thì xin ba mẹ một ví dụ cụ thể.')}
@@ -786,7 +788,7 @@ function rHt(){
     <div class="bar" role="group" aria-label="Lọc theo tiến độ học thử">${HT_LOC.map(([k,t,fn])=>`<button class="chip ${FILTER.ht===k?'on':''}" data-ht="${k}" type="button">${t}<span class="c">${n(fn)}</span></button>`).join('')}</div>
     <div class="list">${L.length?L.map(f=>{ const b=htBuoi(f);
       return `<div class="famrow"><button class="fam" type="button" data-open="${esc(f.code)}">
-        <span class="nm">Bé ${esc(f.tenCon||'?')}${f.tuoi?`, ${esc(f.tuoi)} tuổi`:''}${f.khoa?` · ${esc(f.khoa)}`:''}</span>${htBam(f)&&!f.moKhoa?'<span class="badge kh">Đã bấm kích hoạt</span>':''}
+        <span class="nm">Bé ${esc(f.tenCon||'?')}${f.tuoi?`, ${esc(f.tuoi)} tuổi`:''}${f.khoa?` · ${esc(KH(f.khoa))}`:''}</span>${htBam(f)&&!f.moKhoa?'<span class="badge kh">Đã bấm kích hoạt</span>':''}
         <span class="sub">Đăng ký ${ago(f.hocThu.t)} · ${esc(f.zalo||'chưa có số')} · <span class="ht-buoi" title="Đã học ${b}/3 buổi">${[1,2,3].map(i=>`<i class="${b>=i?'on':''}"></i>`).join('')}</span> ${b}/3 buổi${f.hoc&&f.hoc.noi?` · nói ${f.hoc.noi} lần`:''} · ${f.dyTuVan?'✓ tư vấn':'✗ tư vấn'} · ${esc(f.ref)}${XEM_HET()?` · ${esc(f.nguoiHoTro||'chưa giao')}`:''}${f.viec.length?` · <b>${f.viec.length} việc</b>`:''}</span></button>
         ${mkBox(f)}${cpkBtn(f)}</div>`; }).join('')
       :`<div class="empty"><b>Chưa có gia đình nào ở đây</b>Ba mẹ đăng ký ở ô "Học thử miễn phí" trên web học sẽ hiện ở đây.</div>`}</div>`;
@@ -794,7 +796,7 @@ function rHt(){
   const qs=$('#qs'); qs.oninput=()=>{ FILTER.sdt=qs.value; const pos=qs.selectionStart; rHt(); const m=$('#qs'); m.focus(); try{ m.setSelectionRange(pos,pos); }catch(e){} };
   document.querySelectorAll('[data-ht]').forEach(b=>b.onclick=()=>{ FILTER.ht=b.dataset.ht; rHt(); });
   $('#htCsv').onclick=()=>csv('dang-ky-hoc-thu', ['Đăng ký lúc','Mã gia đình','Tên con','Tuổi','SĐT / Zalo','Khoá','Số buổi đã học','Bấm kích hoạt','Chặng đã mở','Đồng ý tư vấn','Trạng thái','Người hỗ trợ','Mã CTV'],
-    L.map(f=>[fmt(f.hocThu.t), f.code, f.tenCon, f.tuoi, f.zalo, f.khoa, htBuoi(f), htBam(f)?fmt(f.hoc.tKichHoat):'', moCh(f).join(', '), f.dyTuVan?'Có':'', f.trangThai, f.nguoiHoTro, f.ref]));
+    L.map(f=>[fmt(f.hocThu.t), f.code, f.tenCon, f.tuoi, f.zalo, KH(f.khoa), htBuoi(f), htBam(f)?fmt(f.hoc.tKichHoat):'', moCh(f).join(', '), f.dyTuVan?'Có':'', f.trangThai, f.nguoiHoTro, f.ref]));
   bindAi(); bindActs($('#main'));
 }
 
@@ -911,21 +913,21 @@ function rBc(){
         kenh.map(k=>[k.ref,k.mo,k.hoc,k.zalo,k.xong3,k.dangKy,k.daPhi,k.mo?pct(k.daPhi,k.mo):'—']))}</details></section>
 
     <section class="box"><h3>Tiến độ 99 ngày theo nhóm</h3><p class="sub">Số bé đã hoàn thành từng ngày học. Cột thấp dần là bé rơi khỏi hành trình; ngày 7, 14, 21 là buổi Zoom.</p>
-      ${legend([['Little Seed',s1],['Canopy',s2]])}<div class="cv tall"><canvas id="cTienDo" role="img" aria-label="Biểu đồ số bé hoàn thành từng ngày học"></canvas></div>
-      ${asTable(['Ngày học','Little Seed','Canopy'],B.hoc.theoNgayHoc['Little Seed'].map((v,i)=>[zl(i),v,B.hoc.theoNgayHoc['Canopy'][i]]))}</section>
+      ${legend([['Little Seed',s1],['Seedling',s2]])}<div class="cv tall"><canvas id="cTienDo" role="img" aria-label="Biểu đồ số bé hoàn thành từng ngày học"></canvas></div>
+      ${asTable(['Ngày học','Little Seed','Seedling'],B.hoc.theoNgayHoc['Little Seed'].map((v,i)=>[zl(i),v,B.hoc.theoNgayHoc['Canopy'][i]]))}</section>
 
     <div class="grid2">
       <section class="box"><h3>Bé đã học được bao nhiêu buổi</h3><p class="sub">Số bé theo số buổi đã hoàn thành</p>
-        ${legend([['Little Seed',s1],['Canopy',s2]])}<div class="cv short"><canvas id="cPhanBo" role="img" aria-label="Biểu đồ phân bố số buổi đã học"></canvas></div>
-        ${asTable(['Số buổi','Little Seed','Canopy'],B.hoc.phanBo.map(x=>[x.nhom,x.seed,x.canopy]))}</section>
+        ${legend([['Little Seed',s1],['Seedling',s2]])}<div class="cv short"><canvas id="cPhanBo" role="img" aria-label="Biểu đồ phân bố số buổi đã học"></canvas></div>
+        ${asTable(['Số buổi','Little Seed','Seedling'],B.hoc.phanBo.map(x=>[x.nhom,x.seed,x.canopy]))}</section>
       <section class="box"><div class="box-hd"><div><h3>Bé cần nhắc (nghỉ từ 2 ngày)</h3><p class="sub">Lâu nhất lên trước. Gửi tin mẫu "nhac_hoc" qua Zalo cho ba mẹ.</p></div>${nghi.length?'<button class="dl" type="button" id="dlNghi">Tải CSV</button>':''}</div>
-        ${nghi.length?`<ul class="kid-list">${nghi.slice(0,12).map(b=>`<li><b>${esc(b.ten||b.kid)}</b> ${esc(b.khoa)} · ${b.buoi} buổi<span>học lần cuối ${ago(b.cuoi)}</span></li>`).join('')}</ul>${nghi.length>12?`<p class="hint">và ${nghi.length-12} bé nữa trong tệp CSV.</p>`:''}`
+        ${nghi.length?`<ul class="kid-list">${nghi.slice(0,12).map(b=>`<li><b>${esc(b.ten||b.kid)}</b> ${esc(KH(b.khoa))} · ${b.buoi} buổi<span>học lần cuối ${ago(b.cuoi)}</span></li>`).join('')}</ul>${nghi.length>12?`<p class="hint">và ${nghi.length-12} bé nữa trong tệp CSV.</p>`:''}`
           :'<div class="empty" style="padding:18px"><b>Chưa có bé nào nghỉ 2 ngày</b>Danh sách tự cập nhật theo điểm buổi học.</div>'}</section>
     </div>
 
     <div class="grid2">
       <section class="box"><h3>Đăng ký theo nhóm</h3><p class="sub">Đơn trên trang ưu đãi</p>
-        <div class="cv short"><canvas id="cDkKhoa" role="img" aria-label="Biểu đồ đăng ký theo nhóm"></canvas></div>${asTable(['Nhóm','Số đơn'],B.dangKy.khoa.map(x=>[x.k,x.n]))}</section>
+        <div class="cv short"><canvas id="cDkKhoa" role="img" aria-label="Biểu đồ đăng ký theo nhóm"></canvas></div>${asTable(['Nhóm','Số đơn'],B.dangKy.khoa.map(x=>[KH(x.k),x.n]))}</section>
       <section class="box"><h3>Ba mẹ biết qua đâu</h3><p class="sub">Câu trả lời trên form đăng ký</p>
         <div class="cv short" style="height:${Math.max(200,B.dangKy.biet.length*36+50)}px"><canvas id="cDkBiet" role="img" aria-label="Biểu đồ kênh ba mẹ biết đến"></canvas></div>${asTable(['Kênh','Số đơn'],B.dangKy.biet.map(x=>[x.k,x.n]))}</section>
     </div>
@@ -957,17 +959,17 @@ function rBc(){
     options:baseOpts({indexAxis:'y',interaction:{mode:'nearest',axis:'y',intersect:false},scales:{x:{beginAtZero:true,suggestedMax:pMax,grid:{color:css('--grid')},border:{display:false},ticks:{precision:0,color:css('--axis')}},y:{grid:{display:false},border:{color:css('--grid')},ticks:{color:css('--ink')}}}})});
   chart('cKenh',{type:'bar',data:{labels:kenh.map(k=>k.ref),datasets:[hbarDs('Đã đăng ký',kenh.map(k=>k.dangKy),s1),hbarDs('Đã đóng phí',kenh.map(k=>k.daPhi),s2)]},
     options:baseOpts({indexAxis:'y',interaction:{mode:'index',axis:'y',intersect:false},scales:{x:{beginAtZero:true,grid:{color:css('--grid')},border:{display:false},ticks:{precision:0,color:css('--axis')}},y:{grid:{display:false},border:{color:css('--grid')},ticks:{color:css('--ink')}}}})});
-  chart('cTienDo',{type:'bar',data:{labels:B.hoc.theoNgayHoc['Little Seed'].map((_,i)=>(i+1)%7===0?(i+1)+' Zoom':String(i+1)),datasets:[barDs('Little Seed',B.hoc.theoNgayHoc['Little Seed'],s1),barDs('Canopy',B.hoc.theoNgayHoc['Canopy'],s2)]},
+  chart('cTienDo',{type:'bar',data:{labels:B.hoc.theoNgayHoc['Little Seed'].map((_,i)=>(i+1)%7===0?(i+1)+' Zoom':String(i+1)),datasets:[barDs('Little Seed',B.hoc.theoNgayHoc['Little Seed'],s1),barDs('Seedling',B.hoc.theoNgayHoc['Canopy'],s2)]},
     options:baseOpts({plugins:{legend:{display:false},tooltip:Object.assign(baseOpts().plugins.tooltip,{callbacks:{title:c=>zl(c[0].dataIndex),label:c=>` ${c.dataset.label}: ${num(c.parsed.y)} bé`}})}})});
-  chart('cPhanBo',{type:'bar',data:{labels:B.hoc.phanBo.map(x=>x.nhom),datasets:[barDs('Little Seed',B.hoc.phanBo.map(x=>x.seed),s1),barDs('Canopy',B.hoc.phanBo.map(x=>x.canopy),s2)]},options:baseOpts()});
+  chart('cPhanBo',{type:'bar',data:{labels:B.hoc.phanBo.map(x=>x.nhom),datasets:[barDs('Little Seed',B.hoc.phanBo.map(x=>x.seed),s1),barDs('Seedling',B.hoc.phanBo.map(x=>x.canopy),s2)]},options:baseOpts()});
   const one=(id,arr,lbl,h)=>chart(id,{type:'bar',data:{labels:arr.map(x=>x.k),datasets:[(h?hbarDs:barDs)(lbl,arr.map(x=>x.n),s1)]},
     options:h?baseOpts({indexAxis:'y',interaction:{mode:'index',axis:'y',intersect:false},scales:{x:{beginAtZero:true,grid:{color:css('--grid')},border:{display:false},ticks:{precision:0,color:css('--axis')}},y:{grid:{display:false},border:{color:css('--grid')},ticks:{color:css('--ink')}}}}):baseOpts()});
-  one('cDkKhoa',B.dangKy.khoa,'Số đơn'); one('cDkBiet',B.dangKy.biet,'Số đơn',true); one('cDkTuoi',B.dangKy.tuoi.slice().sort((a,b)=>parseInt(a.k)-parseInt(b.k)),'Số đơn');
+  one('cDkKhoa',B.dangKy.khoa.map(x=>Object.assign({},x,{k:KH(x.k)})),'Số đơn'); one('cDkBiet',B.dangKy.biet,'Số đơn',true); one('cDkTuoi',B.dangKy.tuoi.slice().sort((a,b)=>parseInt(a.k)-parseInt(b.k)),'Số đơn');
   one('cTT',D.trangThai.map(t=>({k:t,n:B.theoTT[t]||0})),'Số gia đình',true);
 
   $('#dlNgay').onclick=()=>csv('tuyen-sinh-theo-ngay',['Ngày','Mở link','Bé bắt đầu học','Xong buổi 1','Để lại Zalo','Đăng ký','Mở khóa chặng','Số bé học','Buổi hoàn thành'],B.ngay.map(x=>[x.ngay,x.mo,x.hoc,x.xong1,x.zalo,x.dangKy,x.moKhoa,x.beHoc,x.buoi]));
   $('#dlKenh').onclick=()=>csv('hieu-qua-theo-kenh',['Mã','Mở link','Bé học thử','Xong buổi 1','Để lại Zalo','Xong 3 buổi','Bấm đăng ký','Đã đăng ký','Đã đóng phí'],B.kenh.map(k=>[k.ref,k.mo,k.hoc,k.xong1,k.zalo,k.xong3,k.bamDk,k.dangKy,k.daPhi]));
-  if($('#dlNghi')) $('#dlNghi').onclick=()=>csv('be-can-nhac',['Tên bé','Nhóm','Số buổi','Học lần cuối'],nghi.map(b=>[b.ten||b.kid,b.khoa,b.buoi,new Date(b.cuoi).toLocaleString('vi-VN')]));
+  if($('#dlNghi')) $('#dlNghi').onclick=()=>csv('be-can-nhac',['Tên bé','Nhóm','Số buổi','Học lần cuối'],nghi.map(b=>[b.ten||b.kid,KH(b.khoa),b.buoi,new Date(b.cuoi).toLocaleString('vi-VN')]));
 }
 
 /* ---------- Tài khoản ---------- */
@@ -1124,7 +1126,7 @@ function formTao(){
       <p class="hint" id="tTrung" hidden></p>
       <div class="two"><label>Tên con<input id="tCon" maxlength="60" autocomplete="off" placeholder="Ba mẹ nhập đúng tên này khi đăng nhập"></label>
         <label>Tuổi<select id="tTuoi"><option value="">Chọn</option>${['3','4','5','6','7','8','9','10','Trên 10'].map(a=>`<option>${a}</option>`).join('')}</select></label></div>
-      <div class="two"><label>Khoá<select id="tKh"><option value="">Chưa xếp</option><option>Little Seed</option><option>Canopy</option></select></label>
+      <div class="two"><label>Khoá<select id="tKh"><option value="">Chưa xếp</option><option>Little Seed</option><option value="Canopy">Seedling</option></select></label>
         <label>Mã CTV (nếu có)<input id="tRef" maxlength="20" autocomplete="off" placeholder="CTV05"></label></div>
       ${D.laQL?`<label>Người hỗ trợ<select id="tHo"><option value="">(chưa giao)</option>${D.team.map(t=>`<option ${t.ten===D.me.ten?'selected':''}>${esc(t.ten)}</option>`).join('')}</select></label>`:''}
       <div class="ck">Mở chặng ngay (đã nhận phí chặng đó):<div class="mkc mkc-ds" style="margin-top:6px;justify-content:start">${[1,2,3,4,5,6,7].map(n=>`<label title="Chặng ${n} · từ ${changNgay(n)}"><input type="checkbox" class="tMoCh" value="${n}" ${n===changNay()?'checked':''} aria-label="Chặng ${n}"><span class="${n===changNay()?'nay':''}">${n}</span></label>`).join('')}</div></div>
@@ -1167,7 +1169,7 @@ function linkDk(f){ const u=D.caiDat.link, q=[]; if(f.ref&&f.ref!=='TU_NHIEN') q
   return u+(u.includes('?')?'&':'?')+q.join('&'); }
 function fillTpl(key,f){
   const t=(D.tinMau[key]||{}).noiDung||''; const b3=f.bc3||{}, h={...(f.hoc||{})}; h.soBuoi=Math.max(+h.soBuoi||0,+b3.bai||0); h.noi=Math.max(+h.noi||0,+b3.noi||0);
-  const map={phu_huynh:xung(f), ten_con:(f.tenCon||'con').split(',')[0].trim(), khoa:f.khoa||'phù hợp', nguoi_ho_tro:D.me.ten,
+  const map={phu_huynh:xung(f), ten_con:(f.tenCon||'con').split(',')[0].trim(), khoa:KH(f.khoa)||'phù hợp', nguoi_ho_tro:D.me.ten,
     so_buoi:h.soBuoi||0, so_lan_noi:h.noi||0, hoc_them:h.noi?` và đã nói thành tiếng ${h.noi} lần`:'', link_dang_ky:linkDk(f),
     han:D.caiDat.hanText, khai_mac:D.caiDat.khaiMac, phi:D.caiDat.phi, so_zalo:f.zalo||'', link_hoc:D.caiDat.linkHoc};
   return String(t).replace(/\{(\w+)\}/g,(m,k)=>k in map?map[k]:m); }
@@ -1474,7 +1476,7 @@ function openFam(code, keep, opt){
     <div class="box" id="gdBox"><div class="h3row"><h3>Gia đình</h3><button class="act sm-act" type="button" id="suaBtn">✏️ Sửa thông tin</button></div><dl class="kv">
       <dt>Tên ba/mẹ</dt><dd>${esc(f.phuHuynh||'—')}</dd>
       <dt>Số Zalo</dt><dd>${esc(f.zalo||'—')}</dd>
-      <dt>Bé</dt><dd>${esc(f.tenCon)}${f.tuoi?`, ${esc(f.tuoi)} tuổi`:''} · ${esc(f.khoa||'chưa xếp khoá')}</dd>
+      <dt>Bé</dt><dd>${esc(f.tenCon)}${f.tuoi?`, ${esc(f.tuoi)} tuổi`:''} · ${esc(KH(f.khoa)||'chưa xếp khoá')}</dd>
       <dt>Nguồn</dt><dd>${f.hocThu?'<span class="badge ht">Đăng ký học thử</span> ':''}${esc(f.nguon)} · ${esc(f.ref)}</dd>
       ${f.hocThu?`<dt>Học thử</dt><dd>Đăng ký ${fmt(f.hocThu.t)} · ${htBuoi(f)}/3 buổi${f.hoc&&f.hoc.tXong2?' · xong buổi 2 lúc '+fmt(f.hoc.tXong2):''}${htBam(f)?' · <b>bấm kích hoạt '+fmt(f.hoc.tKichHoat)+'</b>':''}</dd>`:''}
       <dt>Tạo lúc</dt><dd>${fmt(f.taoLuc)}</dd>
@@ -1489,7 +1491,7 @@ function openFam(code, keep, opt){
         <label>Số điện thoại (đăng nhập)<input id="sSo" maxlength="40" inputmode="tel" value="${esc(f.zalo||'')}"></label></div>
       <div class="two"><label>Tên con<input id="sCon" maxlength="80" value="${esc(f.tenCon||'')}"></label>
         <label>Tuổi<select id="sTuoi"><option value="">Chưa rõ</option>${['3','4','5','6','7','8','9','10','Trên 10'].concat(f.tuoi&&!['3','4','5','6','7','8','9','10','Trên 10'].includes(f.tuoi)?[f.tuoi]:[]).map(a=>`<option ${a===f.tuoi?'selected':''}>${esc(a)}</option>`).join('')}</select></label></div>
-      <div class="two"><label>Khoá<select id="sKh"><option value="">Chưa xếp</option>${['Little Seed','Canopy'].map(k=>`<option ${k===f.khoa?'selected':''}>${k}</option>`).join('')}</select></label>
+      <div class="two"><label>Khoá<select id="sKh"><option value="">Chưa xếp</option>${['Little Seed','Canopy'].map(k=>`<option value="${k}" ${k===f.khoa?'selected':''}>${KH(k)}</option>`).join('')}</select></label>
         <label>Mã CTV<input id="sRef" maxlength="20" value="${esc(f.ref||'')}"></label></div>
       <p class="err" id="sErr" hidden></p>
       <div class="acts"><button class="save" type="submit" id="sOk">Lưu thay đổi</button><button class="act" type="button" id="sHuy">Huỷ</button></div>
@@ -1505,7 +1507,7 @@ function openFam(code, keep, opt){
         <label ${cap==='ctv'?'hidden':''}>Trạng thái<select id="tt">${D.trangThai.map(t=>`<option ${t===f.trangThai?'selected':''}>${esc(t)}</option>`).join('')}</select></label></div>
       <div class="two" id="lyDoBox" hidden><label>Lý do (bắt buộc)<select id="ld"><option value="">Chọn lý do</option>${D.lyDo.map(k=>`<option>${esc(k)}</option>`).join('')}</select></label>
         <label>Thêm chi tiết<input id="ld2" maxlength="200"></label></div>
-      <div class="two" ${cap==='ctv'?'hidden':''}><label>Khoá<select id="kh"><option value="">${esc(f.khoa||'Chưa xếp')}</option><option>Little Seed</option><option>Canopy</option></select></label>
+      <div class="two" ${cap==='ctv'?'hidden':''}><label>Khoá<select id="kh"><option value="">${esc(KH(f.khoa)||'Chưa xếp')}</option><option>Little Seed</option><option value="Canopy">Seedling</option></select></label>
         ${XEM_HET()?`<label>Người hỗ trợ<select id="ho"><option value="">(chưa giao)</option>${D.team.filter(t=>t.cap!=='ctv').map(t=>`<option ${t.ten===f.nguoiHoTro?'selected':''}>${esc(t.ten)}</option>`).join('')}</select></label>`:'<span></span>'}</div>
       <p class="err" id="lerr" hidden></p>
       <button class="save" type="submit" id="sv">Lưu</button>

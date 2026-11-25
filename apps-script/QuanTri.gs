@@ -574,7 +574,7 @@ function qtBc3_(f, T, cd, now) {
       if (!n) { if (v.done) zoomDone++; return; }   // ô Zoom / Tổng kết của chặng: không tính là bài
       if (v.clipSent) clips++;
       if (v.done) (g === 'seed' ? seed : can)[n] = 1;
-      else if (Object.keys(v.ol || v.ls || v.ex || {}).length) dang.push((g === 'seed' ? 'Seed' : 'Canopy') + ' ngày ' + n);
+      else if (Object.keys(v.ol || v.ls || v.ex || {}).length) dang.push((g === 'seed' ? 'Seed' : 'Seedling') + ' ngày ' + n);
       if (g === 'seed' && v.done && v.ls) {   // MÙA 3: bài lớp offline ghi ở v.ol (không có 5 bước cũ)
         const ls = v.ls || {}; for (let i = 0; i < 5; i++) steps[i] += +ls[i] || 0; stepn++;
         if (+ls[2] <= 1) low.push('Seed ngày ' + n + ': bước Cụm từ chỉ ' + ls[2] + ' lượt');
@@ -603,7 +603,7 @@ function qtBc3_(f, T, cd, now) {
     if (missed.length) hoi.push('Con chưa học ngày ' + missed.join(', ') + ' — hỏi nhẹ giờ học cố định');
     if (rec === 0 && groups.seed) hoi.push('Chưa ghi nhận lượt nói — hỏi con có nói theo micro không (H4)');
     if (dang.length) hoi.push('Đang dở: ' + dang.slice(0, 2).join(', '));
-    if (Object.keys(groups).length > 1) hoi.push('Con học cả Little Seed và Canopy — xác nhận nhóm Zoom');
+    if (Object.keys(groups).length > 1) hoi.push('Con học cả Little Seed và Seedling — xác nhận nhóm Zoom');
     if (low.length) hoi.push(low[0] + ' — hỏi con có ngại phần nói theo không');
     if (accs.length > 1) hoi.push('Có ' + accs.length + ' tài khoản học — hướng dẫn dùng 1 tài khoản');
   } else if (accs.length) hoi.push('Đã đăng nhập nhưng chưa làm bài — hỏi con vướng ở đâu, hướng dẫn bấm vào Ngày 1');

@@ -18,7 +18,7 @@ const AVA_BG = {
   quai:{n:'Đồng cỏ quái vật', img:Q_IMG+'bg_quai.webp', p:20},
   phong:{n:'Phòng quà', img:Q_IMG+'bg_phong.webp', p:20},
   seed:{n:'Thế giới Little Seed', img:'../xem-truoc/tai-nguyen/trang/the_gioi_seed.webp', p:20},
-  canopy:{n:'Thành phố Canopy', img:'../xem-truoc/tai-nguyen/trang/the_gioi_canopy.webp', p:20}};
+  canopy:{n:'Thành phố Seedling', img:'../xem-truoc/tai-nguyen/trang/the_gioi_canopy.webp', p:20}};
 const AVA_FR = {none:{n:'Trắng', p:0}, vang:{n:'Vàng', p:15}, cauvong:{n:'Cầu vồng', p:25}, sao:{n:'Sao lấp lánh', p:30}, vuongmien:{n:'Vương miện', p:40}};
 const GIFTS = [
   {id:'sticker', n:'Bộ sticker hoạt hình', vnd:'5.000đ', p:120}, {id:'tay', n:'Tẩy hình con vật', vnd:'5.000đ', p:120},
