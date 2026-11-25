@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="canopy.css">
 <link rel="stylesheet" href="ls.css">
-<link rel="stylesheet" href="bo-sung.css?v=20261125a">
+<link rel="stylesheet" href="bo-sung.css?v=20261125b">
 <link rel="stylesheet" href="bo-cuc.css">
 <link rel="stylesheet" href="qua.css">
 <link rel="stylesheet" href="khen.css">
@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="cong-zalo.css">
 <link rel="stylesheet" href="huong-dan-clip.css">
 <link rel="stylesheet" href="xep-hang.css">
-<link rel="stylesheet" href="ol.css?v=20261120a">
+<link rel="stylesheet" href="ol.css?v=20261125b">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&family=Noto+Sans+SC:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{color-scheme:light;
@@ -473,7 +473,7 @@ a.gtab{text-decoration:none}
 <script src="huong-dan-clip.js"></script>
 <script src="xep-hang.js"></script>
 <script src="bai-offline.js?v=20261121a"></script>
-<script src="ol.js?v=20261121a"></script>
+<script src="ol.js?v=20261125b"></script>
 <script>
 /* =====================================================================
    PHẦN DỮ LIỆU — SỬA NỘI DUNG Ở ĐÂY
@@ -1835,8 +1835,8 @@ function hubStep(o){
 /* "Nhiệm vụ & khám phá" của một buổi: nhiệm vụ quay clip + 2 video gợi ý */
 function extrasPanel(g,i){
   const ov=document.createElement('div'); ov.className='overlay pp';
-  ov.innerHTML=`<div class="modal pp-box" role="dialog" aria-label="Nhiệm vụ và khám phá"><button class="pp-x" aria-label="Đóng">✕</button>
-    <h3>Nhiệm vụ & khám phá</h3>${missionHTML(g,i)}${xtTeaser(g,Math.floor(i/PER),'🧭 Góc khám phá')}</div>`;
+  ov.innerHTML=`<div class="modal pp-box" role="dialog" aria-label="Nộp bài và khám phá"><button class="pp-x" aria-label="Đóng">✕</button>
+    <h3>Nộp bài & khám phá</h3>${missionHTML(g,i)}${xtTeaser(g,Math.floor(i/PER),'🧭 Góc khám phá')}</div>`;
   document.body.appendChild(ov); missionWire(ov,g,i);
   const close=()=>ov.remove(); ov.querySelector('.pp-x').onclick=close; ov.addEventListener('click',e=>{ if(e.target===ov) close(); });
   ov.querySelectorAll('.xt-tc, .xt-th a').forEach(a=>a.addEventListener('click',close));

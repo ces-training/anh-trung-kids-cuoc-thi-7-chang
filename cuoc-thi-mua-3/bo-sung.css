@@ -279,3 +279,8 @@ body.is-demo:not(.in-step) .toast{bottom:calc(max(10px,env(safe-area-inset-botto
 .mission .mi-note,.ls-cele .mission p.mi-note{margin:8px 0 0;font-size:13px;color:#4F6B5B;font-weight:600}
 /* Bảng kích hoạt đóng phí (sau buổi 2) và bảng mời đăng ký phải nổi trên màn chúc mừng (.ls-cele z-index 9000) */
 .overlay.kh,.overlay.demo{z-index:9500}
+
+/* Nút "📤 Nộp bài" trên thanh buổi học luôn hiện; xong buổi mà chưa nộp thì nhấp nháy nhắc ba mẹ (25/11/2026) */
+.ol-x.nhac{animation:olNhac 1.4s ease-in-out infinite}
+@keyframes olNhac{0%,100%{transform:scale(1)}50%{transform:scale(1.08);box-shadow:0 0 0 6px rgba(59,178,115,.25)}}
+@media (prefers-reduced-motion:reduce){.ol-x.nhac{animation:none}}

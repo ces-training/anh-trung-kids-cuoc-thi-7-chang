@@ -20,3 +20,9 @@
   .ol-bar{min-height:40px}
   .ol-tt small{display:none}
 }
+/* Điện thoại hẹp: nút "📤 Nộp bài" luôn hiện nên đưa tên buổi xuống dòng dưới cho khỏi bị ép (25/11/2026) */
+@media (max-width:520px){
+  .ol-bar{flex-wrap:wrap;row-gap:4px}
+  .ol-tt{order:5;flex-basis:100%}
+  .ol-pts{margin-left:auto}
+}

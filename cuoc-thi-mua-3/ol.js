@@ -75,14 +75,14 @@ function viewOlDay(g, i) {
     <div class="ol-bar"><a class="btn y ol-back" href="#/g/${g}">← Bản đồ</a>
       <div class="ol-tt"><small>${G.icon} ${esc(G.name)} · Chặng ${CHANG} · Buổi ${learnNo(i)}/${CHANG_LEARN} · Ngày ${ngay99(i)}/99</small><b>${titleHTML(day.t)}</b></div>
       <span class="ol-pts" id="olPts">⭐ ${dayPoints(g, i)}</span>
-      <button class="btn ol-x" id="olX" type="button" ${s.done ? '' : 'hidden'}>🎯 Nhiệm vụ</button></div>
+      <button class="btn ol-x ${s.done && !s.clipSent ? 'nhac' : ''}" id="olX" type="button">📤 Nộp bài</button></div>
     <iframe class="ol-frame" id="olFrame" src="${esc(olSrc(g, i))}" allow="autoplay; microphone; camera; fullscreen" title="Bài học ${esc(day.t)}"></iframe></div>`;
   document.getElementById('olX').onclick = () => { sfx.pop(); extrasPanel(g, i); };
   window.scrollTo({ top: 0 });
 }
 function olUpd(g, i) {
   const el = document.getElementById('olPts'); if (el) el.textContent = '⭐ ' + dayPoints(g, i);
-  const x = document.getElementById('olX'); if (x) x.hidden = !st(g, i).done;
+  const x = document.getElementById('olX'), s = st(g, i); if (x) x.classList.toggle('nhac', !!s.done && !s.clipSent);   // nút Nộp bài luôn hiện; xong buổi mà chưa nộp thì nhấp nháy nhắc
 }
 window.addEventListener('message', e => {
   const m = e.data; if (!m || !m.m3 || e.origin !== location.origin || !OLCUR) return;
