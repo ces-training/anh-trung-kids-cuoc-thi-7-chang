@@ -937,6 +937,8 @@ function demoFam(){ return lsGet('lle3-fam',null); }
 const DEMO_FEE = "159.000đ", DEMO_HAN = "", DEMO_KHAI_MAC = "thứ Hai 30/11/2026";   // MÙA 3: phí 159k, không có hạn đăng ký, khai mạc 30/11/2026
 /* Kích hoạt 21 ngày: hiện khi bé học xong buổi 2 của bản học thử. Ba mẹ quét QR đóng phí học liệu rồi nhắn Zalo đội hỗ trợ;
    đội tick "Mở khóa 21 ngày" trên trang quản trị, lần mở web sau máy tự mở đủ 21 ngày theo số điện thoại đã để lại. */
+/* Kích hoạt theo từng chặng (25/11/2026): đóng phí mở 1 chặng 14 ngày (chặng 7: 15 ngày), không mở cả 99 ngày */
+const KH_TEN = `chặng ${CHANG} (${CHANG_LEARN} ngày)`;
 const KH_SAU_BUOI = 2, KH_ZALO = "https://zalo.me/0974840845", KH_QR = "../xem-truoc/tai-nguyen/trang/qr-chuyen-khoan.webp";
 const KID_KEY = DEMO ? 'lle3-kid-demo' : 'lle3-kid';
 let TEACHER = !DEMO && GV_LINK;
@@ -2153,9 +2155,9 @@ function demoGate(why){
       <li>🏆 <b>Xếp hạng</b> mỗi chặng và <b>Phòng đổi quà</b> bằng sao</li>
       <li>🌟 <b>Chung kết tỏa sáng</b> livestream: cúp, cờ và giấy chứng nhận cho Top 3 mỗi khoá</li>
     </ul>
-    <p class="dm-info">Phí học liệu <b>${DEMO_FEE}</b> · 99 ngày gồm <b>7 buổi Zoom, 7 buổi Tổng kết với giáo viên</b> và các buổi làm bài tập trên web</p>
-    ${demoMaxDone()>=KH_SAU_BUOI ? '' : `<p class="kh-chua">🎁 Con học xong <b>buổi ${KH_SAU_BUOI}</b> là có nút <b>Kích hoạt cuộc thi 99 ngày</b>.</p>`}
-    <div class="row">${demoMaxDone()>=KH_SAU_BUOI ? '<button class="btn g" type="button" id="dmKh">🚀 Kích hoạt 99 ngày</button>' : ''}
+    <p class="dm-info">Phí học liệu <b>${DEMO_FEE}</b> · mỗi lần kích hoạt mở <b>1 chặng ${CHANG_LEARN} ngày</b>: ${CHANG_LEARN} buổi làm bài trên web, <b>1 buổi Zoom và 1 buổi Tổng kết với giáo viên</b></p>
+    ${demoMaxDone()>=KH_SAU_BUOI ? '' : `<p class="kh-chua">🎁 Con học xong <b>buổi ${KH_SAU_BUOI}</b> là có nút <b>Kích hoạt ${KH_TEN}</b>.</p>`}
+    <div class="row">${demoMaxDone()>=KH_SAU_BUOI ? `<button class="btn g" type="button" id="dmKh">🚀 Kích hoạt ${KH_TEN}</button>` : ''}
       <button class="btn y" id="dmLater" type="button">${why==='xong'?'Xem lại bài đã học':'Để sau'}</button></div>
     <button class="mk-link" id="dmMk" type="button">Ba mẹ đã đóng phí? <b>Đăng nhập để mở cuộc thi</b></button>
     ${demoFam()||!KID||!ZALO_OK?'':'<button class="dm-zalo" id="dmZalo" type="button">📩 Nhận nhận xét của cô qua Zalo</button>'}
@@ -2225,7 +2227,7 @@ function zaloGate(){
 function demoMaxDone(){ return Object.keys(GROUPS).reduce((m,g)=>Math.max(m, demoDone(g)), 0); }
 function demoRibbon(){ const rb=document.querySelector('.demo-rb'); if(!rb) return;
   const on=demoMaxDone()>=KH_SAU_BUOI; rb.classList.toggle('kh', on);
-  rb.innerHTML= on ? '<b>🚀 Kích hoạt cuộc thi 99 ngày</b><span>· Học một lần, được hai ngôn ngữ ·</span><i>Kích hoạt ngay →</i>'
+  rb.innerHTML= on ? `<b>🚀 Kích hoạt ${KH_TEN}</b><span>· Học một lần, được hai ngôn ngữ ·</span><i>Kích hoạt ngay →</i>`
                    : '<b>Anh-Trung-Kids</b><span>· Học thử miễn phí ·</span><i>Học một lần, được hai ngôn ngữ</i>'; }
 function chep(t){ try{ if(navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(t).then(()=>true,()=>false); }catch(e){}
   try{ const a=document.createElement('textarea'); a.value=t; a.style.cssText='position:fixed;opacity:0'; document.body.appendChild(a); a.select(); const ok=document.execCommand('copy'); a.remove(); return Promise.resolve(ok); }catch(e){ return Promise.resolve(false); } }
@@ -2234,12 +2236,12 @@ function kichHoat(tuDong){
   document.querySelectorAll('.overlay.demo').forEach(x=>x.remove());
   const nm=KID&&KID.name||'con', f=demoFam(), sdt=f&&f.acct&&!f.acct.includes('@')?f.acct:'';
   const nd=('LLE '+slugName(nm).replace(/-/g,' ').toUpperCase()+(sdt?' '+sdt:'')).trim();
-  const tin=`Chào đội hỗ trợ Anh-Trung-Kids, em đã chuyển ${DEMO_FEE} phí học liệu cho bé ${nm}${sdt?' (SĐT '+sdt+')':''}. Nhờ đội kích hoạt cuộc thi 99 ngày cho con giúp em ạ.`;
+  const tin=`Chào đội hỗ trợ Anh-Trung-Kids, em đã chuyển ${DEMO_FEE} phí học liệu cho bé ${nm}${sdt?' (SĐT '+sdt+')':''}. Nhờ đội kích hoạt ${KH_TEN} cho con giúp em ạ.`;
   const ov=document.createElement('div'); ov.className='overlay pp kh';
   ov.innerHTML=`<div class="modal pp-box dm-box kh-box" role="dialog" aria-labelledby="khh">
     <button class="pp-x" aria-label="Đóng">✕</button>
-    <h3 id="khh">${tuDong?`${esc(nm)} xong buổi ${KH_SAU_BUOI}! 🎉<br>`:''}Kích hoạt cuộc thi 99 ngày 🚀</h3>
-    <p class="kh-lead">Ba mẹ đóng giúp cô <b>${DEMO_FEE} phí học liệu</b> nhé. Con sẽ tham gia <b>99 ngày, 7 chặng</b>, mỗi chặng có <b>buổi Zoom và buổi Tổng kết với giáo viên</b> cùng các buổi làm bài tập trên web.</p>
+    <h3 id="khh">${tuDong?`${esc(nm)} xong buổi ${KH_SAU_BUOI}! 🎉<br>`:''}Kích hoạt ${KH_TEN} 🚀</h3>
+    <p class="kh-lead">Ba mẹ đóng giúp cô <b>${DEMO_FEE} phí học liệu</b> nhé. Con được mở <b>chặng ${CHANG} (${CHANG_LEARN} ngày)</b>: ${CHANG_LEARN} buổi làm bài trên web, <b>1 buổi Zoom và 1 buổi Tổng kết với giáo viên</b>. Các chặng sau kích hoạt theo từng chặng.</p>
     <ol class="kh-steps">
       <li><span><b>Quét mã để chuyển ${DEMO_FEE}</b></span>
         <img class="kh-qr" src="${KH_QR}" alt="Mã QR chuyển khoản Techcombank, PHAM DUC ANH">
