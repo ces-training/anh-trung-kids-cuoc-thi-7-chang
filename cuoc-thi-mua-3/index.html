@@ -22,6 +22,7 @@
 <link rel="stylesheet" href="bo-sung.css?v=20261125b">
 <link rel="stylesheet" href="bo-cuc.css">
 <link rel="stylesheet" href="qua.css">
+<link rel="stylesheet" href="qua-choi.css?v=20261125a">
 <link rel="stylesheet" href="khen.css">
 <link rel="stylesheet" href="dien-thoai.css">
 <link rel="stylesheet" href="chang.css">
@@ -471,6 +472,7 @@ a.gtab{text-decoration:none}
 <script src="canopy-games.js"></script>
 <script src="canopy-speak.js"></script>
 <script src="qua.js?v=20261105z"></script>
+<script src="qua-choi.js?v=20261125a"></script>
 <script src="khen.js"></script>
 <script src="huong-dan-clip.js"></script>
 <script src="xep-hang.js"></script>
@@ -979,6 +981,7 @@ function mergeProg(a,b){
   for(const k in (b||{})){ const x=out[k], y=b[k];
     if(!x){ out[k]=y; continue; }
     if(k==='_shop'||k==='_j'){ out[k]=((y&&y.t)||0)>((x&&x.t)||0)?y:x; continue; }
+    if(k==='_earn'||k==='_les'){ const o=Object.assign({},x); for(const c in (y||{})) o[c]=Math.max(+o[c]||0,+y[c]||0); out[k]=o; continue; }   /* sao, số buổi từng chặng: giữ số lớn hơn */
     const sc=s=>(s.done?1000:0)+Object.keys(s.ol||{}).length*10+Object.keys(s.ls||{}).length*10+Object.keys(s.ex||{}).length*10+(s.clipSent?5:0);
     if(sc(y)>sc(x)) out[k]=y; }
   return out;
@@ -988,7 +991,7 @@ function mergeProg(a,b){
 /* chế độ giáo viên lưu tiến độ riêng, để cô bấm thử không làm thay đổi điểm và ngày của bé trên cùng máy */
 function progKey(){ return DEMO ? 'lle3-progress-demo' : TEACHER ? 'lle3-progress-gv' : 'lle3-progress-v2'; }
 let P = lsGet(progKey(), {}) || {};
-function save(){ if(typeof jMark==='function') jMark(); lsSet(progKey(),P); updateStars(); syncSoon(); demoCheckDone(); }
+function save(){ if(typeof jMark==='function') jMark(); if(typeof qcMark==='function') qcMark(); lsSet(progKey(),P); updateStars(); syncSoon(); demoCheckDone(); }
 function st(g,i){ return (P[pk(g,i)] ||= {learn:false, parent:false, game:false, gameBest:0, done:false}); }
 function isDone(g,i){ const s=P[pk(g,i)]; return !!(s && s.done); }
 /* Bản đồ: mỗi chặng 6 buổi tự học. Buổi Zoom (ngày 7, 14, 21) không chặn đường đi,
