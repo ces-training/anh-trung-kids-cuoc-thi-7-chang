@@ -103,7 +103,8 @@ function doPost(e) {
 function doGet(e) {
   const p = e.parameter || {};
   if (p.action === 'zoomsao') return json_(zoomSao_(p));        // web học hỏi số sao Zoom đã cộng cho một bé
-  if (p.action === 'ping') return json_({ ok: true, v: 17, mua3: '99 ngày · 7 chặng' });          // v17: mở khóa theo từng chặng (cột Z "Mở chặng") · v16: Lớp Zoom một màn (tab Lớp Zoom 1 màn, Sao Zoom, ?action=zoomsao) · v15: Lớp Zoom (tab Lớp Zoom, Chuẩn bị Zoom, ảnh con vào Drive) · v14: bỏ tích nhiệm vụ · v13: Gọi tuần 1 gộp (4H + thẻ), CTV ghi đủ 6 ô · v12: Gọi sau 3 buổi (báo cáo + ô tích Đã gọi / Đồng ý Zoom) · v11: phân luồng CTV (chưa kích hoạt) / Sale (đã kích hoạt) / Cố vấn (chỉ định) · v3: Bảng Gia đình · v4: mở khóa 99 ngày · v5: trang quản trị có tài khoản · v7: Xếp hạng · v8: việc theo vai trò CTV/Sale/Cố vấn · v9: offer trong Thẻ gia đình · v10: nhiệm vụ theo bản đồ
+  if (p.action === 'vinhdanh') return json_(vinhDanh_(p));      // Góc vinh danh: video trong thư mục Drive, chia theo chặng
+  if (p.action === 'ping') return json_({ ok: true, v: 18, mua3: '99 ngày · 7 chặng' });          // v18: Góc vinh danh (?action=vinhdanh, thư mục Drive theo chặng) · v17: mở khóa theo từng chặng (cột Z "Mở chặng") · v16: Lớp Zoom một màn (tab Lớp Zoom 1 màn, Sao Zoom, ?action=zoomsao) · v15: Lớp Zoom (tab Lớp Zoom, Chuẩn bị Zoom, ảnh con vào Drive) · v14: bỏ tích nhiệm vụ · v13: Gọi tuần 1 gộp (4H + thẻ), CTV ghi đủ 6 ô · v12: Gọi sau 3 buổi (báo cáo + ô tích Đã gọi / Đồng ý Zoom) · v11: phân luồng CTV (chưa kích hoạt) / Sale (đã kích hoạt) / Cố vấn (chỉ định) · v3: Bảng Gia đình · v4: mở khóa 99 ngày · v5: trang quản trị có tài khoản · v7: Xếp hạng · v8: việc theo vai trò CTV/Sale/Cố vấn · v9: offer trong Thẻ gia đình · v10: nhiệm vụ theo bản đồ
   if (p.action === 'xephang') return json_(xepHang_(p));
   if (p.action === 'access') return json_(access_(p));
   if (p.action === 'visit') return visit_(p);
@@ -517,4 +518,53 @@ function zoomSao_(p) {
   let sao = 0, n = 0;
   sh.getRange(2, 7, sh.getLastRow() - 1, 2).getValues().forEach(r => { if (String(r[0]) === id) { sao += +r[1] || 0; n++; } });
   return { sao: sao, n: n };
+}
+
+/* =====================================================================
+ * GÓC VINH DANH (?action=vinhdanh&kid=<mã bé>) · v18
+ * Thư mục gốc: tab "Cài đặt quản trị", dòng "Thư mục video vinh danh" (link hoặc ID).
+ * Trong đó có các thư mục con "Chặng 1" … "Chặng 7"; web đọc số chặng trong tên thư mục.
+ * Tên video: "Bông – đọc truyện Unit 2.mp4"; thêm mã con trong ngoặc vuông để con thấy huy hiệu
+ * "Video của con": "Bông [mã-con] – đọc truyện Unit 2.mp4". Mã con KHÔNG gửi ra web, máy chủ chỉ báo con:true.
+ * Danh sách nhớ 5 phút (video mới hiện chậm nhất khoảng 5 phút). Video xem được nhờ thư mục cha để
+ * "bất kỳ ai có đường liên kết" (web phát bằng trình phát của Drive).
+ * ===================================================================== */
+const VD_THU_MUC_MAC_DINH = '1QSX4wzGujK84_b7bOVKOX93OdEh2Gqfe';
+function vdThuMuc_() {
+  let id = VD_THU_MUC_MAC_DINH;
+  try {
+    const sh = ss_().getSheetByName('Cài đặt quản trị');
+    if (sh && sh.getLastRow() > 1) sh.getRange(2, 1, sh.getLastRow() - 1, 2).getValues()
+      .forEach(r => { if (String(r[0]).trim() === 'Thư mục video vinh danh' && String(r[1]).trim()) id = String(r[1]).trim(); });
+  } catch (e) {}
+  const m = id.match(/folders\/([\w-]+)/) || id.match(/[?&]id=([\w-]+)/);
+  return m ? m[1] : id;
+}
+function vdTep_(f) {
+  let ten = String(f.getName()).replace(/\.[^.\s]{2,5}$/, '');
+  const m = ten.match(/\[\s*([\w-]+)\s*\]/), kid = m ? m[1].toLowerCase() : '';
+  ten = ten.replace(/\s*\[[^\]]*\]\s*/g, ' ').replace(/\s+/g, ' ').trim();
+  const p = ten.split(/\s+[–—-]\s+/), con = p.shift(), viec = p.join(' – ');
+  return { id: f.getId(), ten: con || ten, viec: viec, t: f.getDateCreated().getTime(), k: kid };
+}
+function vdDanhSach_() {
+  const cache = CacheService.getScriptCache(), key = 'vinhdanh-v1';
+  const c = cache.get(key); if (c) return JSON.parse(c);
+  let goc; try { goc = DriveApp.getFolderById(vdThuMuc_()); } catch (e) { return { ok: false, err: 'Không mở được thư mục video vinh danh' }; }
+  const out = { ok: true, chang: {} }, subs = goc.getFolders();
+  while (subs.hasNext()) {
+    const f = subs.next(), mm = String(f.getName()).match(/(\d+)/); if (!mm) continue;
+    const k = +mm[1]; if (k < 1 || k > 7) continue;
+    const list = out.chang[k] || (out.chang[k] = []), fs = f.getFiles();
+    while (fs.hasNext()) { const x = fs.next(); if (x.isTrashed() || String(x.getMimeType()).indexOf('video/') !== 0) continue; list.push(vdTep_(x)); }
+  }
+  Object.keys(out.chang).forEach(k => { out.chang[k].sort((a, b) => b.t - a.t); out.chang[k] = out.chang[k].slice(0, 80); });
+  try { cache.put(key, JSON.stringify(out), 300); } catch (e) {}
+  return out;
+}
+function vinhDanh_(p) {
+  const d = vdDanhSach_(); if (!d.ok) return d;
+  const kid = String(p.kid || '').toLowerCase(), chang = {};
+  Object.keys(d.chang).forEach(k => { chang[k] = d.chang[k].map(x => ({ id: x.id, ten: x.ten, viec: x.viec, t: x.t, con: !!(kid && x.k && x.k === kid) })); });
+  return { ok: true, chang: chang };
 }

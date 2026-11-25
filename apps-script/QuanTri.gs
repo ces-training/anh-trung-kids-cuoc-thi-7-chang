@@ -56,6 +56,7 @@ const QT_CAI_DAT_MAC_DINH = [
   ['Mã thiết lập tài khoản', '', 'Nhập mã này trên trang quản trị để tạo tài khoản Quản lý đầu tiên hoặc đặt lại mật khẩu. Mã tự đổi sau mỗi lần dùng.'],
   ['Ngày bắt đầu 99 ngày', '2026-11-30', 'Năm-tháng-ngày. Dùng để tự sinh việc theo tuần (Bạn · Bàn · Bán · Bám)'],
   ['Ngày chung kết', '', 'Năm-tháng-ngày. Để trống thì tính là ngày thứ 100 sau ngày bắt đầu'],
+  ['Thư mục video vinh danh', 'https://drive.google.com/drive/folders/1QSX4wzGujK84_b7bOVKOX93OdEh2Gqfe', 'Link thư mục "Video vinh danh – Cuộc thi mùa 3" (trong đó có Chặng 1 … Chặng 7). Cô thả video vào đúng chặng, web tự hiện ở mục 🌟 Vinh danh sau khoảng 5 phút.'],
 ];
 const QT_TIN_MAU_MAC_DINH = [
   ['chao', 'Gọi chào (vừa để lại Zalo)',

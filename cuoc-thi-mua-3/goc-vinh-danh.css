@@ -1,0 +1,45 @@
+/* ===== GÓC VINH DANH (goc-vinh-danh.js) – dùng chung khung với xep-hang.css ===== */
+.sd-btn.c8{--b:#E0A100}
+.sd-btn{position:relative}
+.vd3-dot{position:absolute;top:2px;right:6px;min-width:18px;height:18px;padding:0 4px;border-radius:999px;background:#E3262E;color:#fff;
+  font-size:11px;font-weight:800;line-height:18px;text-align:center;box-shadow:0 0 0 2px #fff}
+.vd3-hero{background-position:right 30%}
+.vd3 .xh-ht small{color:#C98A00}
+.vd3 .xh-tab.on{background:#E0A100;border-color:#E0A100;box-shadow:0 3px 0 #A87700}.vd3 .xh-tab.on small{color:#FFF6D6}
+.vd3-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;padding:2px}
+.vd3-it{display:flex;flex-direction:column;border:3px solid #F3EAD0;border-radius:20px;background:#fff;padding:0;overflow:hidden;cursor:pointer;
+  font:inherit;color:var(--ink);text-align:left;box-shadow:0 4px 0 rgba(58,42,26,.08);animation:rise .4s var(--d,0s) both;transition:transform .15s}
+.vd3-it:hover{transform:translateY(-3px)}.vd3-it:active{transform:translateY(1px)}
+.vd3-it.me{border-color:#F2B600;box-shadow:0 4px 0 #E0A100}
+.vd3-th{position:relative;display:grid;place-items:center;aspect-ratio:16/10;background:#2B2B2B center/cover no-repeat}
+.vd3-th i{font-style:normal;width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.92);color:#E3262E;display:grid;place-items:center;
+  font-size:22px;padding-left:4px;box-shadow:0 4px 0 rgba(0,0,0,.2)}
+.vd3-tag{position:absolute;top:8px;left:8px;font-style:normal;font-weight:800;font-size:12px;background:#E3262E;color:#fff;border-radius:999px;padding:2px 10px}
+.vd3-tag.me{background:#F2B600;color:#3A2A1A}
+.vd3-lb{display:flex;flex-direction:column;padding:8px 12px 10px;line-height:1.2;min-width:0}
+.vd3-lb b{font-size:18px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vd3-lb small{color:var(--muted);font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.overlay.vd3-ov{z-index:9000}
+.vd3-box{width:min(920px,100%);max-height:calc(100dvh - 32px);display:flex;flex-direction:column;background:#fff;border-radius:22px;overflow:hidden;
+  box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.vd3-hd{display:flex;align-items:center;gap:10px;padding:10px 12px 10px 16px;background:#FFF6D6}
+.vd3-hd b{font-size:18px;white-space:nowrap}
+.vd3-hd small{flex:1;min-width:0;color:var(--muted);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vd3-x{flex:none;width:40px;height:40px;border:0;border-radius:50%;background:#fff;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.12)}
+.vd3-fr{background:#000;flex:1;min-height:0;display:flex}
+.vd3-fr iframe{width:100%;aspect-ratio:16/9;max-height:calc(100dvh - 160px);border:0;display:block;margin:auto}
+.vd3-nav{display:flex;justify-content:space-between;gap:8px;padding:10px 12px}
+
+@media (max-width:520px){
+  .vd3-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .vd3-it{border-radius:14px}
+  .vd3-lb{padding:6px 8px 8px}.vd3-lb b{font-size:15px}.vd3-lb small{font-size:11px}
+  .vd3-th i{width:40px;height:40px;font-size:17px}
+  .vd3-tag{font-size:10px;padding:1px 7px;top:6px;left:6px}
+  .overlay.vd3-ov{padding:8px}
+  .vd3-hd b{font-size:15px}
+}
+@media (orientation:portrait) and (max-width:820px){
+  .vd3-dot{top:0;right:2px;min-width:15px;height:15px;line-height:15px;font-size:9px}
+}
