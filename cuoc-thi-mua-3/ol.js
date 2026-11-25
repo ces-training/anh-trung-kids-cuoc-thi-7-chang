@@ -53,8 +53,28 @@ function olDayPoints(s, d) { if (!s) return 0; return Object.keys(s.ol || {}).le
     return o; });
 })();
 
-/* Nhiệm vụ quay clip: lời thoại mẫu của mùa 2 thuộc bài cũ nên bỏ; câu cho ba mẹ quay lấy từ tên bài song ngữ "Anh – Trung" */
-window.CLIP_GUIDE = { seed: [], canopy: [] };
+/* Hướng dẫn quay clip "2 cách" như web cũ (25/11/2026): câu, pinyin, giọng mẫu lấy từ bài (huong-dan-nop-bai.js, sinh bằng
+   cong-cu/tao_huong_dan_nop_bai.js); 2 kịch bản quay dựng ở đây, lời ba mẹ chỉ bằng tiếng Việt. Lời thoại mùa 2 thuộc bài cũ nên không dùng. */
+function nopBaiCach(say) {
+  const x = say.map(p => ({ en: p[0], zh: p[1], py: p[2] || '', ae: p[3] || '', az: p[4] || '' })), c1 = x[0], c2 = x[1];
+  const B = vi => ({ w: 'bm', vi }), D = vi => ({ w: 'do', vi });
+  const C = (c, chi, act) => Object.assign({ w: 'con' }, chi !== 'zh' ? { en: c.en, ae: c.ae } : {}, chi !== 'en' ? { zh: c.zh, py: c.py, az: c.az } : {}, act ? { act } : {});
+  return {
+    a: { t: 'Hỏi – đáp nhanh', prep: ['Ba hoặc mẹ ngồi cạnh con, một người cầm máy quay (hoặc dựng máy)'],
+      s: [B('Hôm nay con học nói câu gì? Con nói bằng tiếng Anh cho ba mẹ nghe nhé!'), C(c1, 'en'), B('Bây giờ nói bằng tiếng Trung nào!'), C(c1, 'zh'),
+        ...(c2 ? [B('Còn câu này con nói thế nào?'), C(c2)] : []), B('Giỏi quá! Đập tay nào! 🙌')],
+      tip: 'Ba mẹ bấm 🔊 cho con nghe mẫu một lần trước khi quay. Con mới nói được 1 từ, nói một thứ tiếng hay chỉ làm động tác cũng là hoàn thành.' },
+    b: { t: 'Đóng vai: Con làm cô giáo nhỏ', prep: ['Xếp vài thú bông làm "học trò" (hoặc ba mẹ ngồi làm học trò)', 'Con đứng trước "lớp", máy quay để ngang tầm con'],
+      s: [D('Con chào "cả lớp" rồi nói: "Hôm nay cô dạy các bạn câu này!"'), C(c1, '', 'chỉ tay vào "lớp"'), D('Ba mẹ (học trò) nói lại theo con, con gật đầu khen "Good!"'),
+        ...(c2 ? [C(c2)] : []), D('Cả nhà vỗ tay cho cô giáo nhỏ')],
+      tip: 'Bé rất thích được làm người dạy. Có thể diễn 2 lần: lần đầu tiếng Anh, lần sau tiếng Trung.' } };
+}
+const NOP_BAI_CACHE = {};
+window.CLIP_GUIDE = { get(g, i) {
+  const d = typeof GROUPS !== 'undefined' && GROUPS[g] && GROUPS[g].days[i], N = window.NOP_BAI;
+  if (!d || !d.ol || d.zoom || !N || !N[d.ol.src] || !N[d.ol.src][d.ol.n]) return null;
+  const k = d.ol.src + d.ol.n; if (!NOP_BAI_CACHE[k]) { const h = N[d.ol.src][d.ol.n]; NOP_BAI_CACHE[k] = Object.assign({ topic: h.topic, say: h.say }, nopBaiCach(h.say)); }
+  return NOP_BAI_CACHE[k]; } };
 function olSay(g, i) {
   const d = GROUPS[g] && GROUPS[g].days[i]; if (!d || !d.ol) return null;
   const m = /^(.+?)\s+–\s+(.*[\u3400-\u9fff].*)$/.exec(d.t || ''); return m ? [m[1].trim(), m[2].trim()] : null;

@@ -71,6 +71,10 @@ def main():
             if moi or bo: print('%-32s thêm/sửa %4d · xoá %4d' % (os.path.relpath(b, KHO), len(moi), len(bo)))
             if not thu and (moi or bo): chep(a, b)
         print(('SẼ ĐỔI' if thu else 'ĐÃ ĐỔI'), tong_moi, 'tệp, xoá', tong_bo, 'tệp.' if tong_moi + tong_bo else '(không có gì mới)')
+    if not thu:   # dựng lại "Hướng dẫn quay clip · 2 cách" theo câu của bài mới (huong-dan-nop-bai.js)
+        import subprocess
+        try: subprocess.run(['node', os.path.join(HERE, 'tao_huong_dan_nop_bai.js')], check=True)
+        except Exception as e: print('CHÚ Ý: chưa dựng lại huong-dan-nop-bai.js (' + str(e) + '); chạy tay: node cuoc-thi-mua-3/cong-cu/tao_huong_dan_nop_bai.js')
 
 
 if __name__ == '__main__':

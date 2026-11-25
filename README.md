@@ -30,6 +30,7 @@ git switch -c cap-nhat-bai-<ngày>
 python3 cuoc-thi-mua-3/cong-cu/lay_bai_tu_web_offline.py /tmp/nguon --thu   # xem trước sẽ đổi gì
 python3 cuoc-thi-mua-3/cong-cu/lay_bai_tu_web_offline.py /tmp/nguon         # chép thật
 ```
+Bước chép thật tự dựng lại `cuoc-thi-mua-3/huong-dan-nop-bai.js` (Hướng dẫn quay clip · 2 cách cho từng buổi, câu lấy từ bài). Muốn chạy riêng: `node cuoc-thi-mua-3/cong-cu/tao_huong_dan_nop_bai.js`.
 Kiểm tra xong thì commit, đẩy thẳng lên `main` (không cần Pull Request từ 24/11/2026). Kho web lớp offline chỉ đọc, không sửa.
 
 ## Quy tắc sửa

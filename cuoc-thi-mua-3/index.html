@@ -473,7 +473,8 @@ a.gtab{text-decoration:none}
 <script src="huong-dan-clip.js"></script>
 <script src="xep-hang.js"></script>
 <script src="bai-offline.js?v=20261121a"></script>
-<script src="ol.js?v=20261125b"></script>
+<script src="huong-dan-nop-bai.js?v=20261125c"></script>
+<script src="ol.js?v=20261125c"></script>
 <script>
 /* =====================================================================
    PHẦN DỮ LIỆU — SỬA NỘI DUNG Ở ĐÂY
@@ -1845,7 +1846,7 @@ function extrasPanel(g,i){
 }
 
 /* ---------- nhiệm vụ chia sẻ lên cộng đồng (nhóm Zalo) ---------- */
-function clipGuide(g,i){ const G=window.CLIP_GUIDE; return G && G[g] && G[g][i]; }
+function clipGuide(g,i){ const G=window.CLIP_GUIDE; if(G && typeof G.get==='function') return G.get(g,i); return G && G[g] && G[g][i]; }
 const MI_OK=()=>`<span class="mi-ok">✓ Đã gửi clip · +${PTS.clip} điểm</span>`;
 function missionHTML(g,i){
   if(TEACHER && !KID) return '';
@@ -1853,13 +1854,14 @@ function missionHTML(g,i){
   const say=(cg&&cg.say&&cg.say[0]) || (typeof olSay==='function'?olSay(g,i):null);   // MÙA 3: câu từ tên bài
   const sayHTML=say?`<div class="mi-say"><span>🇬🇧 ${esc(say[0])}</span><span class="zh">🇨🇳 ${esc(say[1])}</span></div>`:'';
   const doneBtn=sent?MI_OK():`<button class="btn y sm mi-done">Ba mẹ đã gửi clip ✓</button>`;
-  if(!cg){   /* MÙA 3 (25/11/2026): hướng dẫn nộp bài từng bước, có dòng ghi chú để cô ghi điểm */
+  if(!cg || window.NOP_BAI){   /* MÙA 3 (25/11/2026): hướng dẫn nộp bài từng bước, có dòng ghi chú để cô ghi điểm; có kịch bản thì kèm nút "Hướng dẫn quay clip · 2 cách" như web cũ */
     const grp=GROUPS[g], cap=`Bé ${KID&&KID.name&&!KID.temp?KID.name:'…'} · ${grp?grp.name:''} · Chặng ${CHANG} – Buổi ${lessonNo(i)}`;
     return `<div class="mission ${sent?'sent':''}">
     <div class="mi-h"><span class="mi-ic">📤</span><div><b>Hướng dẫn nộp bài (+${PTS.clip} điểm)</b>
       <small>Nộp bài buổi ${lessonNo(i)} bằng một clip ngắn gửi vào nhóm Zalo của cuộc thi.</small></div></div>
     <ol class="mi-steps">
-      <li><b>Quay clip 15–30 giây</b> con nói câu hôm nay bằng tiếng Anh và tiếng Trung. Con nói 1 từ hay chỉ làm động tác cũng được tính.${sayHTML}</li>
+      <li><b>Quay clip 15–30 giây</b> con nói câu hôm nay bằng tiếng Anh và tiếng Trung. Con nói 1 từ hay chỉ làm động tác cũng được tính.${sayHTML}
+        ${cg?`<button class="btn sm mi-guide" type="button">🎬 Hướng dẫn quay clip <small>· 2 cách</small></button>`:''}</li>
       <li><b>Mở nhóm Zalo</b>, gửi clip kèm dòng này để cô ghi điểm cho con:
         <span class="mi-cap"><code>${esc(cap)}</code><button type="button" class="kh-chep mi-chep" data-t="${esc(cap)}">Chép</button></span></li>
       <li>Gửi xong, ba mẹ bấm <b>Ba mẹ đã gửi clip ✓</b> để con nhận +${PTS.clip} điểm.</li>
@@ -1902,9 +1904,9 @@ function cgAudio(t,l){
   const k=l+'|'+cxAKey(t);
   return cgLsAudio()[k] || (typeof cxFile==='function' ? cxFile(t,l) : '') || '';
 }
-function cgLine(t,l,py){
+function cgLine(t,l,py,a){
   if(!t) return '';
-  const f=cgAudio(t,l);
+  const f=a||cgAudio(t,l);
   return `<div class="cg-ln ${l}"><span class="fl">${l==='en'?'🇬🇧':'🇨🇳'}</span>
     <span class="tx ${l==='zh'?'zh':''}">${esc(t)}${l==='zh'&&py?`<span class="py">${esc(py)}</span>`:''}</span>
     ${f?`<button class="cg-snd" type="button" data-a="${esc(f)}" aria-label="Nghe mẫu">🔊</button>`:''}</div>`;
@@ -1914,7 +1916,7 @@ function cgStep(x){
   if(x.w==='bm') return `<li class="cg-step bm"><span class="who"><i>👩</i>Ba mẹ</span><div class="cg-bub">${esc(x.vi)}</div></li>`;
   if(x.w==='bmf') return `<li class="cg-step bmf"><span class="who"><i>👩</i>Ba mẹ</span><div class="cg-bub">${cgLine(x.en,'en')}${cgLine(x.zh,'zh',x.py)}
     ${x.vi?`<span class="cg-alt">${x.en||x.zh?'Hoặc nói tiếng Việt: ':''}${esc(x.vi)}</span>`:''}</div></li>`;
-  return `<li class="cg-step con"><span class="who"><i>🧒</i>Con</span><div class="cg-bub">${cgLine(x.en,'en')}${cgLine(x.zh,'zh',x.py)}
+  return `<li class="cg-step con"><span class="who"><i>🧒</i>Con</span><div class="cg-bub">${cgLine(x.en,'en',null,x.ae)}${cgLine(x.zh,'zh',x.py,x.az)}
     ${x.act?`<span class="cg-act">👉 ${esc(x.act)}</span>`:''}</div></li>`;
 }
 function cgPlan(o){
@@ -1935,7 +1937,7 @@ function clipGuideOpen(g,i){
     <span class="cg-chip">🎥 Hướng dẫn quay clip · Chặng ${CHANG} – Buổi ${lessonNo(i)}</span>
     <h3>${esc(cg.topic)}</h3>
     <p class="cg-lead">Ba mẹ chọn 1 trong 2 cách quay bên dưới. Lời thoại đã soạn sẵn, bấm 🔊 để nghe mẫu.</p>
-    <div class="cg-sec"><h4>🗣️ Câu con sẽ nói</h4><div class="cg-say">${cg.say.map(p=>`<div class="cg-pair">${cgLine(p[0],'en')}${cgLine(p[1],'zh',p[2])}</div>`).join('')}</div>
+    <div class="cg-sec"><h4>🗣️ Câu con sẽ nói</h4><div class="cg-say">${cg.say.map(p=>`<div class="cg-pair">${cgLine(p[0],'en',null,p[3])}${cgLine(p[1],'zh',p[2],p[4])}</div>`).join('')}</div>
       ${cg.own?`<p class="cg-own">✏️ ${esc(cg.own)}</p>`:''}</div>
     <div class="cg-sec"><h4>👇 Chọn cách quay</h4><div class="cg-pick">${opt('a','💬','Dễ nhất · 15–20 giây')}${opt('b','🎭','Vui hơn · 20–30 giây')}</div></div>
     <div class="cg-plan">${cgPlan(cg[pick])}</div>
