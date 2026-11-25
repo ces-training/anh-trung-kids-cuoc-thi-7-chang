@@ -72,10 +72,10 @@ async function vd3Fill(r){
   }
   const mine=list.filter(x=>x.con).length;
   card().innerHTML=`${mine?`<div class="xh-msg">🎉 Con có <b>${mine}</b> video được vinh danh ở chặng này!</div>`:''}
-    <div class="vd3-grid">${list.map((x,i)=>`<button class="vd3-it${x.con?' me':''}" type="button" data-i="${i}" style="--d:${Math.min(i,12)*.05}s">
+    <div class="vd3-grid">${list.map((x,i)=>`<button class="vd3-it${i===0?' big':''}${x.con?' me':''}" type="button" data-i="${i}" style="--d:${Math.min(i,12)*.05}s">
       <span class="vd3-th" style="background-image:url('https://drive.google.com/thumbnail?id=${encodeURIComponent(x.id)}&sz=w480')"><i>▶</i>
         ${x.con?'<em class="vd3-tag me">⭐ Video của con</em>':vd3IsNew(x)?'<em class="vd3-tag">Mới</em>':''}</span>
-      <span class="vd3-lb"><b>${esc(x.ten)}</b><small>${esc(x.viec||'Bài làm thật giỏi')} · ${vd3Date(x.t)}</small></span></button>`).join('')}</div>
+      <span class="vd3-lb">${i===0?'<small>🌟 Video mới nhất</small>':''}<b>${esc(x.ten)}</b><small>${esc(x.viec||'Bài làm thật giỏi')} · ${vd3Date(x.t)}</small>${i===0?'<span class="vd3-go">▶ Xem video</span>':''}</span></button>`).join('')}</div>
     <div class="xh-meta">${list.length} video · <button class="xh-re" type="button" onclick="route()">↻ Tải lại</button></div>`;
   card().querySelectorAll('.vd3-it').forEach(b=>b.onclick=()=>{ try{ sfx.pop(); }catch(e){} vd3Play(list, +b.dataset.i); });
   if(mine){ try{ sfx.win(); confetti(24); }catch(e){} }

@@ -1,12 +1,20 @@
 /* ===== GÓC VINH DANH (goc-vinh-danh.js) – dùng chung khung với xep-hang.css ===== */
 .sd-btn.c8{--b:#E0A100}
-.sd-btn{position:relative}
+#sdVinh{position:relative}   /* chỉ nút này: .sd-btn có lớp c1/c2/c3 trùng CSS mây trôi, thêm position cho cả nhóm sẽ đẩy nút ra ngoài */
+.vd3{max-width:1040px}
 .vd3-dot{position:absolute;top:2px;right:6px;min-width:18px;height:18px;padding:0 4px;border-radius:999px;background:#E3262E;color:#fff;
   font-size:11px;font-weight:800;line-height:18px;text-align:center;box-shadow:0 0 0 2px #fff}
 .vd3-hero{background-position:right 30%}
 .vd3 .xh-ht small{color:#C98A00}
 .vd3 .xh-tab.on{background:#E0A100;border-color:#E0A100;box-shadow:0 3px 0 #A87700}.vd3 .xh-tab.on small{color:#FFF6D6}
-.vd3-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;padding:2px}
+.vd3-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;padding:2px}
+.vd3-it.big{grid-column:1/-1;flex-direction:row;align-items:stretch}
+.vd3-it.big .vd3-th{flex:0 0 62%;aspect-ratio:16/9}
+.vd3-it.big .vd3-th i{width:72px;height:72px;font-size:30px}
+.vd3-it.big .vd3-lb{justify-content:center;padding:16px 20px;gap:6px}
+.vd3-it.big .vd3-lb b{font-size:clamp(22px,2.6vw,30px);white-space:normal}
+.vd3-it.big .vd3-lb small{font-size:15px;white-space:normal}
+.vd3-it.big .vd3-lb .vd3-go{align-self:flex-start;margin-top:6px;background:#E3262E;color:#fff;border-radius:999px;padding:6px 16px;font-weight:800;font-size:15px;box-shadow:0 3px 0 #A81B21}
 .vd3-it{display:flex;flex-direction:column;border:3px solid #F3EAD0;border-radius:20px;background:#fff;padding:0;overflow:hidden;cursor:pointer;
   font:inherit;color:var(--ink);text-align:left;box-shadow:0 4px 0 rgba(58,42,26,.08);animation:rise .4s var(--d,0s) both;transition:transform .15s}
 .vd3-it:hover{transform:translateY(-3px)}.vd3-it:active{transform:translateY(1px)}
@@ -31,6 +39,11 @@
 .vd3-fr iframe{width:100%;aspect-ratio:16/9;max-height:calc(100dvh - 160px);border:0;display:block;margin:auto}
 .vd3-nav{display:flex;justify-content:space-between;gap:8px;padding:10px 12px}
 
+@media (max-width:760px){
+  .vd3-it.big{flex-direction:column}
+  .vd3-it.big .vd3-th{flex:none;width:100%}
+  .vd3-it.big .vd3-lb{padding:10px 12px}
+}
 @media (max-width:520px){
   .vd3-grid{grid-template-columns:1fr 1fr;gap:8px}
   .vd3-it{border-radius:14px}
