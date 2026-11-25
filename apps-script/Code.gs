@@ -103,7 +103,7 @@ function doPost(e) {
 function doGet(e) {
   const p = e.parameter || {};
   if (p.action === 'zoomsao') return json_(zoomSao_(p));        // web học hỏi số sao Zoom đã cộng cho một bé
-  if (p.action === 'ping') return json_({ ok: true, v: 16, mua3: '99 ngày · 7 chặng' });          // v16: Lớp Zoom một màn (tab Lớp Zoom 1 màn, Sao Zoom, ?action=zoomsao) · v15: Lớp Zoom (tab Lớp Zoom, Chuẩn bị Zoom, ảnh con vào Drive) · v14: bỏ tích nhiệm vụ · v13: Gọi tuần 1 gộp (4H + thẻ), CTV ghi đủ 6 ô · v12: Gọi sau 3 buổi (báo cáo + ô tích Đã gọi / Đồng ý Zoom) · v11: phân luồng CTV (chưa kích hoạt) / Sale (đã kích hoạt) / Cố vấn (chỉ định) · v3: Bảng Gia đình · v4: mở khóa 99 ngày · v5: trang quản trị có tài khoản · v7: Xếp hạng · v8: việc theo vai trò CTV/Sale/Cố vấn · v9: offer trong Thẻ gia đình · v10: nhiệm vụ theo bản đồ
+  if (p.action === 'ping') return json_({ ok: true, v: 17, mua3: '99 ngày · 7 chặng' });          // v17: mở khóa theo từng chặng (cột Z "Mở chặng") · v16: Lớp Zoom một màn (tab Lớp Zoom 1 màn, Sao Zoom, ?action=zoomsao) · v15: Lớp Zoom (tab Lớp Zoom, Chuẩn bị Zoom, ảnh con vào Drive) · v14: bỏ tích nhiệm vụ · v13: Gọi tuần 1 gộp (4H + thẻ), CTV ghi đủ 6 ô · v12: Gọi sau 3 buổi (báo cáo + ô tích Đã gọi / Đồng ý Zoom) · v11: phân luồng CTV (chưa kích hoạt) / Sale (đã kích hoạt) / Cố vấn (chỉ định) · v3: Bảng Gia đình · v4: mở khóa 99 ngày · v5: trang quản trị có tài khoản · v7: Xếp hạng · v8: việc theo vai trò CTV/Sale/Cố vấn · v9: offer trong Thẻ gia đình · v10: nhiệm vụ theo bản đồ
   if (p.action === 'xephang') return json_(xepHang_(p));
   if (p.action === 'access') return json_(access_(p));
   if (p.action === 'visit') return visit_(p);
@@ -199,8 +199,33 @@ function visit_(p) {
  * Một gia đình (cùng mã người xem hoặc cùng số Zalo) gửi lại thì chỉ cập nhật, không tạo dòng mới. */
 const GD_HEAD = ['Mã gia đình', 'Tạo lúc', 'Nguồn', 'Mã người xem', 'Mã CTV', 'Tên ba/mẹ', 'Số Zalo', 'Tên con', 'Tuổi', 'Khoá',
   'ĐY học tập', 'ĐY tư vấn', 'ĐY tin ưu đãi', 'Trạng thái', 'Đổi trạng thái lúc', 'Người hỗ trợ', 'Liên hệ đầu', 'Liên hệ gần nhất',
-  'Hẹn gọi lại', 'Lý do dừng', 'Ghi chú', 'Điểm', 'Làn', 'Mở khóa 99 ngày', 'Mở khóa lúc'];
-const COT_MO_KHOA = 24;                                               // cột X (đếm từ 1)
+  'Hẹn gọi lại', 'Lý do dừng', 'Ghi chú', 'Điểm', 'Làn', 'Mở khóa 99 ngày', 'Mở khóa lúc', 'Mở chặng'];
+const COT_MO_KHOA = 24;                                               // cột X (đếm từ 1): tick = đã mở ít nhất một chặng
+const COT_MO_CHANG = 26;                                              // cột Z: các chặng đã mở, ví dụ "1,2,3"
+/* Mở khóa theo từng chặng (chị chốt 25/11/2026, bỏ mở 99 ngày một lần).
+ * Cột Z "Mở chặng" ghi các chặng đã mở. Dòng cũ chỉ có tick cột X, cột Z trống → tính là mở đủ 7 chặng (không ai bị khóa mất). */
+function moChangDoc_(r) {
+  const z = String(r[COT_MO_CHANG - 1] == null ? '' : r[COT_MO_CHANG - 1]).trim();
+  if (z) { const o = {}; (z.match(/[1-7]/g) || []).forEach(x => o[+x] = 1); return Object.keys(o).map(Number).sort((a, b) => a - b); }
+  return yes_(r[COT_MO_KHOA - 1]) ? [1, 2, 3, 4, 5, 6, 7] : [];
+}
+const KHAI_MAC_99 = '2026-11-30';   // giống cuoc-thi-mua-3/chang.js
+/* Chặng đang diễn ra theo lịch (trước khai mạc = chặng 1) */
+function changNay_() {
+  const d = Math.floor((Date.now() - new Date(KHAI_MAC_99 + 'T00:00:00+07:00').getTime()) / 864e5);
+  return Math.max(1, Math.min(7, Math.floor(d / 14) + 1));
+}
+function moChangGhi_(r, ds) {
+  r[COT_MO_CHANG - 1] = ds.length ? ds.join(',') : '';
+  r[COT_MO_KHOA - 1] = ds.length > 0;
+}
+/* Bảo đảm tab Gia đình có đủ cột (tiêu đề X, Y, Z) và cột Z để dạng chữ (tránh "1,2" bị hiểu thành số 1,2) */
+function gdCot_(sh) {
+  if (sh.getMaxColumns() < GD_HEAD.length) sh.insertColumnsAfter(sh.getMaxColumns(), GD_HEAD.length - sh.getMaxColumns());
+  const h = sh.getRange(1, COT_MO_KHOA, 1, 3).getValues()[0];
+  if (!h[0] || !h[2]) sh.getRange(1, COT_MO_KHOA, 1, 3).setValues([['Mở khóa 99 ngày', 'Mở khóa lúc', 'Mở chặng']]);
+  sh.getRange(1, COT_MO_CHANG, sh.getMaxRows(), 1).setNumberFormat('@');
+}
 const DONG_HO_SO = ['Dừng', 'Nuôi dưỡng', 'Học viên khóa dài'];
 function normPhone_(s) {
   s = String(s || '').trim().toLowerCase();
@@ -251,7 +276,7 @@ function family0_(d) {
   const kid = String(d.kid || '').trim().slice(0, 40), vid = String(d.vid || '').slice(0, 24);
   if (!phone || !parent || !kid) return { ok: false, err: 'thieu' };
   const ss = ss_(), sh = giaDinhSheet_(ss);
-  if (!sh.getRange(1, COT_MO_KHOA).getValue()) sh.getRange(1, COT_MO_KHOA, 1, 2).setValues([['Mở khóa 99 ngày', 'Mở khóa lúc']]);
+  gdCot_(sh);
   const n = sh.getLastRow(), rows = n > 1 ? sh.getRange(2, 1, n - 1, GD_HEAD.length).getValues() : [];
   const yes = v => v === true || v === 'true' || v === 1 || v === '1';
   let at = -1;
@@ -312,8 +337,9 @@ function dangKy_(p) {
   finally { lock.releaseLock(); }
 }
 
-/* ---------- Mở khóa 99 ngày (một link cho ba mẹ từ đầu đến cuối) ----------
- * Web học gửi  ?action=access&p=<mã băm số điện thoại/Gmail>&id=<mã bé>  và nhận về {ok:true/false}.
+/* ---------- Mở khóa theo chặng (mỗi chặng một link) ----------
+ * Web học gửi  ?action=access&p=<mã băm số điện thoại/Gmail>&id=<mã bé>&chang=<1–7>  và nhận về {ok:true/false}.
+ * Gia đình có dòng ở tab "Gia đình" đã mở ít nhất một chặng: chỉ mở đúng các chặng ghi ở cột "Mở chặng" (via 'chua-mo-chang' nếu chưa mở).
  * Không gửi số điện thoại thật; mã băm = 16 ký tự đầu SHA-256 của "lle|" + số đã chuẩn hóa (giống hashStr ở web).
  * Thứ tự xét:
  *   1. Ô "Mở khóa 99 ngày" trong tab "Gia đình" được tick (đội tick trên trang quản trị hoặc thẳng trên Sheet) → mở.
@@ -330,16 +356,17 @@ function hashAcct_(a) {
 }
 function yes_(v) { return v === true || String(v).toUpperCase() === 'TRUE'; }
 function bangMoKhoa_() {
-  const cache = CacheService.getScriptCache(), hit = cache.get('mo-khoa-v1');
+  const cache = CacheService.getScriptCache(), hit = cache.get('mo-khoa-v2');
   if (hit) return JSON.parse(hit);
   const gd = {}, paid = {}, ss = ss_();
   const sh = ss.getSheetByName('Gia đình');
   if (sh && sh.getLastRow() > 1) {
-    const w = Math.max(COT_MO_KHOA, sh.getLastColumn());
+    const w = Math.min(Math.max(COT_MO_CHANG, sh.getLastColumn()), sh.getMaxColumns());
     sh.getRange(2, 1, sh.getLastRow() - 1, w).getValues().forEach(r => {
       const a = normPhone_(r[6]); if (!a) return;
-      const k = hashAcct_(a), g = gd[k] || { on: false, khoa: false };
-      g.on = g.on || yes_(r[COT_MO_KHOA - 1]); g.khoa = g.khoa || /^khóa/i.test(String(r[COT_MO_KHOA] || ''));
+      const k = hashAcct_(a), g = gd[k] || { ch: [], khoa: false };
+      moChangDoc_(r).forEach(c => { if (g.ch.indexOf(c) < 0) g.ch.push(c); });
+      g.khoa = g.khoa || /^khóa/i.test(String(r[COT_MO_KHOA] || ''));
       gd[k] = g;
     });
   }
@@ -359,15 +386,19 @@ function bangMoKhoa_() {
   const cu = {}, td = ss.getSheetByName('TienDo');
   if (td && td.getLastRow() > 1) td.getRange(2, 1, td.getLastRow() - 1, 1).getValues().forEach(r => { if (r[0]) cu[String(r[0])] = 1; });
   const out = { gd: gd, paid: paid, cu: cu };
-  try { cache.put('mo-khoa-v1', JSON.stringify(out), 60); } catch (e) { }
+  try { cache.put('mo-khoa-v2', JSON.stringify(out), 60); } catch (e) { }
   return out;
 }
 function access_(p) {
   const h = String(p.p || '').toLowerCase().replace(/[^0-9a-f]/g, '').slice(0, 16), id = String(p.id || '').slice(0, 40);
   if (!h && !id) return { ok: false };
+  const chang = Math.max(0, Math.min(7, Math.floor(+p.chang) || 0));   // web mới gửi số chặng đang mở; 0 = web cũ
   const b = bangMoKhoa_();
   const g = h && b.gd[h];
-  if (g && g.on) return { ok: true, via: 'gia-dinh' };
+  if (g && g.ch && g.ch.length) {
+    if (!chang || g.ch.indexOf(chang) >= 0) return { ok: true, via: 'gia-dinh', ch: g.ch };
+    return { ok: false, via: 'chua-mo-chang', ch: g.ch };
+  }
   if (g && g.khoa) return { ok: false, via: 'da-khoa' };
   if (h && b.paid[h]) return { ok: true, via: 'da-dong-phi' };
   if (id && b.cu[id]) return { ok: true, via: 'dang-hoc' };

@@ -40,3 +40,9 @@ Gửi link `/exec` cho Claude để dán và đẩy lên GitHub, hoặc tự s�
 ## Cập nhật máy chủ sau này
 Sửa `Code.gs`/`QuanTri.gs` trong thư mục này → dán vào dự án "Cuộc thi mùa 3 – Máy chủ" (nhớ giữ `DATA_ID` của mùa 3) → **Triển khai → Quản lý các bản triển khai** → bút chì → **Phiên bản mới** → Triển khai. Link `/exec` giữ nguyên.
 Sửa máy chủ của trang chính (`apps-script/Code.gs`) không tự sang mùa 3, và ngược lại.
+
+## Mở khóa theo từng chặng (từ 25/11/2026, máy chủ v17)
+- Không còn mở 99 ngày một lần. Trang quản trị có 7 ô số 1–7 cho mỗi gia đình; tick chặng nào thì bé vào được link chặng đó.
+- Tab "Gia đình" thêm cột Z **Mở chặng** (ví dụ `1,2`). Cột X "Mở khóa 99 ngày" vẫn còn, nghĩa là "đã mở ít nhất một chặng".
+- Dòng cũ chỉ có tick cột X, cột Z trống: được tính là mở đủ 7 chặng.
+- Gia đình đóng phí qua tab "Đăng ký Web": tự mở chặng đang diễn ra.

@@ -904,7 +904,13 @@ function lsSet(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){
 const GV_LINK = /[?&]gv=1/.test(location.search) || lsGet('lle3-teacher',false)===true;
 const MO_KHOA = lsGet('lle3-mo-khoa', null);
 const MAY_CU_DAY_DU = !MO_KHOA && !!(lsGet('lle3-kid',null)||{}).id;
+/* Mở khóa theo từng chặng (25/11/2026): lle3-mo-khoa.ch = {số chặng: true/false}. Tài khoản đã đăng nhập nhưng chặng này chưa được đội mở → CHANG_CHUA_MO: vào web bình thường, mọi buổi của chặng khóa. */
+const MK_CH = MO_KHOA && MO_KHOA.ok && MO_KHOA.ch ? MO_KHOA.ch[CHANG] : undefined;
+const CHANG_CHUA_MO = !GV_LINK && MK_CH===false;
 const DEMO = !GV_LINK && !(MO_KHOA && MO_KHOA.ok) && !MAY_CU_DAY_DU;
+function mkLuu(o, okCh){ const old=lsGet('lle3-mo-khoa',null)||{}; const ch=Object.assign({}, old.id===o.id&&old.ch||{});
+  if(typeof okCh==='boolean') ch[CHANG]=okCh; lsSet('lle3-mo-khoa', Object.assign(o,{ch})); }
+const CHUA_MO_TXT = () => `Chặng ${CHANG} chưa được mở cho tài khoản của con. Ba mẹ nhắn <a href="${ZALO_LINK}" target="_blank" rel="noopener">nhóm Zalo</a> để đội CES mở chặng này nhé.`;
 const DEMO_N = 3;
 const DANG_KY_LINK = "https://ceseducation.github.io/little-language-explorers/";   // trang ưu đãi + đăng ký dự án
 /* Link CTV: /demo/?ref=CTV01 … CTV10. Web nhớ mã của link CTV gần nhất rồi chuyển kèm ?ref= sang trang đăng ký,
@@ -985,7 +991,7 @@ const LEARN_TOTAL = CHANG_LEARN;
 function isZoomIdx(i){ return i%PER===PER-1; }
 function doneCount(g){ let n=0; for(let i=0;i<TOTAL;i++) if(!isZoomIdx(i) && isDone(g,i)) n++; return n; }
 function prevLearn(i){ let k=i-1; while(k>=0 && isZoomIdx(k)) k--; return k; }
-function isUnlocked(g,i){ if(TEACHER) return true; if(DEMO) return CHANG===1 && i<DEMO_N; if(!changDaMo(CHANG)) return false; const k=prevLearn(i); return k<0 || isDone(g,k); }
+function isUnlocked(g,i){ if(TEACHER) return true; if(CHANG_CHUA_MO) return false; if(DEMO) return CHANG===1 && i<DEMO_N; if(!changDaMo(CHANG)) return false; const k=prevLearn(i); return k<0 || isDone(g,k); }
 function nextLearn(i){ let k=i+1; while(k<TOTAL && isZoomIdx(k)) k++; return k<TOTAL?k:-1; }
 function stageNo(i){ return CHANG; }
 function lessonNo(i){ return learnNo(i); }
@@ -1318,8 +1324,8 @@ function askProfile(g, then){
     if(!TEACHER){
       const kq=await moKhoaHoi(acct, name);
       if(kq && kq.ok===false){ btn.disabled=false; btn.textContent='Lên đường! 🚀'; err.hidden=false;
-        err.innerHTML='Số này chưa được mở khóa cuộc thi. Ba mẹ kiểm tra lại số đã đăng ký, hoặc nhắn <a href="'+ZALO_LINK+'" target="_blank" rel="noopener">nhóm Zalo</a> để đội CES mở khóa.'; return; }
-      if(kq && kq.ok) lsSet('lle3-mo-khoa',{ok:true, p:await hashStr(acct), id, t:Date.now()});
+        err.innerHTML=kq.via==='chua-mo-chang'?CHUA_MO_TXT():'Số này chưa được mở khóa cuộc thi. Ba mẹ kiểm tra lại số đã đăng ký, hoặc nhắn <a href="'+ZALO_LINK+'" target="_blank" rel="noopener">nhóm Zalo</a> để đội CES mở khóa.'; return; }
+      if(kq && kq.ok) mkLuu({ok:true, p:await hashStr(acct), id, t:Date.now()}, true);
     }
     if(KID && KID.id && KID.id!==id){ lsSet('lle3-prog-'+KID.id, P); P={}; }   // máy dùng chung: cất tiến độ của bé trước
     P=mergeProg(P, lsGet('lle3-prog-'+id, {}));
@@ -1522,6 +1528,7 @@ function viewGroup(g){
         ${nowPos?`<i class="wh-brk"></i><a class="wh-go" href="#/g/${g}/${nowI+1}"><b>▶ Học ngay!</b><span>Chặng ${CHANG} · Buổi ${nk+1}/${LEARN_TOTAL}: ${esc(lessonTitle(G.days[nowI]))}</span></a>`:''}
         ${TEACHER?'<span class="wh-gv">Chế độ giáo viên</span>':''}
         ${!TEACHER && !DEMO && !changDaMo(CHANG)?`<span class="wh-gv">🔒 Chặng ${CHANG} mở ngày ${changNgay(CHANG)}</span>`:''}
+        ${CHANG_CHUA_MO?`<span class="wh-gv">🔒 Chặng ${CHANG} chưa được mở cho con · nhắn đội CES</span>`:''}
       </div>
       <div class="wbtns">
         <a class="wmbtn" href="#/hanh-trinh">🧭<span>Hành trình</span></a>
@@ -1531,6 +1538,7 @@ function viewGroup(g){
     </div>
   </div>`;
   app.querySelectorAll('.sign').forEach(b=>b.onclick=()=>{
+    if(b.classList.contains('lock') && CHANG_CHUA_MO){ sfx.no(); toast(`Chặng ${CHANG} chưa được mở cho con. Ba mẹ nhắn nhóm Zalo để đội CES mở nhé 🔒`); return; }
     if(b.classList.contains('lock') && DEMO){ sfx.no(); demoGate(); return; }
     if(b.classList.contains('lock') && !changDaMo(CHANG)){ sfx.no(); toast(`Chặng ${CHANG} mở ngày ${changNgay(CHANG)} 🔒`); return; }
     if(b.classList.contains('lock')){ sfx.no(); toast('Con học xong buổi trước để mở buổi này nhé! 🔒'); hdSay('Con học xong buổi trước để mở buổi này nhé!'); return; }
@@ -1585,7 +1593,7 @@ function viewDay(g,i,step){
   const G=GROUPS[g]; const day=G && G.days[i];
   if(!day) return viewHome();
   if(!KID){ app.innerHTML=''; return askProfile(g, ()=>viewDay(g,i,step)); }
-  if(!isUnlocked(g,i)){ if(DEMO) setTimeout(()=>demoGate(),200); else toast('Buổi này chưa mở khóa 🔒'); location.hash='#/g/'+g; return; }
+  if(!isUnlocked(g,i)){ if(CHANG_CHUA_MO) toast(`Chặng ${CHANG} chưa được mở cho con 🔒`); else if(DEMO) setTimeout(()=>demoGate(),200); else toast('Buổi này chưa mở khóa 🔒'); location.hash='#/g/'+g; return; }
   cur={g,i,day};
   if(day.zoom) return viewZoom(g,i);
   if(day.ol) return viewOlDay(g,i,step);
@@ -2251,7 +2259,7 @@ function demoNoi(n){ if(DEMO && [1,5,10,20].includes(n)) demoTrack('noi', '', n)
 async function moKhoaHoi(acct, name){
   if(!SCORE_API) return null;
   try{
-    const q=new URLSearchParams({action:'access', t:Date.now()});
+    const q=new URLSearchParams({action:'access', chang:CHANG, t:Date.now()});
     if(acct) q.set('p', await hashStr(acct));
     if(acct && name) q.set('id', await hashStr(acct+'|'+slugName(name)));
     else if(KID && KID.id) q.set('id', KID.id);
@@ -2268,7 +2276,7 @@ async function moKhoaChuyen(name, acct, group){
   Pf=mergeProg(Pf, lsGet('lle3-progress-demo',{})||{});
   lsSet('lle3-progress-v2', Pf); lsSet('lle3-prog-'+id, Pf);
   lsSet('lle3-kid', {name, acct:maskAcct(acct), id, group:group||(KID&&KID.group)||'seed'});
-  lsSet('lle3-mo-khoa', {ok:true, p:await hashStr(acct), id, t:Date.now(), keo:1});
+  mkLuu({ok:true, p:await hashStr(acct), id, t:Date.now(), keo:1}, true);
   const u=new URL(location.href); u.searchParams.delete('demo');
   try{ history.replaceState(null,'',u.pathname+u.search+(location.hash||'#/')); }catch(e){}
   location.reload();
@@ -2276,7 +2284,7 @@ async function moKhoaChuyen(name, acct, group){
 function moKhoaChucMung(name, then){
   const ov=document.createElement('div'); ov.className='overlay pf zg';
   ov.innerHTML=`<div class="modal zg-done"><div class="mart"><img class="mportrait cut" src="../xem-truoc/tai-nguyen/nhan-vat/huou_huou1_a.webp" alt=""></div>
-    <h3>Hành trình 99 ngày của ${esc(name||'con')} đã mở! 🎉</h3>
+    <h3>Chặng ${CHANG} của ${esc(name||'con')} đã mở! 🎉</h3>
     <p>Con học tiếp ngay tại đây, các buổi đã học vẫn được giữ nguyên.</p>
     <div class="row"><button class="btn" type="button">Lên đường! 🚀</button></div></div>`;
   document.body.appendChild(ov); sfx.win&&sfx.win(); confetti&&confetti(40);
@@ -2288,7 +2296,7 @@ function moKhoaDangNhap(g, then){
   const ov=document.createElement('div'); ov.className='overlay pf';
   ov.innerHTML=`<form class="modal" id="mkf" novalidate>
     <div class="mart"><img class="mportrait cut" src="../xem-truoc/tai-nguyen/nhan-vat/kids_bong_a.webp" alt=""></div>
-    <h3>Đăng nhập · Mở hành trình 99 ngày</h3>
+    <h3>Đăng nhập · Mở chặng ${CHANG}</h3>
     <p class="hint">Ba mẹ nhập tên con và <b>số điện thoại (hoặc Gmail) đã đăng ký</b>. Lần sau, kể cả trên máy khác, nhập lại đúng tên và số này là con học tiếp.</p>
     <label for="mkName">Tên của con</label>
     <input id="mkName" maxlength="24" autocomplete="off" placeholder="Ví dụ: Bông, Minh An" value="${esc(KID&&!KID.temp&&KID.name||'')}">
@@ -2310,6 +2318,7 @@ function moKhoaDangNhap(g, then){
     const kq=await moKhoaHoi(acct, name);
     b.disabled=false; b.textContent='Mở cuộc thi 🚀';
     if(!kq) return say('Chưa kết nối được. Ba mẹ kiểm tra mạng rồi bấm lại nhé.');
+    if(!kq.ok && kq.via==='chua-mo-chang') return say(CHUA_MO_TXT());
     if(!kq.ok) return say(`Số này chưa được mở khóa cuộc thi. Đội CES mở khóa trong ngày sau khi nhận phí; ba mẹ kiểm tra lại số đã đăng ký hoặc nhắn <a href="${ZALO_LINK}" target="_blank" rel="noopener">nhóm Zalo</a>. Trong lúc chờ, con vẫn học được 3 buổi đầu.`);
     ov.remove(); moKhoaChuyen(name, acct, g||(KID&&KID.group));
   });
@@ -2320,6 +2329,14 @@ function moKhoaDangNhap(g, then){
    – Bản đầy đủ: đội đã bỏ tick (hoặc máy chưa từng được mở khóa) → về bản học thử. */
 async function moKhoaKiemTraKhiMo(){
   if(GV_LINK) return;
+  if(CHANG_CHUA_MO){   // đã đăng nhập, chặng này chưa mở: hỏi lại, đội vừa tick thì mở ngay
+    const mk=lsGet('lle3-mo-khoa',null)||{};
+    try{ const q=new URLSearchParams({action:'access', chang:CHANG, id:mk.id||'', t:Date.now()}); if(mk.p) q.set('p', mk.p);
+      const kq=await (await fetch(SCORE_API+'?'+q.toString())).json();
+      if(kq && kq.ok===true){ mkLuu({ok:true, p:mk.p||'', id:mk.id, t:Date.now()}, true); moKhoaChucMung(KID&&KID.name, ()=>location.reload()); }
+    }catch(e){}
+    return;
+  }
   if(DEMO){
     const f=demoFam(); if(!f || !f.acct || !KID || !KID.name) return;
     const kq=await moKhoaHoi(f.acct, KID.name);
@@ -2334,10 +2351,12 @@ async function moKhoaKiemTraKhiMo(){
   }
   if(!KID || !KID.id) return;
   let kq=null;
-  try{ const q=new URLSearchParams({action:'access', id:KID.id, t:Date.now()}); if(mk && mk.p) q.set('p', mk.p);
+  try{ const q=new URLSearchParams({action:'access', chang:CHANG, id:KID.id, t:Date.now()}); if(mk && mk.p) q.set('p', mk.p);
     const r=await fetch(SCORE_API+'?'+q.toString()); kq=await r.json(); }catch(e){}
   if(!kq || typeof kq.ok!=='boolean') return;
-  if(kq.ok){ lsSet('lle3-mo-khoa',{ok:true, p:mk&&mk.p||'', id:KID.id, t:Date.now()}); return; }
+  if(kq.ok){ mkLuu({ok:true, p:mk&&mk.p||'', id:KID.id, t:Date.now()}, true); return; }
+  if(kq.via==='chua-mo-chang'){ mkLuu({ok:true, p:mk&&mk.p||'', id:KID.id, t:Date.now()}, false);
+    toast(`Chặng ${CHANG} chưa được mở cho tài khoản của con. Ba mẹ nhắn nhóm Zalo để đội CES mở nhé.`); setTimeout(()=>location.reload(), 2500); return; }
   lsSet('lle3-mo-khoa',{ok:false, p:mk&&mk.p||'', id:KID.id, t:Date.now()});
   toast('Tài khoản này chưa được mở khóa cuộc thi. Con học thử 3 buổi đầu của chặng 1 nhé.');
   setTimeout(()=>location.reload(), 2500);
