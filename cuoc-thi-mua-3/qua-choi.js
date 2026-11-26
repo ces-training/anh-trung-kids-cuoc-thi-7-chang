@@ -30,7 +30,10 @@ function qLessons() { return typeof jAll === 'function' ? jAll(qGroup()).les : q
 /* ---------- tiện ích ---------- */
 const qcPick = a => a[Math.floor(Math.random() * a.length)];
 function qcShuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-function qcEn(t) {   // câu tiếng Anh ngắn của thú cưng: giọng máy, giọng cao cho giống bạn nhỏ
+/* câu tiếng Anh của thú cưng: đã thu (Gemini 3.8 Flash TTS, giọng Achernar, 26/11/2026); câu chưa thu thì dùng giọng máy */
+const QC_EN_F = {"Hello!": "tai-nguyen-chung/thu-cung/pet_en_hello.mp3", "Let's play!": "tai-nguyen-chung/thu-cung/pet_en_lets_play.mp3", "apple, please!": "tai-nguyen-chung/thu-cung/pet_en_apple_please.mp3", "banana, please!": "tai-nguyen-chung/thu-cung/pet_en_banana_please.mp3", "carrot, please!": "tai-nguyen-chung/thu-cung/pet_en_carrot_please.mp3", "cookie, please!": "tai-nguyen-chung/thu-cung/pet_en_cookie_please.mp3", "watermelon, please!": "tai-nguyen-chung/thu-cung/pet_en_watermelon_please.mp3", "milk, please!": "tai-nguyen-chung/thu-cung/pet_en_milk_please.mp3", "cheese, please!": "tai-nguyen-chung/thu-cung/pet_en_cheese_please.mp3", "strawberry, please!": "tai-nguyen-chung/thu-cung/pet_en_strawberry_please.mp3", "Yummy! Thank you!": "tai-nguyen-chung/thu-cung/pet_en_yummy_thank_you.mp3", "Yummy!": "tai-nguyen-chung/thu-cung/pet_en_yummy.mp3", "Got it!": "tai-nguyen-chung/thu-cung/pet_en_got_it.mp3", "Yay!": "tai-nguyen-chung/thu-cung/pet_en_yay.mp3", "Again!": "tai-nguyen-chung/thu-cung/pet_en_again.mp3", "Where am I?": "tai-nguyen-chung/thu-cung/pet_en_where_am_i.mp3", "Boo!": "tai-nguyen-chung/thu-cung/pet_en_boo.mp3", "Not here!": "tai-nguyen-chung/thu-cung/pet_en_not_here.mp3", "I am here!": "tai-nguyen-chung/thu-cung/pet_en_i_am_here.mp3", "Cheese!": "tai-nguyen-chung/thu-cung/pet_en_cheese.mp3"};
+function qcEn(t) {
+  const f = QC_EN_F[t]; if (f) { voicePlay(f); return; }
   try { if (!('speechSynthesis' in window)) return; speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang = 'en-US'; u.rate = 0.95; u.pitch = 1.5; speechSynthesis.speak(u); } catch (e) {}
 }
 function qcBubble(host, txt, ms) {
