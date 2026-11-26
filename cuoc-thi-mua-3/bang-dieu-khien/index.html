@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Bảng điều khiển mùa 3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Bảng điều khiển riêng của Cuộc thi Anh – Trung – Kids mùa 3 (26/11/2026).
+     Cấp, khoá PIN học viên (mỗi bé mỗi chặng một PIN), theo dõi học viên, tiến độ, phễu học thử.
+     Dữ liệu nằm ở Sheet mùa 3, tab gid=0 "PIN học viên"; máy chủ: apps-script/Pin.gs. Đăng nhập bằng tài khoản đội của trang quản trị.
+     Trang này không chứa dữ liệu: mọi số liệu chỉ tải về sau khi đăng nhập. Không hiện tên ba mẹ, số điện thoại. -->
+<style>
+:root{
+  color-scheme:light;
+  --bg:#FBF7EE; --card:#fff; --ink:#2E2418; --muted:#6F6253; --line:#E8DFCF; --soft:#F4EEE2;
+  --red:#D9232B; --red-soft:#FDECEC; --amber:#9A5B00; --amber-soft:#FFF3D6; --green:#2F7D4F; --green-soft:#E6F4EA;
+  --blue:#2D5B9A; --blue-soft:#E8F0FB; --bar:#2a78d6; --bar-bg:#ECE6DA; --focus:#F2B705; --r:14px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#1a1a19; --card:#232321; --ink:#f0efec; --muted:#c3c2b7; --line:#3a3936; --soft:#2c2c29;
+    --red:#ff5a5f; --red-soft:#3b2222; --amber:#f0b44c; --amber-soft:#3a2f1c; --green:#6fcf97; --green-soft:#1f3327;
+    --blue:#8fb5ee; --blue-soft:#1f2a3a; --bar:#3987e5; --bar-bg:#33332f;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#1a1a19; --card:#232321; --ink:#f0efec; --muted:#c3c2b7; --line:#3a3936; --soft:#2c2c29;
+  --red:#ff5a5f; --red-soft:#3b2222; --amber:#f0b44c; --amber-soft:#3a2f1c; --green:#6fcf97; --green-soft:#1f3327;
+  --blue:#8fb5ee; --blue-soft:#1f2a3a; --bar:#3987e5; --bar-bg:#33332f;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+[hidden]{display:none!important}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px 80px}
+a{color:var(--blue)}
+
+/* đăng nhập */
+.gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px}
+.gate-card{width:min(420px,100%);background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px 22px;box-shadow:0 10px 40px rgba(46,36,24,.08)}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.logo i{width:42px;height:42px;border-radius:12px;background:var(--red);color:#fff;display:grid;place-items:center;font-style:normal;font-weight:700;font-size:15px;flex:none}
+.logo b{display:block;font-size:17px}
+.logo small{color:var(--muted);font-size:13px}
+.gate h1{font-size:20px;margin:0 0 6px}
+.lead{margin:0 0 16px;color:var(--muted);font-size:14px}
+.fld{display:grid;gap:5px;margin-bottom:12px;font-size:13px;font-weight:600}
+.fld input,.fld select,.fld textarea{border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:10px 12px;min-height:44px;width:100%;font-size:16px;font-weight:500}
+.btn{border:0;background:var(--red);color:#fff;border-radius:999px;padding:11px 18px;font-weight:700;min-height:46px;font-size:15px}
+.btn.full{width:100%}
+.btn:disabled{opacity:.55}
+.btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.btn.sm{min-height:36px;padding:6px 14px;font-size:13px}
+.err{color:var(--red);font-weight:600;font-size:14px;margin:0 0 10px}
+.hint{font-size:13px;color:var(--muted);margin:6px 0 0}
+.chk{display:flex;gap:8px;align-items:center;font-size:14px;margin:4px 0 14px}
+
+header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.hd{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.brand{font-weight:700;font-size:17px;margin-right:auto;min-width:0;display:flex;gap:10px;align-items:center}
+.brand i{width:36px;height:36px;border-radius:10px;background:var(--red);color:#fff;display:grid;place-items:center;font-style:normal;font-size:13px;flex:none}
+.brand small{display:block;font-weight:500;font-size:12px;color:var(--muted)}
+.ic-btn{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 12px;font-weight:600;font-size:13px;min-height:38px;white-space:nowrap;text-decoration:none;color:var(--ink);display:inline-flex;align-items:center}
+
+h2{font-size:17px;margin:0 0 10px}
+.sec{margin-top:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:16px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.kpi b{display:block;font-size:28px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi span{font-size:13px;color:var(--muted);font-weight:600}
+.kpi em{display:block;font-style:normal;font-size:12px;color:var(--muted);margin-top:3px}
+.kpi.hot{border-color:#F2C46B;background:var(--amber-soft)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+@media (max-width:860px){ .two{grid-template-columns:1fr} }
+
+/* phễu: một màu, nhãn chữ ở mực chữ */
+.fn{display:grid;gap:8px}
+.fn-row{display:grid;grid-template-columns:minmax(120px,190px) 1fr 64px;gap:10px;align-items:center;font-size:14px}
+.fn-row .lb{font-weight:600}
+.fn-row .lb small{display:block;color:var(--muted);font-weight:500;font-size:12px}
+.fn-track{height:18px;background:var(--bar-bg);border-radius:4px;position:relative}
+.fn-fill{position:absolute;left:0;top:0;bottom:0;background:var(--bar);border-radius:0 4px 4px 0;min-width:2px}
+.fn-row .v{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.fn-row .v small{display:block;font-weight:500;font-size:11px;color:var(--muted)}
+@media (max-width:520px){ .fn-row{grid-template-columns:1fr 54px} .fn-row .lb{grid-column:1/-1} }
+
+/* bảng */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle;white-space:nowrap}
+th{font-size:12px;color:var(--muted);font-weight:700;background:var(--soft);position:sticky;top:0}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+tbody tr.hv-row{cursor:pointer}
+tbody tr.hv-row:hover{background:var(--soft)}
+.mini{display:inline-block;width:70px;height:8px;background:var(--bar-bg);border-radius:4px;vertical-align:middle;margin-left:6px;position:relative;overflow:hidden}
+.mini i{position:absolute;left:0;top:0;bottom:0;background:var(--bar)}
+
+/* chặng của một học viên: 7 ô */
+.chs{display:inline-flex;gap:3px}
+.ch{width:24px;height:24px;border-radius:6px;display:grid;place-items:center;font-size:12px;font-weight:700;border:1px solid var(--line);color:var(--muted);background:var(--bg)}
+.ch.cap{border:2px solid var(--amber);color:var(--amber);background:var(--amber-soft)}
+.ch.dung{background:var(--green);border-color:var(--green);color:#fff}
+.ch.khoa{background:var(--red-soft);border-color:var(--red);color:var(--red);text-decoration:line-through}
+.ch.nay{box-shadow:0 0 0 2px var(--focus)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:8px 0 0;align-items:center}
+.legend .ch{width:18px;height:18px;font-size:10px}
+.legend span{display:inline-flex;gap:6px;align-items:center}
+.legend i{font-style:normal}
+
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+.search{flex:1 1 220px;min-width:0;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:8px 14px;min-height:42px;font-size:15px}
+select.sm{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 10px;min-height:42px;font-size:14px;font-weight:600}
+.pill{display:inline-block;border-radius:999px;padding:1px 8px;font-size:12px;font-weight:700;background:var(--soft);color:var(--muted)}
+.pill.g{background:var(--green-soft);color:var(--green)}
+.pill.r{background:var(--red-soft);color:var(--red)}
+.pill.a{background:var(--amber-soft);color:var(--amber)}
+
+/* form cấp PIN */
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg label{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-weight:600;font-size:14px;min-height:40px;cursor:pointer;background:var(--bg)}
+.seg input{accent-color:var(--red);width:18px;height:18px;margin:0}
+.seg label:has(input:checked){border-color:var(--red);background:var(--red-soft)}
+.seg.chang label{min-width:52px;justify-content:center}
+.goi-y{display:grid;gap:6px;margin:-4px 0 12px}
+.goi-y button{text-align:left;border:1px solid var(--amber);background:var(--amber-soft);border-radius:10px;padding:8px 10px;font-size:13px}
+
+/* bảng nổi */
+.sheet{position:fixed;inset:0;z-index:40;background:rgba(20,16,10,.45);display:flex;justify-content:flex-end}
+.sheet .panel{width:min(560px,100%);height:100%;overflow:auto;background:var(--bg);padding:18px 16px 40px;box-shadow:-10px 0 30px rgba(0,0,0,.2)}
+.sheet.mid{justify-content:center;align-items:center;padding:16px}
+.sheet.mid .panel{height:auto;max-height:100%;border-radius:18px;width:min(480px,100%)}
+.x{float:right;border:1px solid var(--line);background:var(--card);border-radius:999px;width:40px;height:40px;font-size:18px}
+.pin-big{font-size:34px;font-weight:700;letter-spacing:.08em;font-variant-numeric:tabular-nums;text-align:center;background:var(--card);border:2px dashed var(--green);border-radius:14px;padding:10px;margin:6px 0}
+.pin-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.pin-row code{font-size:18px;font-weight:700;letter-spacing:.05em}
+.pin-row .meta{flex:1 1 200px;font-size:13px;color:var(--muted)}
+.pin-row .acts{display:flex;gap:6px;flex-wrap:wrap}
+textarea.tin{width:100%;min-height:120px;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--card);font-size:14px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;z-index:60;max-width:calc(100% - 32px)}
+.fatal{margin-top:20px;background:var(--red-soft);border:1px solid var(--red);border-radius:var(--r);padding:16px}
+.fatal b{display:block;margin-bottom:4px}
+.empty{color:var(--muted);text-align:center;padding:24px 10px}
+</style>
+</head>
+<body>
+<div class="gate" id="gate" hidden><div class="gate-card"></div></div>
+<div id="app" hidden>
+  <header><div class="hd">
+    <div class="brand"><i>ATK</i><div>Bảng điều khiển · Cuộc thi mùa 3<small id="sub">Anh – Trung – Kids · 99 ngày · 7 chặng</small></div></div>
+    <button class="ic-btn" id="reload" type="button">↻ Tải lại</button>
+    <a class="ic-btn" href="https://docs.google.com/spreadsheets/d/1Icr3Kq4J77v4VMmu-CEbCFWQtSxnufAvZ5FEQGsjXH8/edit#gid=0" target="_blank" rel="noopener">📄 Sheet</a>
+    <a class="ic-btn" href="../quan-tri/">Trang quản trị</a>
+    <button class="ic-btn" id="out" type="button">Đăng xuất <span id="meName"></span></button>
+  </div></header>
+  <main class="wrap" id="main"></main>
+</div>
+<div id="sheetHost"></div>
+<script>
+const API = "https://script.google.com/macros/s/AKfycbxAB02PlRrsWfpiDUFgQMEkIuc3jzepoKraCitsBVRl4nLA9josgvnRiCYIMWUGSY1u/exec";   // cùng máy chủ với web học và trang quản trị
+const WEB = "https://ces-training.github.io/anh-trung-kids-cuoc-thi-7-chang/";
+const HOTLINE_TXT = "0974.840.845";
+const KHAI_MAC_99 = "2026-11-30";   // giống cuoc-thi-mua-3/chang.js
+
+let D=null, busy=false, Q={q:'', khoa:'', loc:''};
+const $=(q,el=document)=>el.querySelector(q);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=n=>n==null?'—':Number(n).toLocaleString('vi-VN');
+const pinDep=p=>String(p).slice(0,4)+' '+String(p).slice(4);
+const KH=k=>k==='Canopy'?'Seedling':'Little Seed';
+function fmt(t){ if(!t) return '—'; return new Date(t).toLocaleString('vi-VN',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'}); }
+function ago(t){ if(!t) return '—'; const m=Math.round((Date.now()-t)/60000);
+  if(m<1) return 'vừa xong'; if(m<60) return m+' phút trước'; const h=Math.round(m/60); if(h<48) return h+' giờ trước'; return Math.round(h/24)+' ngày trước'; }
+function toast(t){ const el=document.createElement('div'); el.className='toast'; el.setAttribute('role','status'); el.textContent=t; document.body.appendChild(el); setTimeout(()=>el.remove(),2800); }
+function changMoLuc(n){ return new Date(KHAI_MAC_99+'T00:00:00+07:00').getTime()+(n-1)*14*864e5; }
+function changNgay(n){ const d=new Date(changMoLuc(n)+7*36e5); return ('0'+d.getUTCDate()).slice(-2)+'/'+('0'+(d.getUTCMonth()+1)).slice(-2); }
+async function chep(t){ try{ await navigator.clipboard.writeText(t); return true; }catch(e){
+  try{ const a=document.createElement('textarea'); a.value=t; a.style.cssText='position:fixed;opacity:0'; document.body.appendChild(a); a.select(); const ok=document.execCommand('copy'); a.remove(); return ok; }catch(_){ return false; } } }
+
+/* ---------- đăng nhập: dùng chung phiên với trang quản trị (qt3-token) ---------- */
+let MEM='';
+const store={ get(){ try{ return sessionStorage.getItem('qt3-token')||localStorage.getItem('qt3-token')||''; }catch(e){ return MEM; } },
+  set(t,nho){ MEM=t; try{ sessionStorage.setItem('qt3-token',t); if(nho) localStorage.setItem('qt3-token',t); }catch(e){} },
+  clear(){ MEM=''; try{ sessionStorage.removeItem('qt3-token'); localStorage.removeItem('qt3-token'); }catch(e){} } };
+async function api(fn, body){
+  let r; try{ r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action:'qt', fn, token:store.get()}, body||{}))}); }
+  catch(e){ throw new Error('Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.'); }
+  let j; try{ j=await r.json(); }catch(e){ throw new Error('Máy chủ chưa trả lời đúng.'); }
+  if(j && j.het){ store.clear(); showLogin(j.err); throw Object.assign(new Error(j.err),{silent:true}); }
+  if(j && j.doiMk){ store.clear(); showLogin('Tài khoản đang dùng mật khẩu tạm: mở Trang quản trị để đặt mật khẩu riêng trước.'); throw Object.assign(new Error(j.err),{silent:true}); }
+  if(j && j.ok===false && /Không rõ yêu cầu/.test(j.err||'')) throw new Error('Máy chủ chưa có bản PIN học viên (v20). Dán tệp apps-script/Pin.gs, Code.gs, QuanTri.gs vào Apps Script rồi triển khai phiên bản mới (xem apps-script/HUONG-DAN.md).');
+  if(!j || j.ok===false) throw new Error((j&&j.err)||'Có lỗi, thử lại sau.');
+  return j;
+}
+function gate(html){ $('#app').hidden=true; const g=$('#gate'); g.hidden=false;
+  $('.gate-card',g).innerHTML=`<div class="logo"><i>ATK</i><div><b>Bảng điều khiển mùa 3</b><small>Cấp PIN · học viên · tiến độ</small></div></div>`+html; }
+function showLogin(msg){
+  gate(`<h1>Đăng nhập</h1><p class="lead">Dùng tài khoản đội của Trang quản trị mùa 3.</p>
+    <form id="fL" novalidate>${msg?`<p class="err" role="alert">${esc(msg)}</p>`:''}<p class="err" id="lErr" role="alert" hidden></p>
+      <label class="fld">Tên đăng nhập<input id="lU" autocomplete="username" autocapitalize="none" spellcheck="false"></label>
+      <label class="fld">Mật khẩu<input id="lP" type="password" autocomplete="current-password"></label>
+      <label class="chk"><input type="checkbox" id="lNho"> Giữ đăng nhập trên máy này (tối đa 6 giờ)</label>
+      <button class="btn full" id="lB" type="submit">Đăng nhập</button></form>
+    <p class="hint">Chưa có tài khoản hoặc quên mật khẩu: vào <a href="../quan-tri/">Trang quản trị</a>.</p>`);
+  $('#lU').focus();
+  $('#fL').onsubmit=async e=>{ e.preventDefault(); const er=$('#lErr'), b=$('#lB'); er.hidden=true;
+    const u=$('#lU').value.trim(), p=$('#lP').value; if(!u||!p){ er.hidden=false; er.textContent='Nhập tên đăng nhập và mật khẩu.'; return; }
+    b.disabled=true; b.textContent='Đang kiểm tra…';
+    try{ const j=await api('dangNhap',{user:u, mk:p}); store.set(j.token, $('#lNho').checked); $('#gate').hidden=true; $('#app').hidden=false; load(); }
+    catch(x){ if(!x.silent){ er.hidden=false; er.textContent=x.message; } b.disabled=false; b.textContent='Đăng nhập'; } };
+}
+$('#out').onclick=async()=>{ try{ await api('dangXuat'); }catch(e){} store.clear(); showLogin(); };
+$('#reload').onclick=()=>load();
+
+/* ---------- dữ liệu ---------- */
+async function load(){
+  if(busy) return; busy=true; $('#reload').disabled=true;
+  try{ D=await api('pinTai'); render(); }
+  catch(e){ if(!e.silent) $('#main').innerHTML=`<div class="fatal" role="alert"><b>Chưa tải được dữ liệu</b>${esc(e.message)}</div>`; }
+  finally{ busy=false; $('#reload').disabled=false; }
+}
+const VIET = ()=>D && D.me && D.me.cap!=='ctv';
+const hvBy = hv=>D.hv.find(h=>h.hv===hv);
+/* trạng thái PIN của một học viên ở một chặng: '' (chưa cấp) · cap (đã cấp, chưa nhập) · dung (đã nhập) · khoa */
+function chTT(h, c){ const ps=h.pins.filter(p=>p.chang===c); if(!ps.length) return '';
+  const on=ps.find(p=>p.tt!=='Đã khoá'); if(!on) return 'khoa'; return on.dau?'dung':'cap'; }
+function chHtml(h){ return `<span class="chs">${[1,2,3,4,5,6,7].map(c=>{ const t=chTT(h,c);
+  return `<span class="ch ${t} ${c===D.changNay?'nay':''}" title="Chặng ${c}: ${({'':'chưa cấp PIN',cap:'đã cấp, chưa nhập',dung:'đã nhập PIN',khoa:'PIN đã khoá'})[t]}">${c}</span>`; }).join('')}</span>`; }
+
+function render(){
+  $('#meName').textContent='· '+(D.me.ten||D.me.user);
+  $('#sub').textContent=`Chặng đang diễn ra: ${D.changNay}/7 · ${D.me.vaiTro}${VIET()?'':' (chỉ xem)'}`;
+  const N=D.changNay, hv=D.hv, all=hv.flatMap(h=>h.pins);
+  const pinNay=all.filter(p=>p.chang===N && p.tt!=='Đã khoá');
+  const chuaNhap=all.filter(p=>p.tt!=='Đã khoá' && !p.dau);
+  const tuan=hv.filter(h=>h.hoc && Date.now()-h.hoc<7*864e5).length;
+  const P=D.pheu||{};
+  $('#main').innerHTML=`
+    <div class="kpis">
+      <div class="kpi"><span>Học viên có PIN</span><b>${num(hv.length)}</b><em>${num(hv.filter(h=>h.khoa!=='Canopy').length)} Little Seed · ${num(hv.filter(h=>h.khoa==='Canopy').length)} Seedling</em></div>
+      <div class="kpi"><span>PIN chặng ${N} đang dùng</span><b>${num(pinNay.length)}</b><em>${num(pinNay.filter(p=>p.dau).length)} bé đã nhập</em></div>
+      <div class="kpi ${chuaNhap.length?'hot':''}"><span>PIN đã cấp, chưa nhập</span><b>${num(chuaNhap.length)}</b><em>nhắc ba mẹ nhập PIN</em></div>
+      <div class="kpi"><span>Học trong 7 ngày</span><b>${num(tuan)}</b><em>học viên có PIN</em></div>
+      <div class="kpi"><span>Máy học thử</span><b>${num(P.hoc||0)}</b><em>${num(P.xong1||0)} xong buổi 1</em></div>
+      <div class="kpi ${P.hotline?'hot':''}"><span>Bấm gọi hotline</span><b>${num(P.hotline||0)}</b><em>máy bấm Gọi / Zalo CES</em></div>
+    </div>
+    <div class="two sec">
+      <section class="card" aria-labelledby="hCap">${VIET()?capForm():`<h2 id="hCap">Cấp PIN</h2><p class="hint">Tài khoản CTV chỉ xem. Nhờ Sale hoặc Quản lý cấp PIN.</p>`}</section>
+      <section class="card" aria-labelledby="hPheu"><h2 id="hPheu">Phễu học thử <small class="pill">từ 30 ngày trước khai mạc</small></h2>${pheuHtml(P)}</section>
+    </div>
+    <section class="sec" aria-labelledby="hCh"><h2 id="hCh">Theo chặng</h2>${changHtml()}</section>
+    <section class="sec" aria-labelledby="hHv"><h2 id="hHv">Học viên</h2>
+      <div class="bar"><input class="search" id="q" type="search" placeholder="Tìm tên con, mã HV, PIN, mã gia đình" value="${esc(Q.q)}" aria-label="Tìm học viên">
+        <select class="sm" id="fK" aria-label="Lọc khoá"><option value="">Cả hai khoá</option><option value="Little Seed">Little Seed</option><option value="Canopy">Seedling</option></select>
+        <select class="sm" id="fL" aria-label="Lọc trạng thái"><option value="">Tất cả</option><option value="chua">Chưa có PIN chặng ${N}</option><option value="chuaNhap">Có PIN chưa nhập</option><option value="nghi">Chưa học 3 ngày</option></select></div>
+      <div id="hvList"></div>
+      <div class="legend" aria-label="Chú thích ô chặng"><span><i class="ch">1</i>chưa cấp</span><span><i class="ch cap">1</i>đã cấp, chưa nhập</span><span><i class="ch dung">1</i>đã nhập PIN</span><span><i class="ch khoa">1</i>PIN đã khoá</span><span><i class="ch nay">${N}</i>chặng đang diễn ra</span></div>
+    </section>`;
+  $('#fK').value=Q.khoa; $('#fL').value=Q.loc;
+  $('#q').oninput=e=>{ Q.q=e.target.value; hvList(); };
+  $('#fK').onchange=e=>{ Q.khoa=e.target.value; hvList(); };
+  $('#fL').onchange=e=>{ Q.loc=e.target.value; hvList(); };
+  if(VIET()) bindCap();
+  hvList();
+}
+function pheuHtml(P){
+  const rows=[['mo','Mở web học thử','số máy'],['hoc','Bắt đầu học thử','nhập tên con'],['xong1','Xong buổi 1',''],['khoa','Chạm phần cần PIN',''],
+    ['bam_pin','Mở ô nhập PIN',''],['hotline','Bấm gọi hotline / Zalo',''],['pin_ok','Nhập PIN đúng','']];
+  const max=Math.max(1, ...rows.map(r=>P[r[0]]||0)), goc=P.mo||0;
+  return `<div class="fn">${rows.map(([k,t,s])=>{ const v=P[k]||0;
+    return `<div class="fn-row" title="${esc(t)}: ${num(v)} máy${goc?` (${Math.round(100*v/goc)}% số máy mở web)`:''}"><span class="lb">${esc(t)}${s?`<small>${esc(s)}</small>`:''}</span>
+      <span class="fn-track" aria-hidden="true"><span class="fn-fill" style="width:${(100*v/max).toFixed(1)}%"></span></span>
+      <span class="v">${num(v)}${goc&&k!=='mo'?`<small>${Math.round(100*v/goc)}%</small>`:''}</span></div>`; }).join('')}</div>
+    <p class="hint">Mỗi máy (trình duyệt) tính một lần. Số liệu từ tab "Truy cập học thử".</p>`;
+}
+function changHtml(){
+  const rows=[1,2,3,4,5,6,7].map(c=>{
+    const ps=D.hv.flatMap(h=>h.pins).filter(p=>p.chang===c), on=ps.filter(p=>p.tt!=='Đã khoá'), nhap=on.filter(p=>p.dau);
+    const hoc=D.hv.filter(h=>h.td&&h.td[c]&&h.td[c].buoi>0), buoi=hoc.reduce((a,h)=>a+h.td[c].buoi,0);
+    return {c, cap:on.length, nhap:nhap.length, khoa:ps.length-on.length, hoc:hoc.length, buoi};
+  });
+  return `<div class="tbl-wrap"><table><thead><tr><th>Chặng</th><th>Mở ngày</th><th class="n">PIN đang dùng</th><th class="n">Đã nhập</th><th class="n">PIN đã khoá</th><th class="n">Bé đã học</th><th class="n">Buổi đã học</th></tr></thead>
+    <tbody>${rows.map(r=>`<tr${r.c===D.changNay?' style="font-weight:700"':''}><td>Chặng ${r.c}${r.c===D.changNay?' <span class="pill g">đang diễn ra</span>':''}</td><td>${changNgay(r.c)}</td>
+      <td class="n">${num(r.cap)}</td><td class="n">${num(r.nhap)}<span class="mini" title="${r.cap?Math.round(100*r.nhap/r.cap):0}% PIN đã nhập"><i style="width:${r.cap?100*r.nhap/r.cap:0}%"></i></span></td>
+      <td class="n">${num(r.khoa)}</td><td class="n">${num(r.hoc)}</td><td class="n">${num(r.buoi)}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function hvLoc(){
+  const q=Q.q.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d'), N=D.changNay, now=Date.now();
+  return D.hv.filter(h=>{
+    if(Q.khoa && h.khoa!==Q.khoa) return false;
+    if(Q.loc==='chua' && chTT(h,N) && chTT(h,N)!=='khoa') return false;
+    if(Q.loc==='chuaNhap' && !h.pins.some(p=>p.tt!=='Đã khoá' && !p.dau)) return false;
+    if(Q.loc==='nghi' && h.hoc && now-h.hoc<3*864e5) return false;
+    if(!q) return true;
+    const s=[h.hv,h.ten,h.gd,...h.pins.map(p=>p.pin)].join(' ').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d');
+    return s.includes(q.replace(/\s/g,'')) || s.includes(q);
+  }).sort((a,b)=>String(b.hv).localeCompare(String(a.hv)));
+}
+function hvList(){
+  const ds=hvLoc(), N=D.changNay, host=$('#hvList');
+  if(!D.hv.length){ host.innerHTML=`<div class="card empty">Chưa có học viên nào. Cấp PIN đầu tiên ở ô <b>Cấp PIN</b> phía trên.</div>`; return; }
+  host.innerHTML=`<div class="tbl-wrap"><table><thead><tr><th>Mã HV</th><th>Tên con</th><th>Khoá</th><th>PIN 7 chặng</th><th class="n">Sao chặng ${N}</th><th class="n">Buổi chặng ${N}</th><th>Học gần nhất</th></tr></thead>
+    <tbody>${ds.length?ds.map(h=>{ const t=(h.td||{})[N]||{};
+      return `<tr class="hv-row" data-hv="${esc(h.hv)}" tabindex="0" role="button" aria-label="Mở ${esc(h.ten)}"><td><b>${esc(h.hv)}</b></td><td>${esc(h.ten)}</td><td>${KH(h.khoa)}</td><td>${chHtml(h)}</td>
+        <td class="n">${num(t.sao||0)}</td><td class="n">${num(t.buoi||0)}</td><td>${ago(h.hoc||h.cuoi)}</td></tr>`; }).join('')
+      :`<tr><td colspan="7" class="empty">Không có học viên khớp bộ lọc.</td></tr>`}</tbody></table></div>
+    <p class="hint">${num(ds.length)} / ${num(D.hv.length)} học viên. Bấm một dòng để xem PIN, khoá PIN, cấp thêm chặng.</p>`;
+  host.querySelectorAll('.hv-row').forEach(r=>{ r.onclick=()=>openHv(r.dataset.hv); r.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openHv(r.dataset.hv); } }; });
+}
+
+/* ---------- cấp PIN ---------- */
+function changChon(name, chon){ return `<div class="seg chang" role="group" aria-label="Chặng">${[1,2,3,4,5,6,7].map(c=>`<label><input type="checkbox" name="${name}" value="${c}" ${chon.includes(c)?'checked':''}>${c}</label>`).join('')}</div>`; }
+function capForm(){
+  return `<h2 id="hCap">Cấp PIN cho học viên mới</h2>
+    <form id="fCap" novalidate><p class="err" id="cErr" role="alert" hidden></p>
+      <label class="fld">Tên của con<input id="cTen" maxlength="40" autocomplete="off" placeholder="Ví dụ: Minh An"></label>
+      <div class="goi-y" id="cGoiY"></div>
+      <div class="fld">Khoá<div class="seg"><label><input type="radio" name="cKhoa" value="Little Seed" checked>Little Seed</label><label><input type="radio" name="cKhoa" value="Canopy">Seedling</label></div></div>
+      <div class="fld">Chặng (mỗi chặng một PIN riêng)${changChon('cCh',[D.changNay])}</div>
+      <label class="fld">Mã gia đình (tuỳ chọn)<input id="cGd" maxlength="10" autocomplete="off" placeholder="GD…" style="text-transform:uppercase"></label>
+      <p class="hint" style="margin:-6px 0 12px">Ghi mã gia đình (tab Gia đình, trang quản trị) nếu bé đã học trước đây bằng số điện thoại: máy chủ tìm lại tiến độ cũ để con giữ sao và bài đã học.</p>
+      <label class="fld">Ghi chú (tuỳ chọn)<input id="cGhi" maxlength="200" autocomplete="off" placeholder="Ví dụ: đã chuyển khoản 26/11"></label>
+      <button class="btn full" id="cB" type="submit">Cấp PIN</button>
+    </form>`;
+}
+function bindCap(){
+  const ten=$('#cTen'), gy=$('#cGoiY');
+  ten.oninput=()=>{ const t=ten.value.trim().toLowerCase(); if(t.length<2){ gy.innerHTML=''; return; }
+    const m=D.hv.filter(h=>h.ten.toLowerCase().includes(t)).slice(0,3);
+    gy.innerHTML=m.map(h=>`<button type="button" data-hv="${esc(h.hv)}">Đã có <b>${esc(h.hv)} · ${esc(h.ten)}</b> (${KH(h.khoa)}) → cấp thêm chặng cho bé này</button>`).join('');
+    gy.querySelectorAll('button').forEach(b=>b.onclick=()=>openHv(b.dataset.hv)); };
+  $('#fCap').onsubmit=async e=>{ e.preventDefault(); const er=$('#cErr'), b=$('#cB'); er.hidden=true;
+    const say=t=>{ er.hidden=false; er.textContent=t; };
+    const p={ten:ten.value.trim(), khoa:document.querySelector('input[name=cKhoa]:checked').value,
+      chang:[...document.querySelectorAll('input[name=cCh]:checked')].map(x=>+x.value), gd:$('#cGd').value.trim().toUpperCase(), ghi:$('#cGhi').value.trim()};
+    if(!p.ten) return say('Nhập tên của con.');
+    if(!p.chang.length) return say('Chọn ít nhất một chặng.');
+    if(p.gd && !/^GD[A-Z0-9]{4,8}$/.test(p.gd)) return say('Mã gia đình có dạng GD + 4–8 chữ/số, ví dụ GD82CTOX.');
+    b.disabled=true; b.textContent='Đang cấp…';
+    try{ const j=await api('pinCap',{p}); showKetQua(j); await load(); }
+    catch(x){ if(!x.silent) say(x.message); }
+    finally{ b.disabled=false; b.textContent='Cấp PIN'; } };
+}
+function tinGui(ten, ds){
+  return ds.length===1
+    ? `CES gửi ba mẹ mã PIN chặng ${ds[0].chang} của bé ${ten}: ${pinDep(ds[0].pin)}\nBa mẹ mở link ${WEB}chang-${ds[0].chang}/ , bấm "Nhập mã PIN" và nhập 8 số trên là con học tiếp, giữ nguyên bài đã học.\nMỗi chặng có một mã PIN riêng. Cần hỗ trợ, ba mẹ gọi hotline ${HOTLINE_TXT} ạ.`
+    : `CES gửi ba mẹ mã PIN của bé ${ten}:\n${ds.map(x=>`• Chặng ${x.chang}: ${pinDep(x.pin)} (link ${WEB}chang-${x.chang}/)`).join('\n')}\nBa mẹ mở đúng link của chặng, bấm "Nhập mã PIN" và nhập mã của chặng đó là con học tiếp.\nCần hỗ trợ, ba mẹ gọi hotline ${HOTLINE_TXT} ạ.`;
+}
+function sheet(html, mid){ const host=$('#sheetHost');
+  host.innerHTML=`<div class="sheet ${mid?'mid':''}" role="dialog" aria-modal="true"><div class="panel"><button class="x" type="button" aria-label="Đóng">✕</button>${html}</div></div>`;
+  const close=()=>host.innerHTML=''; $('.x',host).onclick=close; $('.sheet',host).onclick=e=>{ if(e.target.classList.contains('sheet')) close(); };
+  document.addEventListener('keydown', function k(e){ if(e.key==='Escape'){ close(); document.removeEventListener('keydown',k); } });
+  return host; }
+function showKetQua(j){
+  const moi=j.pins.filter(x=>!x.cu), cu=j.pins.filter(x=>x.cu);
+  const host=sheet(`<h2>${moi.length?'Đã cấp PIN':'PIN đã có sẵn'} · ${esc(j.hv)} ${esc(j.ten)}</h2>
+    ${j.pins.map(x=>`<p class="hint" style="margin:10px 0 0">Chặng ${x.chang}${x.cu?' · <b>đã có PIN từ trước</b> (không cấp trùng)':''}</p><div class="pin-big">${pinDep(x.pin)}</div>`).join('')}
+    <label class="fld" style="margin-top:12px">Tin nhắn gửi ba mẹ<textarea class="tin" id="tin">${esc(tinGui(j.ten, j.pins))}</textarea></label>
+    <button class="btn full" id="tinC" type="button">Chép tin nhắn</button>
+    ${cu.length?'<p class="hint">Muốn đổi mã của chặng đã có PIN: mở học viên, bấm "Cấp lại" ở chặng đó (mã cũ tự khoá).</p>':''}`, true);
+  $('#tinC',host).onclick=async()=>toast(await chep($('#tin',host).value)?'Đã chép tin nhắn':'Chưa chép được, hãy chọn chữ và chép tay');
+}
+
+/* ---------- một học viên ---------- */
+function openHv(hv){
+  const h=hvBy(hv); if(!h) return;
+  const N=D.changNay, ps=h.pins.slice().sort((a,b)=>a.chang-b.chang||b.cap-a.cap);
+  const thieu=[1,2,3,4,5,6,7].filter(c=>!h.pins.some(p=>p.chang===c && p.tt!=='Đã khoá'));
+  const host=sheet(`<h2>${esc(h.hv)} · ${esc(h.ten)}</h2>
+    <p class="hint" style="margin:0 0 12px">${KH(h.khoa)}${h.gd?` · gia đình ${esc(h.gd)}`:''} · học gần nhất ${ago(h.hoc||h.cuoi)}</p>
+    <div style="margin-bottom:14px">${chHtml(h)}</div>
+    <h3 style="font-size:15px;margin:0 0 8px">PIN đã cấp</h3>
+    ${ps.map(p=>{ const k=p.tt==='Đã khoá', t=(h.td||{})[p.chang]||{};
+      return `<div class="pin-row"><div><b>Chặng ${p.chang}</b> <span class="pill ${k?'r':p.dau?'g':'a'}">${k?'Đã khoá':p.dau?'Đã nhập':'Chưa nhập'}</span><br><code>${pinDep(p.pin)}</code></div>
+        <div class="meta">Cấp ${fmt(p.cap)} bởi ${esc(p.nguoi||'—')}${p.dau?` · nhập lần đầu ${fmt(p.dau)} · ${num(p.lan)} lần vào`:''}${t.buoi?` · ${t.buoi} buổi, ${num(t.sao)} sao`:''}${p.ghi?`<br>${esc(p.ghi)}`:''}</div>
+        ${VIET()?`<div class="acts">${k?`<button class="btn ghost sm" data-mo="${p.pin}">Mở lại</button>`:`<button class="btn ghost sm" data-chep="${p.pin}" data-ch="${p.chang}">Chép tin</button><button class="btn ghost sm" data-lai="${p.chang}">Cấp lại</button><button class="btn ghost sm" data-khoa="${p.pin}">Khoá</button>`}</div>`:''}</div>`; }).join('')}
+    ${VIET()?`<h3 style="font-size:15px;margin:18px 0 8px">Cấp thêm chặng</h3>
+      ${thieu.length?`<form id="fThem">${changChon('tCh', thieu.includes(N)?[N]:[thieu[0]]).replace(/<label><input type="checkbox" name="tCh" value="(\d)"/g,(m,c)=>thieu.includes(+c)?m:m.replace('<label>','<label hidden>'))}
+        <button class="btn full" style="margin-top:10px" type="submit" id="tB">Cấp PIN các chặng đã chọn</button><p class="err" id="tErr" hidden></p></form>`:'<p class="hint">Bé đã có PIN cả 7 chặng.</p>'}
+      <h3 style="font-size:15px;margin:18px 0 8px">Sửa thông tin</h3>
+      <form id="fSua"><label class="fld">Tên của con<input id="sTen" maxlength="40" value="${esc(h.ten)}"></label>
+        <div class="fld">Khoá<div class="seg"><label><input type="radio" name="sKhoa" value="Little Seed" ${h.khoa!=='Canopy'?'checked':''}>Little Seed</label><label><input type="radio" name="sKhoa" value="Canopy" ${h.khoa==='Canopy'?'checked':''}>Seedling</label></div></div>
+        <button class="btn ghost full" type="submit">Lưu thay đổi</button><p class="hint">Web của bé tự đổi tên, khoá ở lần mở sau.</p></form>`:''}`);
+  const lam=async(fn, body, msg)=>{ try{ const j=await api(fn, body); toast(msg); await load(); return j; }catch(x){ if(!x.silent) toast(x.message); } };
+  host.querySelectorAll('[data-khoa]').forEach(b=>b.onclick=async()=>{ if(!confirm('Khoá PIN '+pinDep(b.dataset.khoa)+'? Máy đang dùng PIN này sẽ về bản học thử ở lần mở sau.')) return; await lam('pinKhoa',{pin:b.dataset.khoa, khoa:true},'Đã khoá PIN'); openHv(hv); });
+  host.querySelectorAll('[data-mo]').forEach(b=>b.onclick=async()=>{ await lam('pinKhoa',{pin:b.dataset.mo, khoa:false},'Đã mở lại PIN'); openHv(hv); });
+  host.querySelectorAll('[data-chep]').forEach(b=>b.onclick=async()=>toast(await chep(tinGui(h.ten,[{pin:b.dataset.chep, chang:+b.dataset.ch}]))?'Đã chép tin nhắn gửi ba mẹ':'Chưa chép được'));
+  host.querySelectorAll('[data-lai]').forEach(b=>b.onclick=async()=>{ if(!confirm('Cấp mã mới cho chặng '+b.dataset.lai+'? Mã cũ sẽ bị khoá.')) return;
+    const j=await lam('pinCap',{p:{hv, chang:[+b.dataset.lai], capLai:true}},'Đã cấp mã mới'); if(j) showKetQua(j); });
+  const ft=$('#fThem',host); if(ft) ft.onsubmit=async e=>{ e.preventDefault(); const ch=[...host.querySelectorAll('input[name=tCh]:checked')].map(x=>+x.value);
+    if(!ch.length){ const er=$('#tErr',host); er.hidden=false; er.textContent='Chọn ít nhất một chặng.'; return; }
+    $('#tB',host).disabled=true; const j=await lam('pinCap',{p:{hv, chang:ch}},'Đã cấp PIN'); if(j) showKetQua(j); else $('#tB',host).disabled=false; };
+  const fs=$('#fSua',host); if(fs) fs.onsubmit=async e=>{ e.preventDefault();
+    await lam('pinSuaHv',{hv, p:{ten:$('#sTen',host).value.trim(), khoa:host.querySelector('input[name=sKhoa]:checked').value}},'Đã lưu'); openHv(hv); };
+}
+
+(async function batDau(){
+  if(store.get()){ $('#gate').hidden=true; $('#app').hidden=false; load(); return; }
+  showLogin();
+})();
+</script>
+</body>
+</html>

@@ -114,5 +114,6 @@ window.HD_FILES={
 "Học bổng dành cho bạn chăm học. Con gọi ba mẹ cùng xem nhé!": "tai-nguyen-chung/huong-dan/hd_110.mp3",
 "Hoan hô! Con đã hạ Rồng trùm!": "tai-nguyen-chung/huong-dan/hd_111.mp3",
 "Rồng trùm khoẻ quá! Con ôn bài rồi mai đánh lại nhé.": "tai-nguyen-chung/huong-dan/hd_112.mp3",
-"Rồng trùm khoẻ quá! Con nghe lại các từ rồi đánh lại nhé.": "tai-nguyen-chung/huong-dan/hd_113.mp3"
+"Rồng trùm khoẻ quá! Con nghe lại các từ rồi đánh lại nhé.": "tai-nguyen-chung/huong-dan/hd_113.mp3",
+"Little Seed dành cho bé mới bắt đầu. Seedling dành cho bé đã biết một chút tiếng Anh và tiếng Trung.": "tai-nguyen-chung/huong-dan/hd_114.mp3"
 };

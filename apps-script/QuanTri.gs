@@ -133,6 +133,7 @@ function quanTri_(d) {
     if (fn === 'tich3b') return qtTich3b_(s, d.code, String(d.loai || ''), !!d.on);
     if (fn === 'luu4h') return qtLuu4h_(s, d.code, d.h || {}, !!d.zoom);
     if (fn === 'boHoanThanh') return qtBoHoanThanh_(s, d.code, d.viec);
+    if (/^pin/.test(fn)) return pinQuanTri_(s, fn, d);            // Bảng điều khiển PIN (tệp Pin.gs)
     return { ok: false, err: 'Không rõ yêu cầu.' };
   } catch (e) {
     const m = String(e && e.message || e);

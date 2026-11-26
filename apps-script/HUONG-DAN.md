@@ -46,3 +46,14 @@ Sửa máy chủ của trang chính (`apps-script/Code.gs`) không tự sang mù
 - Tab "Gia đình" thêm cột Z **Mở chặng** (ví dụ `1,2`). Cột X "Mở khóa 99 ngày" vẫn còn, nghĩa là "đã mở ít nhất một chặng".
 - Dòng cũ chỉ có tick cột X, cột Z trống: được tính là mở đủ 7 chặng.
 - Gia đình đóng phí qua tab "Đăng ký Web": tự mở chặng đang diễn ra.
+
+## PIN học viên + Bảng điều khiển (từ 26/11/2026, máy chủ v20)
+1. Mở dự án Apps Script "Cuộc thi mùa 3 – Máy chủ" (tài khoản anhtrung.home).
+2. Dán đè `Code.gs` và `QuanTri.gs` bằng bản mới trong thư mục này.
+3. Bấm **＋ → Tập lệnh**, đặt tên `Pin`, dán toàn bộ `apps-script/Pin.gs`. Bấm **Lưu**.
+4. **Triển khai → Quản lý các bản triển khai** → bút chì → **Phiên bản mới** → Triển khai. Link `/exec` giữ nguyên.
+5. Kiểm tra: link `/exec?action=ping` trả `"v":20`.
+6. Mở Bảng điều khiển `cuoc-thi-mua-3/bang-dieu-khien/`, đăng nhập bằng tài khoản đội. Lần tải đầu, máy chủ đổi tên tab gid=0 thành "PIN học viên" và ghi dòng tiêu đề.
+- CTV chỉ xem; Sale, Cố vấn, Quản lý cấp, khoá, cấp lại PIN.
+- Bé từng học bằng số điện thoại: khi cấp PIN, ghi **Mã gia đình** (GD…) để máy chủ tìm lại tiến độ cũ (tab TienDo), con giữ sao và bài đã học.
+- Chưa dán bản v20 thì web học không kiểm tra được PIN: mọi bé chỉ học được buổi 1 chặng 1.

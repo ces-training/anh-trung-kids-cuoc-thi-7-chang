@@ -9,6 +9,7 @@
  *   4) Cổng Zalo sau buổi 1 (tab "Gia đình")
  *   5) Đơn đăng ký từ trang ưu đãi (tab "Đăng ký Web")
  *   6) Trang quản trị (tệp QuanTri.gs trong CÙNG dự án này): đăng nhập tên + mật khẩu, việc hôm nay, báo cáo
+ *   7) PIN học viên + Bảng điều khiển (tệp Pin.gs trong CÙNG dự án này, từ 26/11/2026)
  *
  * CÁCH BẬT (làm 1 lần, khoảng 5 phút):
  *   1. Đăng nhập anhtrung.home@gmail.com, mở script.google.com → Dự án mới (mã Sheet dữ liệu ở DATA_ID bên dưới).
@@ -104,7 +105,8 @@ function doGet(e) {
   const p = e.parameter || {};
   if (p.action === 'zoomsao') return json_(zoomSao_(p));        // web học hỏi số sao Zoom đã cộng cho một bé
   if (p.action === 'vinhdanh') return json_(vinhDanh_(p));      // Góc vinh danh: video trong thư mục Drive, chia theo chặng
-  if (p.action === 'ping') return json_({ ok: true, v: 19, mua3: '99 ngày · 7 chặng' });          // v19: đóng phí/đang học chỉ mở chặng đang diễn ra · v18: Góc vinh danh (?action=vinhdanh, thư mục Drive theo chặng) · v17: mở khóa theo từng chặng (cột Z "Mở chặng") · v16: Lớp Zoom một màn (tab Lớp Zoom 1 màn, Sao Zoom, ?action=zoomsao) · v15: Lớp Zoom (tab Lớp Zoom, Chuẩn bị Zoom, ảnh con vào Drive) · v14: bỏ tích nhiệm vụ · v13: Gọi tuần 1 gộp (4H + thẻ), CTV ghi đủ 6 ô · v12: Gọi sau 3 buổi (báo cáo + ô tích Đã gọi / Đồng ý Zoom) · v11: phân luồng CTV (chưa kích hoạt) / Sale (đã kích hoạt) / Cố vấn (chỉ định) · v3: Bảng Gia đình · v4: mở khóa 99 ngày · v5: trang quản trị có tài khoản · v7: Xếp hạng · v8: việc theo vai trò CTV/Sale/Cố vấn · v9: offer trong Thẻ gia đình · v10: nhiệm vụ theo bản đồ
+  if (p.action === 'pin') return json_(pinKiemTra_(p));               // v20: PIN học viên (tệp Pin.gs), mỗi bé mỗi chặng một PIN
+  if (p.action === 'ping') return json_({ ok: true, v: 20, mua3: '99 ngày · 7 chặng' });          // v20: PIN học viên (Pin.gs, tab gid=0 "PIN học viên"), không tự đăng ký · v19: đóng phí/đang học chỉ mở chặng đang diễn ra · v18: Góc vinh danh (?action=vinhdanh, thư mục Drive theo chặng) · v17: mở khóa theo từng chặng (cột Z "Mở chặng") · v16: Lớp Zoom một màn (tab Lớp Zoom 1 màn, Sao Zoom, ?action=zoomsao) · v15: Lớp Zoom (tab Lớp Zoom, Chuẩn bị Zoom, ảnh con vào Drive) · v14: bỏ tích nhiệm vụ · v13: Gọi tuần 1 gộp (4H + thẻ), CTV ghi đủ 6 ô · v12: Gọi sau 3 buổi (báo cáo + ô tích Đã gọi / Đồng ý Zoom) · v11: phân luồng CTV (chưa kích hoạt) / Sale (đã kích hoạt) / Cố vấn (chỉ định) · v3: Bảng Gia đình · v4: mở khóa 99 ngày · v5: trang quản trị có tài khoản · v7: Xếp hạng · v8: việc theo vai trò CTV/Sale/Cố vấn · v9: offer trong Thẻ gia đình · v10: nhiệm vụ theo bản đồ
   if (p.action === 'xephang') return json_(xepHang_(p));
   if (p.action === 'access') return json_(access_(p));
   if (p.action === 'visit') return visit_(p);
@@ -174,7 +176,7 @@ function xepHang_(p) {
  *   khoa = bấm vào phần bị khóa (chi tiết: phần nào) · bam_dk = bấm "Đăng ký cho con" · zalo = ba mẹ để lại Zalo
  * Mỗi sự kiện ghi 1 dòng vào tab "Truy cập học thử" của Sheet này;
  * trang quản trị đọc tab này để chấm điểm gia đình và vẽ phễu theo mã CTV. */
-const EVENTS = ['mo', 'vao', 'hoc', 'xong1', 'xong2', 'xong3', 'noi', 'khoa', 'bam_dk', 'zalo', 'dong_hanh', 'kich_hoat'];   // kich_hoat = bấm "Nhắn Zalo đội hỗ trợ" ở bảng Kích hoạt 99 ngày
+const EVENTS = ['mo', 'vao', 'hoc', 'xong1', 'xong2', 'xong3', 'noi', 'khoa', 'bam_dk', 'zalo', 'dong_hanh', 'kich_hoat', 'bam_pin', 'pin_ok', 'hotline'];   // v20: bam_pin = mở ô nhập PIN · pin_ok = nhập PIN đúng · hotline = bấm gọi hotline   // kich_hoat = bấm "Nhắn Zalo đội hỗ trợ" ở bảng Kích hoạt 99 ngày
 const TC_HEAD = ['Thời gian', 'Mã CTV', 'Mã người xem', 'Sự kiện', 'Khoá', 'Chi tiết'];
 function cleanRef_(r) { return String(r || 'TU_NHIEN').toUpperCase().replace(/[^A-Z0-9_]/g, '').slice(0, 20) || 'TU_NHIEN'; }
 function logEvent_(ss, ref, vid, ev, g, x) {
