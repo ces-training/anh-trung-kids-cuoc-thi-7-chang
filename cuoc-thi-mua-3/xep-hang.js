@@ -16,7 +16,7 @@ const XH_CHARS = ['bong','anna','leo','xiaomei'];
 
 function xhT0(){ return new Date(XH_START+'T00:00:00+07:00').getTime(); }
 /* chặng của tuần hiện tại: 1, 2, 3; hết 3 tuần trả 0 (tổng 21 ngày) */
-function xhWeekNow(){ const k=Math.floor((Date.now()-xhT0())/(CHANG_NGAY*864e5)); return k<0?1:(k>CHANG_SO-1?0:k+1); }
+function xhWeekNow(){ const d=Math.floor((Date.now()-xhT0())/864e5); return d<0?1:(d>=99?0:Math.min(CHANG_SO, Math.floor(d/CHANG_NGAY)+1)); }   /* ngày 85–99 đều là chặng 7 (26/11/2026) */
 /* thời điểm kết thúc tuần r (0 = hết tuần 3) */
 function xhEnd(r){ return r ? changMoLuc(r) + (r===CHANG_SO?CHANG_NGAY+1:CHANG_NGAY)*864e5 : xhT0() + 99*864e5; }
 function xhLeft(r){

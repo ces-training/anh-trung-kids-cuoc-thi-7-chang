@@ -22,7 +22,7 @@
 <link rel="stylesheet" href="bo-sung.css?v=20261125b">
 <link rel="stylesheet" href="bo-cuc.css">
 <link rel="stylesheet" href="qua.css">
-<link rel="stylesheet" href="qua-choi.css?v=20261125a">
+<link rel="stylesheet" href="qua-choi.css?v=20261126a">
 <link rel="stylesheet" href="khen.css">
 <link rel="stylesheet" href="dien-thoai.css">
 <link rel="stylesheet" href="chang.css">
@@ -466,18 +466,18 @@ a.gtab{text-decoration:none}
 <script src="tai-nguyen-chung/huong-dan.js"></script>
 <script src="canopy-data.js"></script>
 <script src="ls-data.js"></script>
-<script src="ls.js"></script>
+<script src="ls.js?v=20261126a"></script>
 <script src="xem-them.js"></script>
 <script src="canopy.js"></script>
 <script src="canopy-games.js"></script>
 <script src="canopy-speak.js"></script>
-<script src="qua.js?v=20261105z"></script>
-<script src="qua-choi.js?v=20261125a"></script>
-<script src="khen.js"></script>
+<script src="qua.js?v=20261126a"></script>
+<script src="qua-choi.js?v=20261126a"></script>
+<script src="khen.js?v=20261126a"></script>
 <script src="huong-dan-clip.js"></script>
-<script src="xep-hang.js"></script>
+<script src="xep-hang.js?v=20261126a"></script>
 <script src="goc-vinh-danh.js?v=20261125b"></script>
-<script src="bai-offline.js?v=20261121a"></script>
+<script src="bai-offline.js?v=20261126a"></script>
 <script src="huong-dan-nop-bai.js?v=20261125c"></script>
 <script src="ol.js?v=20261125c"></script>
 <script>
@@ -1407,7 +1407,7 @@ function parentPanel(){
     <button class="pp-x" aria-label="Đóng">✕</button>
     <h3>Ba mẹ đồng hành</h3>
     <ol class="intro-steps">
-      <li><b>99 ngày · 7 chặng · mỗi chặng 14 buổi</b><span>Mỗi chặng có một link riêng, mở theo lịch (chặng ${CHANG}: từ ${changNgay(CHANG)}). Mỗi buổi 12–15 phút, học xong buổi này thì mở buổi sau.</span></li>
+      <li><b>99 ngày · 7 chặng · mỗi chặng 14 buổi (chặng 7: 15 buổi)</b><span>Mỗi chặng có một link riêng, mở theo lịch (chặng ${CHANG}: từ ${changNgay(CHANG)}). Mỗi buổi 12–15 phút, học xong buổi này thì mở buổi sau.</span></li>
       <li><b>Zoom và Tổng kết mỗi chặng</b><span>Sau 6 buổi: buổi Zoom với cô giáo. Sau 12 buổi: buổi Tổng kết chặng, cô nhận xét và vinh danh các bạn chăm chỉ.</span></li>
       <li><b>Sao và Xếp hạng</b><span>Mỗi bước làm xong được sao. Mỗi chặng là một giải đấu: 5 bạn nhiều sao nhất của mỗi khoá vào Nhóm vinh danh. Bảng không có nhóm xuống hạng, bạn ở dưới chỉ thấy còn bao nhiêu sao nữa. <a href="#/xep-hang">🏆 Xem Xếp hạng →</a></span></li>
       <li><b>Chung kết tỏa sáng</b><span>Đi đủ 7 chặng (99 buổi) để sẵn sàng thi Chung kết livestream.</span></li>
@@ -1440,7 +1440,7 @@ const TILE_HD = [
 const TOUR = [
   {img:'../xem-truoc/tai-nguyen/nhan-vat/huou_huou1_a.webp', h:'Chào mừng nhà thám hiểm nhí!', t:'Cô là cô Hươu. Mỗi ngày con học khoảng 15 phút cùng cô và các bạn Bông, Anna, Leo, Xiaomei. Con nghe, xem, chạm và nói bằng tiếng Anh và tiếng Trung.'},
   {img:'../xem-truoc/tai-nguyen/trang/ls_o_truyen_v1.webp', h:'Chọn khoá học', t:'Little Seed dành cho bé mới bắt đầu. Seedling dành cho bé đã biết một chút tiếng Anh và tiếng Trung. Lần đầu, bố mẹ đăng nhập bằng tên con và số điện thoại hoặc Gmail, không cần mật khẩu.'},
-  {img:'../xem-truoc/tai-nguyen/trang/canopy_ban_do.webp', h:'Bản đồ khám phá', t:'Mỗi chặng có một bản đồ 14 buổi. Buổi có màu đỏ đang nhấp nháy là buổi hôm nay. Học xong một buổi thì buổi sau mở khoá. Cuối mỗi chặng có buổi Zoom với cô giáo.'},
+  {img:'../xem-truoc/tai-nguyen/trang/canopy_ban_do.webp', h:'Bản đồ khám phá', t:'Mỗi chặng có một bản đồ 14 buổi. Buổi có màu đỏ đang nhấp nháy là buổi hôm nay. Học xong một buổi thì buổi sau mở khoá. Sau buổi 6 có buổi Zoom với cô giáo, sau buổi 12 có buổi Tổng kết.'},
   {img:'../xem-truoc/tai-nguyen/trang/ls_o_noi_theo.webp', h:'Trong mỗi buổi học', t:'Mỗi bước đều có cô đọc hướng dẫn. Ở cuối màn hình: nút Nghe lại, nút Dừng để tạm nghỉ, nút Câu trước để nghe lại câu vừa rồi. Khi micro đỏ nhấp nháy là máy đang thu giọng con.'},
   {img:'../xem-truoc/tai-nguyen/trang/ls_stickers.webp', h:'Sao, Xếp hạng và Góc khám phá', t:'Mỗi bước làm xong con được sao. Mỗi chặng, 5 bạn nhiều sao nhất vào Nhóm vinh danh ở mục Xếp hạng. Góc khám phá có thêm video và trò chơi cho con thích thì xem thêm.'},
   {img:'../xem-truoc/tai-nguyen/trang/ls_man_khen.webp', h:'Gửi ba mẹ', t:'Ba mẹ bật bài cho con đúng giờ, khen con khi con đang làm bài và khi con xong bài. Không ép nói, không sửa lỗi, không so sánh. Xong mỗi buổi, ba mẹ quay một clip ngắn gửi vào nhóm Zalo để nhận thêm điểm.'}
@@ -1485,7 +1485,7 @@ if(typeof OL_STAGE!=='undefined'){ STAGE_INFO.seed=OL_STAGE.seed; STAGE_INFO.can
 /* Bản đồ thế giới: MỘT tranh ngang vừa khít màn hình (kiểu sảnh trò chơi), 3 khu = 3 chặng,
    con đường đi qua 18 biển số (6 buổi mỗi chặng), biển Zoom cuối mỗi chặng, sân khấu Chung kết ở đỉnh đồi.
    Toạ độ (% ngang, % dọc) dò từ dải đất trống trong tranh. */
-const WORLD = {"seed":{"poly":[[13.81,98.83],[15.68,98.05],[17.55,97.29],[19.43,96.59],[21.32,95.92],[23.2,95.28],[25.1,94.66],[26.99,94.09],[28.89,93.56],[30.79,93.09],[32.7,92.66],[34.59,92.08],[36.47,91.39],[38.34,90.61],[40.2,89.7],[42.04,88.77],[43.89,87.82],[45.72,86.79],[47.52,85.6],[49.25,84.1],[50.81,82.11],[52.13,79.65],[53.01,76.63],[53.25,73.26],[52.87,69.93],[51.91,66.98],[50.59,64.51],[49.07,62.41],[47.4,60.72],[45.66,59.29],[43.89,57.94],[42.12,56.64],[40.34,55.35],[38.57,54.02],[36.84,52.52],[35.23,50.65],[33.84,48.32],[32.82,45.43],[32.39,42.12],[32.73,38.78],[33.57,35.71],[34.73,32.99],[36.14,30.7],[37.78,28.92],[39.54,27.56],[41.35,26.42],[43.18,25.36],[45.0,24.26],[46.83,23.19],[48.69,22.37],[50.59,21.86],[52.51,21.73],[54.43,21.66],[56.35,21.48],[58.27,21.57],[60.18,21.91],[62.09,22.18],[63.99,22.76],[65.86,23.5],[67.73,24.31],[69.59,25.16],[71.46,25.96],[73.34,26.61],[75.26,26.88],[77.18,27.0],[79.1,27.08],[81.02,27.09],[82.94,27.03],[84.86,26.83],[86.77,26.52]],"stops":[[20.28,96.29],[26.93,94.11],[33.62,92.39],[40.21,89.7],[46.67,86.19],[52.18,79.52],[52.45,68.41],[47.38,60.7],[41.17,55.95],[35.16,50.54],[32.5,40.18],[36.28,30.51],[42.34,25.86],[48.8,22.33],[55.54,21.54],[62.28,22.23],[68.88,24.83],[75.52,26.9]],"zoom":[[58.5,74],[40.5,36],[79.1,27.08]],"end":[86.77,26.52],"boards":[[15.6,90.8],[43.8,63],[46,10]]},"canopy":{"poly":[[36.7,98.96],[38.22,98.01],[39.62,96.6],[40.91,94.89],[42.1,92.94],[43.27,90.98],[44.49,89.1],[45.78,87.4],[47.18,85.98],[48.63,84.72],[50.01,83.23],[51.25,81.4],[52.3,79.24],[53.0,76.67],[53.25,73.85],[53.05,71.01],[52.43,68.38],[51.46,66.09],[50.31,64.09],[49.04,62.34],[47.67,60.82],[46.24,59.5],[44.78,58.28],[43.3,57.12],[41.82,56.01],[40.31,54.99],[38.8,53.97],[37.33,52.81],[35.91,51.44],[34.62,49.73],[33.52,47.64],[32.74,45.14],[32.4,42.35],[32.56,39.51],[33.15,36.85],[34.01,34.43],[35.09,32.3],[36.32,30.47],[37.67,28.88],[39.09,27.53],[40.53,26.25],[42.04,25.24],[43.55,24.25],[45.1,23.45],[46.67,22.8],[48.27,22.39],[49.87,22.03],[51.47,21.78],[53.08,21.74],[54.7,21.62],[56.3,21.46],[57.92,21.51],[59.52,21.81],[61.13,22.04],[62.73,22.36],[64.31,22.89],[65.89,23.51],[67.46,24.17],[69.02,24.88],[70.58,25.59],[72.16,26.21],[73.74,26.71],[75.35,26.89],[76.96,26.99],[78.58,27.07],[80.19,27.11],[81.8,27.09],[83.41,27.02],[85.02,26.84],[86.63,26.59]],"stops":[[41.45,94.02],[45.74,87.44],[50.64,82.38],[53.26,73.83],[50.88,65.01],[46.17,59.45],[41.07,55.5],[35.89,51.42],[32.5,43.68],[34.06,34.32],[38.48,28.11],[43.69,24.16],[49.13,22.19],[54.79,21.61],[60.45,21.96],[66.04,23.58],[71.55,25.99],[77.18,27.0]],"zoom":[[56.5,57],[47,27],[80.18,27.11]],"end":[86.63,26.59],"boards":[[36.5,88.2],[34,56],[53,7]]}};
+const WORLD = {"seed":{"poly":[[13.81,98.83],[15.68,98.05],[17.55,97.29],[19.43,96.59],[21.32,95.92],[23.2,95.28],[25.1,94.66],[26.99,94.09],[28.89,93.56],[30.79,93.09],[32.7,92.66],[34.59,92.08],[36.47,91.39],[38.34,90.61],[40.2,89.7],[42.04,88.77],[43.89,87.82],[45.72,86.79],[47.52,85.6],[49.25,84.1],[50.81,82.11],[52.13,79.65],[53.01,76.63],[53.25,73.26],[52.87,69.93],[51.91,66.98],[50.59,64.51],[49.07,62.41],[47.4,60.72],[45.66,59.29],[43.89,57.94],[42.12,56.64],[40.34,55.35],[38.57,54.02],[36.84,52.52],[35.23,50.65],[33.84,48.32],[32.82,45.43],[32.39,42.12],[32.73,38.78],[33.57,35.71],[34.73,32.99],[36.14,30.7],[37.78,28.92],[39.54,27.56],[41.35,26.42],[43.18,25.36],[45.0,24.26],[46.83,23.19],[48.69,22.37],[50.59,21.86],[52.51,21.73],[54.43,21.66],[56.35,21.48],[58.27,21.57],[60.18,21.91],[62.09,22.18],[63.99,22.76],[65.86,23.5],[67.73,24.31],[69.59,25.16],[71.46,25.96],[73.34,26.61],[75.26,26.88],[77.18,27.0],[79.1,27.08],[81.02,27.09],[82.94,27.03],[84.86,26.83],[86.77,26.52]],"stops":[[20.28,96.29],[26.93,94.11],[33.62,92.39],[40.21,89.7],[46.67,86.19],[52.18,79.52],[52.45,68.41],[47.38,60.7],[41.17,55.95],[35.16,50.54],[32.5,40.18],[36.28,30.51],[42.34,25.86],[48.8,22.33],[55.54,21.54],[62.28,22.23],[68.88,24.83],[75.52,26.9]],"zoom":[[58.5,74],[40.5,36],[79.1,27.08]],"end":[86.77,26.52],"boards":[[15.6,90.8],[43.8,63],[46,10]]},"canopy":{"poly":[[36.7,98.96],[38.22,98.01],[39.62,96.6],[40.91,94.89],[42.1,92.94],[43.27,90.98],[44.49,89.1],[45.78,87.4],[47.18,85.98],[48.63,84.72],[50.01,83.23],[51.25,81.4],[52.3,79.24],[53.0,76.67],[53.25,73.85],[53.05,71.01],[52.43,68.38],[51.46,66.09],[50.31,64.09],[49.04,62.34],[47.67,60.82],[46.24,59.5],[44.78,58.28],[43.3,57.12],[41.82,56.01],[40.31,54.99],[38.8,53.97],[37.33,52.81],[35.91,51.44],[34.62,49.73],[33.52,47.64],[32.74,45.14],[32.4,42.35],[32.56,39.51],[33.15,36.85],[34.01,34.43],[35.09,32.3],[36.32,30.47],[37.67,28.88],[39.09,27.53],[40.53,26.25],[42.04,25.24],[43.55,24.25],[45.1,23.45],[46.67,22.8],[48.27,22.39],[49.87,22.03],[51.47,21.78],[53.08,21.74],[54.7,21.62],[56.3,21.46],[57.92,21.51],[59.52,21.81],[61.13,22.04],[62.73,22.36],[64.31,22.89],[65.89,23.51],[67.46,24.17],[69.02,24.88],[70.58,25.59],[72.16,26.21],[73.74,26.71],[75.35,26.89],[76.96,26.99],[78.58,27.07],[80.19,27.11],[81.8,27.09],[83.41,27.02],[85.02,26.84],[86.63,26.59]],"stops":[[41.45,94.02],[45.74,87.44],[50.64,82.38],[53.26,73.83],[50.88,65.01],[46.17,59.45],[41.07,55.5],[35.89,51.42],[32.5,43.68],[34.06,34.32],[38.48,28.11],[43.69,24.16],[49.13,22.19],[54.79,21.61],[60.45,21.96],[66.04,23.58],[71.55,25.99],[77.18,27.0]],"zoom":[[56.5,57],[47,27],[80.18,27.11]],"end":[86.63,26.59],"boards":[[28,86],[34,56],[53,7]]}};
 const ZONE_C = ['#E3262E','#F28C00','#2F8F5B'];
 const SIGN_SHAPE = ['circle','diamond','square','circle','diamond','square'];
 function lessonTitle(day){
@@ -1522,7 +1522,7 @@ function viewGroup(g){
   const zooms=Wd.zoom.slice(0,2).map((pos,r)=>{ const zi=r*PER+PER-1, zd=isDone(g,zi), zo=isUnlocked(g,zi);
     return `<a class="wzoom ${zd?'done':''} ${zo?'':'lock'}" href="#/g/${g}/${zi+1}" style="left:${pos[0]}%;top:${pos[1]}%" title="${r?'Buổi Tổng kết':'Buổi Zoom cùng cô giáo'} – chặng ${CHANG}"><span>${r?'🏅':'🎥'}</span><small>${r?'Tổng kết':'Zoom'}</small></a>`; }).join('');
   const boards=[0,1,2].map(r=>{ const p=(Wd.boards||[])[r]||Wd.stops[r*6], I=info[r]||{};
-    return `<button class="wboard" data-r="${r}" style="left:${p[0]}%;top:${p[1]}%;--zc:${ZONE_C[r]}" type="button"><b>${r?'Phần '+(r+1):'Chặng '+CHANG}</b><span>${esc((I.topic||'').split(' · ')[0])}</span></button>`; }).join('');
+    return `<button class="wboard" data-r="${r}" style="left:${p[0]}%;top:${p[1]}%;--zc:${ZONE_C[r]}" type="button"><b>Chặng ${CHANG} · Phần ${r+1}</b><span>${esc((I.topic||'').split(' · ')[0])}</span></button>`; }).join('');
   const nk=nowK, nowPos=nk>=0?Wd.stops[nk]:null, nowI=nk>=0?Math.floor(nk/6)*PER+nk%6:-1;
   const curStage=nk>=0?Math.floor(nk/6):(n?2:0);
   app.innerHTML=`<div class="screen worldscr">
@@ -1812,7 +1812,7 @@ function stepFinish(){
       <div class="big">${art('🧭','big')}</div><h3>Sắp xong ngày ${i+1} rồi!</h3>
       ${day.goal?`<div class="goal">⭐ <b>Hoàn thành khi:</b> ${esc(day.goal)}</div>`:''}
       ${gamesDone(s)<4?`<div class="task">🎮 Con mới chơi ${gamesDone(s)}/4 trò. <a href="#" id="backGame">Chơi nốt để được thêm điểm →</a></div>`:''}
-      ${day.clip?`<div class="task"><b>🎥 Hôm nay có nhiệm vụ quay clip (+${PTS.clip} điểm).</b> Bố mẹ quay con làm bài và gửi vào nhóm Zalo của thử thách nhé.</div>
+      ${day.clip?`<div class="task"><b>🎥 Hôm nay có nhiệm vụ quay clip (+${PTS.clip} điểm).</b> Bố mẹ quay con làm bài và gửi vào nhóm Zalo của cuộc thi nhé.</div>
       <div class="row"><a class="btn y" href="${ZALO_LINK}" target="_blank" rel="noopener">📤 Mở nhóm Zalo</a></div>`:''}
       <div class="three"><div><b>Không ép nói</b>Con chưa muốn thì chờ lúc khác</div><div><b>Không sửa lỗi</b>Khen con đã dám nói</div><div><b>Không so sánh</b>Mỗi bé một tốc độ</div></div>
       <div class="row"><button class="btn g" id="ok">✅ Con đã hoàn thành!</button></div></div>`;
@@ -1880,7 +1880,7 @@ function missionHTML(g,i){
   }
   return `<div class="mission ${sent?'sent':''}">
     <div class="mi-h"><span class="mi-ic">🎥</span><div><b>Nhiệm vụ chia sẻ (+${PTS.clip} điểm)</b>
-      <small>Ba mẹ quay một clip ngắn (15–30 giây) con nói câu hôm nay bằng tiếng Anh và tiếng Trung, rồi gửi vào nhóm Zalo của thử thách. Đã có sẵn 2 cách quay và lời thoại cho ba mẹ.</small></div></div>
+      <small>Ba mẹ quay một clip ngắn (15–30 giây) con nói câu hôm nay bằng tiếng Anh và tiếng Trung, rồi gửi vào nhóm Zalo của cuộc thi. Đã có sẵn 2 cách quay và lời thoại cho ba mẹ.</small></div></div>
     ${sayHTML}
     <button class="btn sm mi-guide" type="button">🎬 Hướng dẫn quay clip <small>· 2 cách</small></button>
     <div class="row mi-row"><a class="btn g sm" href="${ZALO_LINK}" target="_blank" rel="noopener">📤 Mở nhóm Zalo</a>
@@ -1955,7 +1955,7 @@ function clipGuideOpen(g,i){
       <li>🔇 Tắt tivi, nhạc nền để nghe rõ giọng con.</li>
       <li>⏱️ 15–30 giây là đủ. Quay tối đa 2 lần, đừng để con mệt.</li>
       <li>🎉 Con nói 1 từ, nói một thứ tiếng, hay chỉ làm động tác cũng là hoàn thành.</li>
-      <li>🔒 Không để lộ tên trường, đồng phục, địa chỉ nhà. Chỉ gửi vào nhóm Zalo của thử thách.</li></ul>
+      <li>🔒 Không để lộ tên trường, đồng phục, địa chỉ nhà. Chỉ gửi vào nhóm Zalo của cuộc thi.</li></ul>
       <div class="cg-three"><div><b>Không ép nói</b>Con chưa muốn thì chờ lúc khác</div><div><b>Không sửa lỗi</b>Khen con đã dám nói</div><div><b>Không so sánh</b>Mỗi bé một tốc độ</div></div></details>
     <div class="cg-sec"><h4>📤 Khi gửi vào nhóm Zalo</h4><div style="font-size:15px;font-weight:600">Ba mẹ ghi kèm dòng này để cô ghi điểm cho con:</div>
       <div class="cg-cap"><span id="cgCap">${esc(capOf())}</span><button class="btn y sm" type="button" id="cgCopy">Chép</button></div>

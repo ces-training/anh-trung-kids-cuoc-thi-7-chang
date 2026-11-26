@@ -584,7 +584,7 @@ function viewXemThem(g, r, autoN){
   const thumb=c=>c.startsWith('y:')?`https://i.ytimg.com/vi/${c.slice(2)}/mqdefault.jpg`:'';
   app.innerHTML=`<div class="wrap ls-wrap">
     <div class="ls-banner" style="background-image:url('${esc(G.banners[r-1])}')"><div class="ls-bt">
-      <span class="ls-kick">${esc(G.name)} · Chặng ${r}: ${esc(ROUNDS[r-1].vi)}</span><h2>🧭 Góc khám phá</h2>
+      <span class="ls-kick">${esc(G.name)} · Chặng ${CHANG} · Phần ${r}</span><h2>🧭 Góc khám phá</h2>
       <p class="xt-note">Con nào hứng thú thì khám phá thêm, không cần làm hết. Góc này không mở ngày mới và không tính điểm.</p></div></div>
     <h3 class="xt-h">▶ Xem thêm <small>${vids.length} video · viền xanh là tiếng Anh, viền đỏ là tiếng Trung</small></h3>
     <div class="xt-grid">${vids.map((it,n)=>`<button class="xt-v ${it[0]}" data-n="${n}">${thumb(it[3])?`<img src="${thumb(it[3])}" alt="" loading="lazy" onerror="this.outerHTML='<span class=xt-ph>▶</span>'">`:`<span class="xt-ph">▶</span>`}<b>${esc(it[1])}</b><small>${it[0]==='zh'?'Tiếng Trung':'Tiếng Anh'}</small></button>`).join('')||'<p>Con học thêm vài ngày để mở video mới nhé!</p>'}</div>

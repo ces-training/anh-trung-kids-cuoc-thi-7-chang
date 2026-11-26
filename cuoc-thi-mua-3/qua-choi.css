@@ -154,11 +154,60 @@
 @media (orientation:portrait) and (max-width:820px){
   .pc-album{top:auto;bottom:calc(12px + 84px);right:12px}
   .pc-tray{left:8px;right:8px;transform:none;justify-content:center}
-  .pc-tray-t{display:none}
+  .pc-tray-t{font-size:0;max-width:none}   /* điện thoại: chỉ giữ hình món bạn ấy thèm */
   .pc-quiz{padding-top:96px;gap:6px}
   .pc-opts{gap:8px;flex-wrap:nowrap}
   .pc-opt{width:min(27vw,112px);border-radius:14px;padding:4px}
   .pc-qpet{height:56px}
   .pc-bo-box .pc-opt{width:min(25vw,100px)}
   .pc-bub{font-size:14px;top:20%}
+}
+
+/* ===== sửa sau rà soát UX 26/11/2026 ===== */
+body .toast{z-index:9500}
+.pc-stage.playing .q-plate{display:none}
+.pc-want{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;background:#FFE680;font-size:28px;margin-right:6px;vertical-align:middle;animation:pcWob 1.4s ease-in-out infinite}
+.pc-tray-t{max-width:200px}
+.pc-names{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
+.pc-nm{border:3px solid #F3EAD0;border-radius:999px;background:#FFF8E6;font:inherit;font-weight:800;font-size:18px;padding:8px 16px;min-height:48px;cursor:pointer}
+.pc-nm.on{border-color:#3BB273;background:#E6F7E9}
+.pc-hname input{font-size:16px;color:var(--muted)}
+.pc-hatch{background:rgba(30,20,10,.96)}
+.pc-opt.hint{border-color:#3BB273;box-shadow:0 0 0 5px #9BE15D,0 5px 0 rgba(0,0,0,.15);animation:pcHint .8s ease 2}
+@keyframes pcHint{50%{transform:scale(1.08)}}
+.pc-review{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.pc-rv{width:96px;border:3px solid #F3EAD0;border-radius:16px;background:#fff;padding:4px;cursor:pointer;font:inherit;font-weight:800;font-size:13px}
+.pc-rv img{width:100%;aspect-ratio:1;object-fit:contain}
+.pc-rv span{display:block}
+.modal .pc-ch-done{width:auto;height:120px;align-self:center;object-fit:contain}
+.pc-ch-box #pcTap{min-height:52px}
+.pc-mic-note{position:absolute;inset:0;background:#fff;border-radius:26px;padding:24px;display:flex;flex-direction:column;justify-content:center;gap:10px;text-align:left;z-index:5}
+.pc-mic-note p{margin:0;line-height:1.45}
+.pc-mic-note .btn{align-self:center}
+.pc-ph-prop{position:absolute;right:6%;bottom:6%;font-size:clamp(28px,7vw,56px);filter:drop-shadow(0 3px 2px rgba(0,0,0,.25))}
+/* màn thấp (điện thoại xoay ngang): hộp cuộn được, không đẩy nút ra ngoài màn hình */
+@media (max-height:640px){
+  .overlay{display:flex;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .overlay>*{margin:auto;flex-shrink:0}
+  .modal{max-height:none}
+  .pc-ch-arena,.pc-bo-arena{height:96px}
+  .pc-ch-card img{width:72px}
+  .pc-hbox{width:min(420px,90vw);aspect-ratio:auto;height:auto;min-height:calc(100dvh - 32px);flex-direction:column}
+  .pc-hegg,.pc-hmon{height:150px}
+  .pc-hname{position:relative;margin-top:auto}
+  .pc-opt{width:84px}
+  .pc-bo-box .pc-opt{width:78px}
+}
+/* điện thoại dọc: nút Cho ăn / Chơi cùng không che thú */
+@media (orientation:portrait) and (max-width:600px){
+  .pc-pet{bottom:24%;height:44%}.pc-pet.s1{height:36%}.pc-pet.s2{height:42%}.pc-pet.s3{height:48%}.pc-pet.mon.s0{height:34%}
+}
+/* máy tính bảng dọc: thẻ con vật xếp 3 cột, huy hiệu dễ thấy */
+@media (orientation:portrait) and (min-width:601px) and (max-width:1100px){
+  .qpet .q-cards,.qmon .q-cards{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:none;gap:10px}
+  .qpet .q-card,.qmon .q-card{flex-direction:column;text-align:center;padding:8px}
+  .qpet .q-card img,.qmon .q-card img{width:100%;height:120px;object-fit:contain}
+}
+@media (prefers-reduced-motion:reduce){
+  .pc-pet img,.pc-pet img.egg,.pc-want,.q-act.pc-boss{animation:none!important}
 }

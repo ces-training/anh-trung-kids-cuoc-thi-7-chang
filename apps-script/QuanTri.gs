@@ -1052,14 +1052,16 @@ function qtBaoCao_(ss, fams, sk, nk, dk, cd, now) {
   const be = {};
   diem.forEach(x => { if (x.diem <= 0) return; const b = be[x.kid] || (be[x.kid] = { kid: x.kid, ten: x.ten, g: x.g, ngay: {}, diem: 0, cuoi: 0, xa: 0 });
     b.ngay[x.day] = 1; b.diem += x.diem; b.cuoi = Math.max(b.cuoi, x.t); b.xa = Math.max(b.xa, x.day); b.ten = x.ten || b.ten; b.g = x.g || b.g; });
-  const dsBe = Object.keys(be).map(k => { const b = be[k]; return { kid: b.kid, ten: b.ten, khoa: qtKhoa_(b.g), buoi: Object.keys(b.ngay).length, diem: b.diem, cuoi: b.cuoi, xa: b.xa }; });
+  const dsBe = Object.keys(be).map(k => { const b = be[k]; return { kid: b.kid, ten: b.ten, khoa: qtKhoa_(b.g), buoi: Object.keys(b.ngay).filter(d => qtNgay99_(+d - 1) > 0).length, diem: b.diem, cuoi: b.cuoi, xa: b.xa }; });   // buổi = ngày học, không đếm Zoom
+  /* 26/11/2026: biểu đồ theo ngày học 1–99 (trước đây khung 21 ngày của mùa 2). Tab Diem lưu ô 1–140 (20 ô mỗi chặng),
+     đổi sang ngày 1–99 bằng qtNgay99_; ô Zoom / Tổng kết (trả 0) không tính là ngày học. */
   const theoNgayHoc = { 'Little Seed': [], 'Canopy': [] };
-  for (let i = 1; i <= 21; i++) { theoNgayHoc['Little Seed'].push(0); theoNgayHoc['Canopy'].push(0); }
-  Object.keys(be).forEach(k => { const g = qtKhoa_(be[k].g); if (!theoNgayHoc[g]) return; Object.keys(be[k].ngay).forEach(d => { if (d >= 1 && d <= 21) theoNgayHoc[g][d - 1]++; }); });
-  const phanBo = [['1–3 buổi', 1, 3], ['4–7 buổi', 4, 7], ['8–14 buổi', 8, 14], ['15–21 buổi', 15, 21]].map(x => ({ nhom: x[0],
+  for (let i = 1; i <= 99; i++) { theoNgayHoc['Little Seed'].push(0); theoNgayHoc['Canopy'].push(0); }
+  Object.keys(be).forEach(k => { const g = qtKhoa_(be[k].g); if (!theoNgayHoc[g]) return; Object.keys(be[k].ngay).forEach(d => { const n = qtNgay99_(+d - 1); if (n >= 1 && n <= 99) theoNgayHoc[g][n - 1]++; }); });
+  const phanBo = [['1–7 buổi', 1, 7], ['8–14 buổi', 8, 14], ['15–42 buổi', 15, 42], ['43–70 buổi', 43, 70], ['71–99 buổi', 71, 99]].map(x => ({ nhom: x[0],
     seed: dsBe.filter(b => b.khoa === 'Little Seed' && b.buoi >= x[1] && b.buoi <= x[2]).length,
     canopy: dsBe.filter(b => b.khoa === 'Canopy' && b.buoi >= x[1] && b.buoi <= x[2]).length }));
-  const nghi = dsBe.filter(b => b.buoi < 21 && b.cuoi && now - b.cuoi >= 2 * 86400e3).sort((a, b) => a.cuoi - b.cuoi).slice(0, 60);
+  const nghi = dsBe.filter(b => b.buoi < 99 && b.cuoi && now - b.cuoi >= 2 * 86400e3).sort((a, b) => a.cuoi - b.cuoi).slice(0, 60);
   const hoatDongHomNay = dsBe.filter(b => qtNgay_(b.cuoi) === homNay).length;
   let taiKhoanHoc = 0; const td = ss.getSheetByName('TienDo'); if (td) taiKhoanHoc = Math.max(0, td.getLastRow() - 1);
 

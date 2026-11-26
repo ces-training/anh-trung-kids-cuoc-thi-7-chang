@@ -738,10 +738,10 @@ function rG3(){
         <div class="acts">${callBtns(f,'goi_t1','goi_3b')}</div>
         <details class="g3ct" data-g3ct="${esc(f.code)}" ${G3_MO.has(f.code)?'open':''}><summary>Chi tiết theo 4H và câu hỏi thêm</summary>
           <div class="g3h">
-            ${g3Box('H1 – Thái độ học tập',[['Ngày học',b.ngayHoc+' / '+nq],['Ngày chưa học',b.chuaHoc],['Học gần nhất',b.cuoi],['Bài Little Seed xong',b.seed],['Bài Seedling xong',b.canopy],['Câu Canopy đã làm',b.canopyCau],['Đang học',b.khoaHoc],['Ba mẹ kể',g.h1||'—']],'Con tự đòi học hay mẹ phải nhắc thì hỏi ba mẹ.')}
+            ${g3Box('H1 – Thái độ học tập',[['Ngày học',b.ngayHoc+' / '+nq],['Ngày chưa học',b.chuaHoc],['Học gần nhất',b.cuoi],['Bài Little Seed xong',b.seed],['Bài Seedling xong',b.canopy],['Câu Seedling đã làm',b.canopyCau],['Đang học',b.khoaHoc],['Ba mẹ kể',g.h1||'—']],'Con tự đòi học hay mẹ phải nhắc thì hỏi ba mẹ.')}
             ${g3Box('H2 – Cảm xúc khi học',[['Nhân vật con chọn',b.nhanVat],['Thú cưng',b.thuCung],['Quái vật',b.quaiVat],['Sao đã đổi quà',b.saoDoi],['Điểm đã nhận',b.diem],['Ba mẹ kể',g.h2||'—']],'Mở lời: "Con thích bạn nào nhất ạ?"')}
             ${g3Box('H3 – Tương tác với mẹ',[['Clip ba mẹ đã gửi',b.clip],['Huy hiệu',b.huyHieu],['Ba mẹ kể',g.h3||'—']],'Con có rủ mẹ chơi, kể lại cho mẹ không thì hỏi ba mẹ.')}
-            ${g3Box('H4 – Mang ngôn ngữ về nhà',[['Lượt nói với micro',b.noi],['Lượt theo bước (bài Seed đã xong)',b.buoc],['Số tài khoản học',b.taiKhoan],['Ba mẹ kể',g.h4||'—']],'Bài Canopy chưa ghi lượt nói. Con tự nói ở nhà thì xin ba mẹ một ví dụ cụ thể.')}
+            ${g3Box('H4 – Mang ngôn ngữ về nhà',[['Lượt nói với micro',b.noi],['Lượt theo bước (bài Seed đã xong)',b.buoc],['Số tài khoản học',b.taiKhoan],['Ba mẹ kể',g.h4||'—']],'Bài Seedling chưa ghi lượt nói. Con tự nói ở nhà thì xin ba mẹ một ví dụ cụ thể.')}
           </div>
           <ul class="g3hoi">${(b.hoi||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
         </details></div>
@@ -881,7 +881,7 @@ function rBc(){
   const nghi=B.hoc.nghi;
   const kenh=B.kenh.slice().sort((a,b)=>b.daPhi-a.daPhi||b.dangKy-a.dangKy||b.mo-a.mo);
   const rangeBtns=[['7','7 ngày'],['14','14 ngày'],['all','Cả đợt']].map(([k,l])=>`<button class="chip ${RANGE===k?'on':''}" data-rg="${k}" type="button" aria-pressed="${RANGE===k}">${l}</button>`).join('');
-  const zl=i=>(i+1)%7===0?`Ngày ${i+1} (Zoom)`:`Ngày ${i+1}`;
+  const zl=i=>`Ngày ${i+1}`;   /* ngày học 1–99, Zoom không nằm trong dãy (26/11/2026) */
   const P=B.pheu, pMax=Math.max(1,...P.so);
   $('#main').innerHTML=`<div class="rep">
     <div class="bar" role="group" aria-label="Khoảng thời gian">${rangeBtns}<span class="hint" style="margin:0 0 0 auto">Cập nhật ${fmt(D.now)}</span></div>
@@ -959,7 +959,7 @@ function rBc(){
     options:baseOpts({indexAxis:'y',interaction:{mode:'nearest',axis:'y',intersect:false},scales:{x:{beginAtZero:true,suggestedMax:pMax,grid:{color:css('--grid')},border:{display:false},ticks:{precision:0,color:css('--axis')}},y:{grid:{display:false},border:{color:css('--grid')},ticks:{color:css('--ink')}}}})});
   chart('cKenh',{type:'bar',data:{labels:kenh.map(k=>k.ref),datasets:[hbarDs('Đã đăng ký',kenh.map(k=>k.dangKy),s1),hbarDs('Đã đóng phí',kenh.map(k=>k.daPhi),s2)]},
     options:baseOpts({indexAxis:'y',interaction:{mode:'index',axis:'y',intersect:false},scales:{x:{beginAtZero:true,grid:{color:css('--grid')},border:{display:false},ticks:{precision:0,color:css('--axis')}},y:{grid:{display:false},border:{color:css('--grid')},ticks:{color:css('--ink')}}}})});
-  chart('cTienDo',{type:'bar',data:{labels:B.hoc.theoNgayHoc['Little Seed'].map((_,i)=>(i+1)%7===0?(i+1)+' Zoom':String(i+1)),datasets:[barDs('Little Seed',B.hoc.theoNgayHoc['Little Seed'],s1),barDs('Seedling',B.hoc.theoNgayHoc['Canopy'],s2)]},
+  chart('cTienDo',{type:'bar',data:{labels:B.hoc.theoNgayHoc['Little Seed'].map((_,i)=>'Ngày '+(i+1)),datasets:[barDs('Little Seed',B.hoc.theoNgayHoc['Little Seed'],s1),barDs('Seedling',B.hoc.theoNgayHoc['Canopy'],s2)]},
     options:baseOpts({plugins:{legend:{display:false},tooltip:Object.assign(baseOpts().plugins.tooltip,{callbacks:{title:c=>zl(c[0].dataIndex),label:c=>` ${c.dataset.label}: ${num(c.parsed.y)} bé`}})}})});
   chart('cPhanBo',{type:'bar',data:{labels:B.hoc.phanBo.map(x=>x.nhom),datasets:[barDs('Little Seed',B.hoc.phanBo.map(x=>x.seed),s1),barDs('Seedling',B.hoc.phanBo.map(x=>x.canopy),s2)]},options:baseOpts()});
   const one=(id,arr,lbl,h)=>chart(id,{type:'bar',data:{labels:arr.map(x=>x.k),datasets:[(h?hbarDs:barDs)(lbl,arr.map(x=>x.n),s1)]},

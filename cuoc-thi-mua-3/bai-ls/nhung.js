@@ -14,7 +14,8 @@
   const css = document.createElement('style');
   css.textContent = `.side{display:none!important}#app{margin-left:0!important;padding-bottom:0!important}.toast{margin-left:0!important}
     body.is-demo #app{padding-bottom:0!important}.ls-kick,.dayhead .crumb{display:none!important}
-    body.m3-nhung:not(.m3-ngay) #app{visibility:hidden}`;
+    body.m3-nhung:not(.m3-ngay) #app{visibility:hidden}
+    #xt{display:none!important}`;   /* 26/11/2026: dải "📺 Xem thêm" của lớp offline: sao không vào ví cuộc thi, ghi sai ngày, che bước 1 trên điện thoại. Cuộc thi có Góc khám phá riêng */
   document.head.appendChild(css);
   document.body.classList.add('m3-nhung');
 

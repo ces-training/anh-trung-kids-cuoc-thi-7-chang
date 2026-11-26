@@ -48,17 +48,23 @@ function jToday(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMo
 function jMark(){ if(!KID || TEACHER) return; const j=jGet(); if(!j.days[jToday()]){ j.days[jToday()]=1; j.t=Date.now(); } }
 function jRec(){ if(!KID || TEACHER) return; const j=jGet(); j.rec++; j.t=Date.now(); if(typeof demoNoi==='function') demoNoi(j.rec); }
 function jGroup(){ return KID && GROUPS[KID.group] ? KID.group : 'seed'; }
+/* Cả hành trình 99 ngày (26/11/2026): tiến độ 7 chặng nằm chung trong P, mỗi chặng một ngăn 20 ô (chang.js).
+   Chặng k: ô 0..(số ngày + 1), ô 6 = Zoom, ô 13 = Tổng kết. */
+const J_TOTAL = 99;
+function jSlots(k){ return (k===CHANG_SO ? 99-(CHANG_SO-1)*CHANG_NGAY : CHANG_NGAY) + 2; }
+function jStage(g,k){   // {les: số buổi đã học, n: số buổi của chặng, zoom: số buổi Zoom/Tổng kết đã xong, clip}
+  const off=(k-1)*CHANG_KHOANG, T=jSlots(k); let les=0, n=0, zoom=0, clip=0;
+  for(let i=0;i<T;i++){ const s=P[g+'-'+(off+i)]; if(i%7===6){ if(s&&s.done) zoom++; continue; } n++; if(s&&s.done) les++; if(s&&s.clipSent) clip++; }
+  return {les, n, zoom, clip};
+}
+function jAll(g){ const o={les:0, zoom:0, clip:0, st:[]}; for(let k=1;k<=CHANG_SO;k++){ const a=jStage(g,k); o.les+=a.les; o.zoom+=a.zoom; o.clip+=a.clip; o.st.push(a.les>=a.n); } return o; }
 function jMetrics(g){
-  g=g||jGroup(); const j=jGet();
-  const st=[0,1,2].map(r=>{ for(let d=0; d<PER-1 && r*PER+d<TOTAL; d++) if(!isDone(g, r*PER+d)) return false; return true; });
-  let clip=0; for(let i=0;i<TOTAL;i++){ const s=P[pk(g,i)]; if(s && s.clipSent) clip++; }
-  return {g, les:doneCount(g), st, days:Object.keys(j.days).length, rec:j.rec, zoom:[0,1].filter(r=>isDone(g, r*PER+PER-1)).length, clip, pts:groupPoints(g)};
+  g=g||jGroup(); const j=jGet(), a=jAll(g);
+  return {g, les:a.les, st:a.st, days:Object.keys(j.days).length, rec:j.rec, zoom:a.zoom, clip:a.clip, pts:(typeof qEarned==='function'?qEarned():groupPoints(g))};
 }
 const BADGES = [
   {id:'dau',   n:'Bước chân đầu tiên', d:'Học xong buổi đầu tiên', img:'../xem-truoc/tai-nguyen/qua/pet_cun_1.webp', ok:m=>m.les>=1},
-  {id:'c1',    n:'Xong chặng 1',       d:'Học xong 6 buổi chặng 1', img:g=>`../xem-truoc/tai-nguyen/trang/ban_do_${g}_1.webp`, ok:m=>m.st[0], scene:true},
-  {id:'c2',    n:'Xong chặng 2',       d:'Học xong 6 buổi chặng 2', img:g=>`../xem-truoc/tai-nguyen/trang/ban_do_${g}_2.webp`, ok:m=>m.st[1], scene:true},
-  {id:'c3',    n:'Xong chặng 3',       d:'Học xong 6 buổi chặng 3', img:g=>`../xem-truoc/tai-nguyen/trang/ban_do_${g}_3.webp`, ok:m=>m.st[2], scene:true},
+  ...[1,2,3,4,5,6,7].map(k=>({id:'ch'+k, n:'Xong chặng '+k, d:'Học xong '+(k===7?15:14)+' buổi chặng '+k, img:g=>`../xem-truoc/tai-nguyen/trang/ban_do_${g}_${(k-1)%3+1}.webp`, ok:m=>m.st[k-1], scene:true})),
   {id:'n3',    n:'3 ngày chăm chỉ',    d:'Học vào 3 ngày khác nhau', img:'../xem-truoc/tai-nguyen/qua/mon_la_1.webp', ok:m=>m.days>=3},
   {id:'n7',    n:'7 ngày chăm chỉ',    d:'Học vào 7 ngày khác nhau', img:'../xem-truoc/tai-nguyen/qua/mon_nuoc_2.webp', ok:m=>m.days>=7},
   {id:'n14',   n:'14 ngày chăm chỉ',   d:'Học vào 14 ngày khác nhau', img:'../xem-truoc/tai-nguyen/qua/mon_lua_3.webp', ok:m=>m.days>=14},
@@ -66,7 +72,7 @@ const BADGES = [
   {id:'noi50', n:'Nhà hùng biện nhí',  d:'Nói thành tiếng 50 lần', img:'../xem-truoc/tai-nguyen/trang/ls_o_noi_theo.webp', ok:m=>m.rec>=50, scene:true},
   {id:'zoom',  n:'Gặp cô qua Zoom',    d:'Tham gia 1 buổi Zoom', img:'../xem-truoc/tai-nguyen/trang/cx_o_video.webp', ok:m=>m.zoom>=1, scene:true},
   {id:'clip',  n:'Ngôi sao chia sẻ',   d:'Gửi clip đầu tiên vào nhóm Zalo', img:'../xem-truoc/tai-nguyen/trang/ls_man_khen.webp', ok:m=>m.clip>=1, scene:true},
-  {id:'dich',  n:'Về đích',            d:'Học xong cả chặng', img:'../xem-truoc/tai-nguyen/qua/hocbong.webp', ok:m=>m.les>=LEARN_TOTAL}];
+  {id:'dich',  n:'Về đích',            d:'Học xong cả 99 ngày', img:'../xem-truoc/tai-nguyen/qua/hocbong.webp', ok:m=>m.les>=J_TOTAL}];
 function badgeImg(b,g){ return typeof b.img==='function' ? b.img(g) : b.img; }
 function badgeHTML(b, g, on, isNew){
   return `<div class="hj-badge ${on?'on':''} ${b.scene?'scene':''}" title="${esc(b.d)}">
@@ -83,7 +89,7 @@ function badgesNew(){
 }
 
 /* ---------- quà bất ngờ: không báo trước, sau một số buổi học ---------- */
-const SURPRISE_AT = [2,5,8,11,14,17];
+const SURPRISE_AT = [2,5,8,11,14,21,28,35,42,49,56,63,70,77,84,91,98];   /* tính trên tổng số buổi cả 99 ngày */
 function surprisePick(){
   const s=shop(), a=s.ava, sp=Object.keys(MON_SP).find(x=>!s.mons.some(m=>m.sp===x));
   const pool=[
@@ -122,9 +128,10 @@ function rewardExtras(g,i){
     parts.push(`<div class="rw-badges"><small>🏅 Huy hiệu mới</small><div>${nb.map(b=>badgeHTML(b,g,true,false)).join('')}</div><a class="rw-go" href="#/hanh-trinh">Xem hành trình của con →</a></div>`);
     out.lines.push(KHEN.badge);
   }
-  const r=Math.floor(i/PER);
-  if(i%PER===PER-2 && m.st[r]){
-    parts.push(`<div class="rw-stage">🎬 ${esc(KHEN.stage)} <a href="#/g/${g}/them/${r+1}">Mở Game – video chặng ${r+1} →</a></div>`);
+  j.stMsg=j.stMsg||{};
+  if(m.st[CHANG-1] && !j.stMsg[CHANG]){   /* vừa học xong buổi cuối của chặng đang mở */
+    j.stMsg[CHANG]=Date.now();
+    parts.push(`<div class="rw-stage">🎬 Con đã đi hết chặng ${CHANG}! <a href="#/g/${g}/them/1">Mở Game - video →</a></div>`);
     out.lines.push(KHEN.stage);
   }
   if(parts.length){ j.t=Date.now(); save(); }
@@ -158,9 +165,9 @@ function viewJourney(){
       <div class="hj-left">
         <div class="hj-me"><span class="ava-mini big fr-${shop().ava.fr}" style="background-image:url('${avaBg()}')"><img src="${avaSrc()}" alt=""></span>
           <div><b>${esc(KID&&!KID.temp?KID.name:'Nhà thám hiểm nhí')}</b><small>${esc(G.icon+' '+G.name)}</small>
-          <div class="hj-road"><i style="width:${Math.round(m.les/LEARN_TOTAL*100)}%"></i><span>${m.les}/${LEARN_TOTAL} buổi</span></div></div></div>
+          <div class="hj-road"><i style="width:${Math.round(m.les/J_TOTAL*100)}%"></i><span>${m.les}/${J_TOTAL} buổi</span></div></div></div>
         <div class="hj-stats">
-          ${stat('📚', m.les, 'buổi con đã học', m.les<LEARN_TOTAL?`còn ${LEARN_TOTAL-m.les} buổi nữa là về đích`:'Con đã về đích!')}
+          ${stat('📚', m.les, 'buổi con đã học (cả 7 chặng)', m.les<J_TOTAL?`còn ${J_TOTAL-m.les} buổi nữa là về đích`:'Con đã về đích!')}
           ${stat('📅', m.days, 'ngày con đã học', 'mỗi ngày học là một bước tiến')}
           ${stat('🎤', m.rec, 'lần con nói thành tiếng', 'càng nói nhiều, càng nói hay')}
           ${stat('⭐', m.pts, 'sao con đã kiếm', `<a href="#/qua">Mở Phòng đổi quà →</a>`)}

@@ -90,10 +90,15 @@ def build(src_dir, out_dir, key, data_file, server_file):
 
 def meta(src_dir, data_file):
     js = r'''global.window={};eval(require("fs").readFileSync(process.argv[1],"utf8"));const S=window.SD,o=[];
-for(let n=1;n<=%d;n++){const d=S.days[n];o.push({n,t:d.t,goal:d.goal,hero:d.hero,unit:d.unit,unitname:d.unitname,part:d.part,
+for(let n=1;n<=%d;n++){const d=S.days[n];o.push({n,t:d.t,story:d.story||'',goal:d.goal,hero:d.hero,unit:d.unit,unitname:d.unitname,part:d.part,
 steps:d.steps.map(s=>({type:s.type,lab:s.lab||''}))});}console.log(JSON.stringify(o));''' % SO_NGAY
     r = subprocess.run(['node', '-e', js, os.path.join(ROOT, src_dir, data_file)], capture_output=True, text=True, check=True)
     days = json.loads(r.stdout)
+    for d in days:   # 26/11/2026: tên bài là câu mô tả (không có chữ Hán, không có " – ") → dùng tên truyện, ví dụ "The Body Show · Phần 1"
+        st = d.pop('story', '') or ''
+        t = d['t'] or ''
+        if st and not re.search(r'[\u4e00-\u9fff]', t) and ' · ' not in t and (' – ' not in t or re.search(r'[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽếềểễệịỉĩọỏốồổỗộớờởỡợụủứừửữựỳỷỹỵ]', t.split(' – ')[0].lower())):
+            d['t'] = st
     for d in days:   # tranh: đường dẫn theo trang gốc (src_dir/) → theo cuoc-thi-mua-3/ (cùng độ sâu)
         h = d['hero'] or ''
         if h and not h.startswith('../') and not re.match(r'^(https?:)?//', h):

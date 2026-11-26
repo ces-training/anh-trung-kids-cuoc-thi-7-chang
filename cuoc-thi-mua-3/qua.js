@@ -61,7 +61,7 @@ document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) qZoomPu
 function qWallet(){ return Math.max(0, qEarned() - shop().spent); }
 function qGroup(){ return KID && GROUPS[KID.group] ? KID.group : 'seed'; }
 function qLessons(){ return doneCount(qGroup()); }
-function qZooms(){ const g=qGroup(); return [0,1].filter(r=>isDone(g, r*PER+PER-1)).length; }
+function qZooms(){ return typeof jAll==='function' ? jAll(qGroup()).zoom : [0,1].filter(r=>isDone(qGroup(), r*PER+PER-1)).length; }   /* Zoom + Tổng kết của cả 7 chặng */
 function qToday(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function qDaysSince(day){ if(!day) return 99; return Math.round((Date.parse(qToday())-Date.parse(day))/864e5); }
 function qNoStars(n){
@@ -124,7 +124,7 @@ function qOrder(kind, item){
   ov.innerHTML=`<div class="modal pp-box q-done" role="dialog"><button class="pp-x" aria-label="Đóng">✕</button>
     <img src="${kind==='hb'?Q_IMG+'hocbong.webp':Q_IMG+'gift_'+item.id+'.webp'}" alt="">
     <h3>Đã tạo phiếu ${o.code}</h3><p><b>${esc(item.n)}</b> · ${item.p} ⭐</p>
-    <p>CES kiểm tra tiến độ học của con trong 3 ngày làm việc rồi báo ba mẹ qua Zalo. Ba mẹ có thể chụp màn hình phiếu này gửi vào nhóm Zalo của thử thách.</p>
+    <p>CES kiểm tra tiến độ học của con trong 3 ngày làm việc rồi báo ba mẹ qua Zalo. Ba mẹ có thể chụp màn hình phiếu này gửi vào nhóm Zalo của cuộc thi.</p>
     <div class="row"><a class="btn g" href="${ZALO_LINK}" target="_blank" rel="noopener">📤 Mở nhóm Zalo</a><a class="btn y" href="#/qua/phieu">🧾 Phiếu của con</a></div></div>`;
   document.body.appendChild(ov);
   const close=()=>ov.remove(); ov.querySelector('.pp-x').onclick=close; ov.addEventListener('click',e=>{ if(e.target===ov||e.target.closest('a')) close(); });
@@ -346,7 +346,7 @@ function viewGifts(){
     const g=GIFTS.find(x=>x.id===b.dataset.id); sfx.pop();
     if(!qCanReal()) return;
     if(!open){ sfx.no(); return toast(`Con học xong ${Q_RULE.giftMinLessons} buổi (1 chặng) thì đổi được quà thật nhé! Con đã học ${les} buổi.`); }
-    if(used>=Q_RULE.giftMax){ sfx.no(); return toast(`Mỗi bạn đổi tối đa ${Q_RULE.giftMax} món quà thật trong thử thách.`); }
+    if(used>=Q_RULE.giftMax){ sfx.no(); return toast(`Mỗi bạn đổi tối đa ${Q_RULE.giftMax} món quà thật trong cuộc thi.`); }
     if(qWallet()<g.p) return qNoStars(g.p);
     parentGate(g.n, `${g.p} ⭐ · giá tham khảo ${g.vnd}. Mẫu thật có thể khác hình minh hoạ.`, ()=>qOrder('gift', g));
   });
@@ -391,7 +391,7 @@ function viewOrders(){
       <li><b>Quà ảo</b> (thú cưng, quái vật, avatar) đổi ngay, không hoàn lại thành sao. Thú cưng không bao giờ ốm hay mất.</li>
       <li><b>Quà thật</b> 120–350 ⭐: mở khi con học xong 6 buổi, tối đa 2 món. <b>Học bổng</b> 350–650 ⭐: theo số buổi đã học, tối đa 1 phiếu.</li>
       <li><b>Ba mẹ xác nhận</b> ở Cổng ba mẹ; CES kiểm tra tiến độ trong 3 ngày làm việc. Phiếu không duyệt được hoàn đủ sao.</li>
-      <li>Phòng đổi quà mở đến hết 7 ngày sau Chung kết. Thắc mắc, ba mẹ nhắn nhóm Zalo của thử thách.</li></ol>
-      <a class="btn g sm" href="${ZALO_LINK}" target="_blank" rel="noopener">📤 Nhóm Zalo thử thách</a></div>`, 'qord');
+      <li>Phòng đổi quà mở đến hết 7 ngày sau Chung kết. Thắc mắc, ba mẹ nhắn nhóm Zalo của cuộc thi.</li></ol>
+      <a class="btn g sm" href="${ZALO_LINK}" target="_blank" rel="noopener">📤 Nhóm Zalo cuộc thi</a></div>`, 'qord');
   const r=document.getElementById('qRefresh'); if(r) r.onclick=()=>{ sfx.pop(); toast('Đang xem trạng thái…'); qSyncOrders(true); };
 }

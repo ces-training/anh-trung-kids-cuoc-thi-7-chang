@@ -10,10 +10,11 @@
    - Từ vựng cho Đố từ, Luyện chiêu, Rồng trùm lấy từ bài con đã học (qua-tu.js, sinh bằng cong-cu/tao_tu_qua.js),
      không thêm chữ Trung mới.
    ===================================================================== */
-const QC = { hatch: 3, chieu: 3, bossQ: 5, bossHp: 3, bossE: 5, album: 30, tkNgay: 12 };
+const QC = { hatch: 3, chieu: 3, bossQ: 5, bossHp: 3, bossE: 5, bossDay: 3, album: 30, tkNgay: 12 };
 const QC_FOOD = [['🍎', 'apple'], ['🍌', 'banana'], ['🥕', 'carrot'], ['🍪', 'cookie'], ['🍉', 'watermelon'], ['🥛', 'milk'], ['🧀', 'cheese'], ['🍓', 'strawberry']];
 const QC_STICK = ['⭐', '🌈', '🎈', '🍭', '🌸', '🦋', '🎀', '🍀', '🌟', '🎉', '🧸', '🍦'];
 const QC_SHOT = { lua: '🔥', nuoc: '💧', la: '🍃' };
+const QC_TEN = { lua: ['Lửa Nhỏ', 'Bé Lửa', 'Đốm Đỏ'], nuoc: ['Giọt Nước', 'Bé Mây', 'Tí Xanh'], la: ['Mầm Lá', 'Bé Mầm', 'Lá Non'] };
 const QC_HELLO_ZH = '../seedling/tai-nguyen/little-seed/audio/ls_co_huou_zh_014.mp3';   // 你好 (bài Seedling ngày 1)
 
 /* ---------- sao và số buổi qua mọi chặng ---------- */
@@ -24,7 +25,7 @@ function qcMark() {
 }
 function qcSum(o, cur) { let n = 0; for (let k = 1; k <= CHANG_SO; k++) n += k === CHANG ? cur : (+((o || {})[k]) || 0); return n; }
 function qEarned() { return qcSum(P._earn, myPoints()) + qZoomSao(); }
-function qLessons() { return qcSum(P._les, doneCount(qGroup())); }
+function qLessons() { return typeof jAll === 'function' ? jAll(qGroup()).les : qcSum(P._les, doneCount(qGroup())); }   // đếm thẳng trong P, cả 7 chặng
 
 /* ---------- tiện ích ---------- */
 const qcPick = a => a[Math.floor(Math.random() * a.length)];
@@ -47,7 +48,7 @@ const qcSfx = { knock: () => qcTone([[420, .06, 'square'], [380, .08, 'square']]
 /* ---------- từ vựng con đã học (qua-tu.js tải khi cần) ---------- */
 function qcTu(cb) {
   if (window.M3_TU) return cb();
-  const s = document.createElement('script'); s.src = 'qua-tu.js?v=20261125a';
+  const s = document.createElement('script'); s.src = 'qua-tu.js?v=20261126a';
   s.onload = () => cb(); s.onerror = () => { sfx.no(); toast('Chưa tải được bài. Ba mẹ kiểm tra mạng rồi thử lại nhé!'); };
   document.head.appendChild(s);
 }
@@ -64,7 +65,7 @@ function qcPool() {   // từ con đã học: tới ngày con đang học (ít n
 function qcStagePool() { const L = qcCards(CHANG_A + 1, CHANG_B); return L.length >= 6 ? L : qcCards(1, CHANG_B); }
 function qcQuiz(pool, n) {   // n câu, mỗi câu 3 thẻ khác nhau
   const qs = [], targets = qcShuffle(pool).slice(0, n);
-  targets.forEach((t, i) => { const opts = qcShuffle([t].concat(qcShuffle(pool.filter(x => x.en !== t.en)).slice(0, 2))); qs.push({ t, opts, zh: i % 2 === 1 && !!t.az }); });
+  targets.forEach((t, i) => { const opts = qcShuffle([t].concat(qcShuffle(pool.filter(x => x.en !== t.en && x.img !== t.img)).slice(0, 2))); qs.push({ t, opts, zh: i % 2 === 1 && !!t.az }); });
   return qs;
 }
 function qcSay(q, done) { voicePlay(q.zh ? q.t.az : q.t.ae, { onend: done, onerr: done }); }
@@ -140,8 +141,9 @@ function qcTouch(p) {
   const box = document.getElementById('pcPet'), stage = document.getElementById('pcStage'); if (!box) return;
   const img = box.querySelector('img');
   let down = null, dist = 0, hiN = 0;
-  const idle = () => { clearTimeout(qcIdle); qcIdle = setTimeout(() => { if (!document.body.contains(box)) return;
-    qcFx(img, 'r-wave', 1200); qcBubble(stage, 'Chơi với tớ đi! 🎾'); qcEn("Let's play!"); idle(); }, 20000); };
+  let called = false;   // gọi con một lần mỗi lần vào trang, không gọi mãi
+  const idle = () => { clearTimeout(qcIdle); if (called) return; qcIdle = setTimeout(() => { if (!document.body.contains(box) || document.getElementById('pcStage').classList.contains('playing')) return;
+    called = true; qcFx(img, 'r-wave', 1200); qcBubble(stage, 'Chơi với tớ đi! 🎾'); qcEn("Let's play!"); }, 20000); };
   box.onpointerdown = e => { down = { x: e.clientX, y: e.clientY, lx: e.clientX }; dist = 0; try { box.setPointerCapture(e.pointerId); } catch (er) {} };
   box.onpointermove = e => { if (!down) return; dist += Math.abs(e.clientX - down.lx); down.lx = e.clientX;
     if (dist > 90 && !box.classList.contains('stroking')) { box.classList.add('stroking'); qcFx(img, 'r-stroke', 1600); qcBubble(stage, 'Thích quá… 💤'); qFloat(box, '💤'); } };
@@ -165,7 +167,7 @@ function qcFeed(p) {
   const want = qcCrave(p), opts = qcShuffle([want].concat(qcShuffle(QC_FOOD.map((_, i) => i).filter(i => i !== want)).slice(0, 2)));
   stage.classList.add('feeding');
   const tray = document.createElement('div'); tray.className = 'pc-tray';
-  tray.innerHTML = `<span class="pc-tray-t">Kéo món ăn vào bạn ấy</span>${opts.map(i => `<button class="pc-food" type="button" data-i="${i}" aria-label="${QC_FOOD[i][1]}">${QC_FOOD[i][0]}</button>`).join('')}<button class="pc-x" type="button" aria-label="Thôi">✕</button>`;
+  tray.innerHTML = `<span class="pc-tray-t"><span class="pc-want">${QC_FOOD[want][0]}</span>Bạn ấy thèm món này. Kéo món vào bạn ấy nhé!</span>${opts.map(i => `<button class="pc-food" type="button" data-i="${i}" aria-label="${QC_FOOD[i][1]}">${QC_FOOD[i][0]}</button>`).join('')}<button class="pc-x" type="button" aria-label="Thôi">✕</button>`;
   stage.appendChild(tray);
   qcBubble(stage, `Tớ thèm ${QC_FOOD[want][0]} quá!`, 4000); qcEn(QC_FOOD[want][1] + ', please!');
   const close = () => { tray.remove(); stage.classList.remove('feeding'); };
@@ -258,7 +260,7 @@ function qcGameQuiz(p, layer, end) {
     opts.querySelectorAll('.pc-opt').forEach(b => b.onclick = () => { const c = q.opts[+b.dataset.i];
       if (c.en === q.t.en) { sfx.ok(); b.classList.add('ok'); qcFx(pet, 'r-jump', 700); ans.innerHTML = qcWord(c); opts.querySelectorAll('.pc-opt').forEach(x => x.onclick = null);
         setTimeout(() => { k++; if (k < qs.length) show(); else { const bonus = perfect ? 1 : 0; if (bonus) { confetti(20); toast('Đúng cả 3 câu! Con được thêm 1 sticker 🌟'); } setTimeout(() => end(bonus, 'Đố từ'), 700); } }, 1300); }
-      else { sfx.no(); perfect = false; miss = true; qcFx(b, 'no', 500); b.disabled = true; } }); };
+      else { sfx.no(); perfect = false; miss = true; qcFx(b, 'no', 500); b.disabled = true; setTimeout(() => qcSay(q), 500); } }); };
   layer.querySelector('.pc-say').onclick = () => qcSay(qs[k]);
   show();
 }
@@ -267,11 +269,11 @@ function qcGameQuiz(p, layer, end) {
 function qcPhoto(p, extra, title, after) {
   const s = shop(); s.album = s.album || [];
   const k = qcShuffle(QC_STICK).slice(0, 2 + (extra || 0));
-  const ph = { t: Date.now(), sp: p.sp, st: petStage(p), a: Object.assign({}, s.ava), k, g: title };
+  const ph = { t: Date.now(), sp: p.sp, st: petStage(p), a: Object.assign({}, s.ava), k, g: title, e: { 'Ném bóng': '🎾', 'Trốn tìm': '🌳', 'Đố từ': '🃏' }[title] || '📷' };
   s.album.unshift(ph); s.album = s.album.slice(0, QC.album); qSave();
   const ov = document.createElement('div'); ov.className = 'overlay pp pc-ph-ov';
   ov.innerHTML = `<div class="modal pc-ph-box" role="dialog" aria-label="Ảnh kỷ niệm"><h3>📷 Ảnh kỷ niệm: ${esc(title)}</h3>${qcPhotoHTML(ph)}
-    <p>Ảnh đã vào Album của con.</p><div class="row"><button class="btn y" type="button" id="pcDl">⬇️ Tải ảnh</button><button class="btn g" type="button" id="pcOk">Xong 👍</button></div></div>`;
+    <p>Ảnh đã vào Album của con.</p><div class="row"><button class="btn y" type="button" id="pcDl">👨‍👩‍👧 Ba mẹ tải ảnh</button><button class="btn g" type="button" id="pcOk">Xong 👍</button></div></div>`;
   document.body.appendChild(ov); sfx.win(); qcEn('Cheese!');
   const close = () => { ov.remove(); after && after(); };
   ov.querySelector('#pcOk').onclick = close; ov.querySelector('#pcDl').onclick = () => qcDownload(ph);
@@ -279,17 +281,22 @@ function qcPhoto(p, extra, title, after) {
 function qcPhotoHTML(ph) {
   return `<div class="pc-photo" style="background-image:url('${Q_IMG}bg_vuon.webp')">
     <img class="pc-ph-pet s${ph.st}" src="${Q_IMG}pet_${ph.sp}_${ph.st}.webp" alt=""><img class="pc-ph-ava" src="${avaSrc(ph.a)}" alt="">
-    ${ph.k.map((x, i) => `<span class="pc-ph-st st${i}">${x}</span>`).join('')}<span class="pc-ph-date">${new Date(ph.t).toLocaleDateString('vi-VN')}</span></div>`;
+    ${ph.k.map((x, i) => `<span class="pc-ph-st st${i}">${x}</span>`).join('')}${ph.e ? `<span class="pc-ph-prop">${ph.e}</span>` : ''}<span class="pc-ph-date">${new Date(ph.t).toLocaleDateString('vi-VN')}</span></div>`;
 }
 function qcAlbum() {
   const s = shop(), A = s.album || [];
   const ov = document.createElement('div'); ov.className = 'overlay pp pc-ph-ov';
   ov.innerHTML = `<div class="modal pc-al-box" role="dialog" aria-label="Album ảnh"><button class="pp-x" aria-label="Đóng">✕</button><h3>📷 Album của con (${A.length}/${QC.album})</h3>
-    ${A.length ? `<div class="pc-al">${A.map((ph, i) => `<button class="pc-al-it" type="button" data-i="${i}">${qcPhotoHTML(ph)}<small>${esc(ph.g || '')}</small></button>`).join('')}</div><p class="q-hint">Chạm vào ảnh để tải về, gửi ba mẹ hoặc cô nhé.</p>`
+    ${A.length ? `<div class="pc-al">${A.map((ph, i) => `<button class="pc-al-it" type="button" data-i="${i}">${qcPhotoHTML(ph)}<small>${esc(ph.g || '')}</small></button>`).join('')}</div><p class="q-hint">Chạm vào ảnh để xem to. Ba mẹ tải ảnh về để gửi cô nhé.</p>`
       : '<p>Con chơi cùng bạn thú cưng để có ảnh kỷ niệm nhé!</p>'}</div>`;
   document.body.appendChild(ov);
   ov.querySelector('.pp-x').onclick = () => ov.remove(); ov.addEventListener('click', e => { if (e.target === ov) ov.remove(); });
-  ov.querySelectorAll('.pc-al-it').forEach(b => b.onclick = () => qcDownload(A[+b.dataset.i]));
+  ov.querySelectorAll('.pc-al-it').forEach(b => b.onclick = () => { sfx.pop(); const ph = A[+b.dataset.i];
+    const v = document.createElement('div'); v.className = 'overlay pp pc-ph-ov';
+    v.innerHTML = `<div class="modal pc-ph-box"><button class="pp-x" aria-label="Đóng">✕</button>${qcPhotoHTML(ph)}<p>${esc(ph.g || '')} · ${new Date(ph.t).toLocaleDateString('vi-VN')}</p>
+      <div class="row"><button class="btn y sm" type="button">👨‍👩‍👧 Ba mẹ tải ảnh</button></div></div>`;
+    document.body.appendChild(v); v.querySelector('.pp-x').onclick = () => v.remove(); v.addEventListener('click', e => { if (e.target === v) v.remove(); });
+    v.querySelector('.btn').onclick = () => qcDownload(ph); });
 }
 function qcDownload(ph) {
   const W = 1280, H = 720, c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
@@ -315,7 +322,8 @@ function monStage(m) { if (monSince(m) < QC.hatch) return 0; const e = monEnergy
 function qcMonName(m) { return m.ten || MON_SP[m.sp].n; }
 function qcBossOpen() { return TEACHER || doneCount(qGroup()) >= 12 || Date.now() >= changMoLuc(CHANG) + QC.tkNgay * 864e5; }
 function qcBossWon(n) { const b = shop().boss || {}; return !!b[n]; }
-function qcBossTriedToday() { const t = (shop().bossTry || {})[CHANG]; return t === qToday() && !TEACHER; }
+function qcBossTries() { const t = (shop().bossTry || {})[CHANG]; return t && t.d === qToday() ? t.n : 0; }
+function qcBossTriedToday() { return !TEACHER && qcBossTries() >= QC.bossDay; }
 function viewMons() {
   const s = shop(); const sel = Math.min(s.monSel || 0, Math.max(0, s.mons.length - 1)); const m = s.mons[sel];
   const list = Object.keys(MON_SP).map(sp => { const k = s.mons.findIndex(x => x.sp === sp), own = k >= 0, x = s.mons[k];
@@ -381,11 +389,14 @@ function viewMons() {
 function qcHatch(m) {
   const ov = document.createElement('div'); ov.className = 'overlay pp pc-hatch';
   ov.innerHTML = `<div class="pc-hbox"><img class="pc-hegg" src="${Q_IMG}mon_${m.sp}_0.webp" alt=""><div class="pc-flash"></div>
-    <img class="pc-hmon" src="${Q_IMG}mon_${m.sp}_1.webp" alt=""><form class="pc-hname" hidden><h3>Trứng nở rồi! 🎉</h3><label>Con đặt tên cho bạn ấy nhé</label>
-    <input maxlength="14" value="${esc(MON_SP[m.sp].n)}" aria-label="Tên quái vật"><button class="btn g" type="submit">Xong 👍</button></form></div>`;
+    <img class="pc-hmon" src="${Q_IMG}mon_${m.sp}_1.webp" alt=""><form class="pc-hname" hidden><h3>Trứng nở rồi! 🎉</h3><label>Con chọn tên cho bạn ấy nhé</label>
+    <div class="pc-names">${QC_TEN[m.sp].map(n => `<button class="pc-nm" type="button">${esc(n)}</button>`).join('')}</div>
+    <input maxlength="14" value="${esc(QC_TEN[m.sp][0])}" aria-label="Tên quái vật (ba mẹ gõ tên khác nếu muốn)"><button class="btn g" type="submit">Xong 👍</button></form></div>`;
   document.body.appendChild(ov); qcSfx.knock(); setTimeout(qcSfx.knock, 500); setTimeout(qcSfx.knock, 900);
   setTimeout(() => { qcSfx.boom(); sfx.win(); confetti(40); hdSay('Ôi, trứng nở rồi!'); }, 1500);
-  setTimeout(() => { const f = ov.querySelector('form'); f.hidden = false; const i = f.querySelector('input'); i.focus(); i.select();
+  setTimeout(() => { const f = ov.querySelector('form'); f.hidden = false; const i = f.querySelector('input');
+    f.querySelectorAll('.pc-nm').forEach(b => b.onclick = () => { sfx.pop(); i.value = b.textContent; f.querySelectorAll('.pc-nm').forEach(x => x.classList.toggle('on', x === b)); });
+    f.querySelector('.pc-nm').classList.add('on');
     f.onsubmit = e => { e.preventDefault(); m.ten = String(i.value || '').trim().slice(0, 14) || MON_SP[m.sp].n; m.seen = true; qSave(); ov.remove(); viewMons(); }; }, 2600);
 }
 
@@ -415,22 +426,29 @@ function qcChieu(m) {
   document.body.appendChild(ov);
   const card = ov.querySelector('.pc-ch-card img'), word = ov.querySelector('.pc-ch-word'), bar = ov.querySelector('.pc-ch-meter i'), tip = ov.querySelector('.pc-ch-tip'),
     tap = ov.querySelector('#pcTap'), cnt = ov.querySelector('.pc-count'), mon = ov.querySelector('.pc-ch-mon'), shot = ov.querySelector('.pc-ch-shot');
-  let raf = 0, live = true, power = 0, taps = 0;
+  let raf = 0, live = true, taps = 0, miss = 0;
   const close = () => { live = false; cancelAnimationFrame(raf); qcMicClose(); ov.remove(); viewMons(); };
   ov.querySelector('.pp-x').onclick = close;
   const hit = () => { cancelAnimationFrame(raf); tap.hidden = true; shot.textContent = QC_SHOT[m.sp]; qcSfx.zap();
     shot.animate([{ transform: 'translate(0,0) scale(.6)', opacity: 1 }, { transform: 'translate(260%, -20%) scale(1.6)', opacity: 1, offset: .8 }, { transform: 'translate(300%, -20%) scale(2.2)', opacity: 0 }], { duration: 800 });
     qcFx(mon, 'r-jump', 700); gained++; m.c = (m.c || 0) + 1; qSave(); tip.textContent = 'Tuyệt! Chiêu thật mạnh! ⚡ +1';
     setTimeout(() => { k++; if (k < words.length) next(); else finish(); }, 1300); };
+  /* Có micro: đo tiếng ồn nền 0,3 giây, rồi con nói thành tiếng khoảng 0,5 giây là trúng (không cần hét).
+     Sau 6 giây chưa nghe rõ: hiện thêm nút 👊 để con vẫn chơi được. Chỉ đo to nhỏ, không ghi âm. */
   const listen = () => {
-    if (!live) return; power = 0; taps = 0; bar.style.width = '0%';
-    if (mic) { tip.textContent = 'Nói thật to nào! 🎤'; const t0 = Date.now();
-      const loop = () => { if (!live) return; const lv = qcLevel(); if (lv > .06) power += lv * 3.2; bar.style.width = Math.min(100, power) + '%';
-        if (power >= 100) return hit(); if (Date.now() - t0 > 7000) { tip.textContent = 'Con nói to hơn chút nữa nhé! Bấm 🔊 nghe lại rồi nói lại.'; power = 0; return; } raf = requestAnimationFrame(loop); };
+    if (!live) return; taps = 0; bar.style.width = '0%';
+    if (mic) { tip.textContent = 'Con nói theo cô nào! 🎤'; const t0 = performance.now(); let floor = 0, nf = 0, voiced = 0, last = t0;
+      const loop = now => { if (!live) return; const lv = qcLevel(), dt = Math.min(100, now - last); last = now;
+        if (now - t0 < 300) { floor += lv; nf++; raf = requestAnimationFrame(loop); return; }
+        const th = Math.max(.02, (floor / Math.max(1, nf)) * 2.5);
+        if (lv > th) voiced += dt; bar.style.width = Math.min(100, voiced / 5) + '%';
+        if (voiced >= 500) return hit();
+        if (now - t0 > 6300) { miss++; tap.hidden = false; tip.textContent = 'Con nói lại cùng cô nhé, rồi bấm 👊 nếu micro chưa nghe thấy.'; return; }
+        raf = requestAnimationFrame(loop); };
       raf = requestAnimationFrame(loop);
-    } else { tap.hidden = false; tip.textContent = 'Con vừa nói to vừa bấm nút 👊 thật nhanh!'; }
+    } else { tap.hidden = false; tip.textContent = 'Con nói theo cô và bấm nút 👊 nhé!'; }
   };
-  tap.onclick = () => { taps++; bar.style.width = Math.min(100, taps * 20) + '%'; sfx.pop(); if (taps >= 5) hit(); };
+  tap.onclick = () => { taps++; bar.style.width = Math.min(100, taps * 34) + '%'; sfx.pop(); if (taps >= 3) hit(); };
   const next = () => { const c = words[k], zh = k % 2 === 1 && c.az; cnt.textContent = (k + 1) + '/' + words.length;
     card.src = c.img; word.innerHTML = qcWord(c); tip.textContent = 'Nghe cô đọc nhé…'; bar.style.width = '0%';
     voicePlay(zh ? c.az : c.ae, { onend: listen, onerr: listen }); };
@@ -438,7 +456,13 @@ function qcChieu(m) {
   const finish = () => { qcMicClose(); m.lc = qToday(); qSave(); sfx.win(); confetti(24);
     ov.querySelector('.modal').innerHTML = `<h3>💪 Luyện chiêu xong!</h3><img class="pc-ch-done" src="${monImg(m)}" alt=""><p>${esc(qcMonName(m))} được <b>+${gained} năng lượng</b>. Mai con luyện tiếp nhé!</p><div class="row"><button class="btn g" type="button">Xong 👍</button></div>`;
     ov.querySelector('.btn').onclick = () => { ov.remove(); viewMons(); }; };
-  qcMicOpen().then(x => { mic = x; if (!x) toast('Không mở được micro: con bấm nút 👊 thay cho micro nhé.'); next(); });
+  /* lần đầu: giải thích cho ba mẹ trước khi xin quyền micro */
+  const go = () => qcMicOpen().then(x => { mic = x; if (!x) toast('Không mở được micro: con bấm nút 👊 thay cho micro nhé.'); next(); });
+  if (lsGet('m3-mic-ok', false)) go();
+  else { const pane = document.createElement('div'); pane.className = 'pc-mic-note';
+    pane.innerHTML = `<b>👨‍👩‍👧 Gửi ba mẹ</b><p>Trò này dùng micro để nghe con nói to hay nhỏ. Web <b>không ghi âm, không lưu, không gửi tiếng</b> của con đi đâu. Trình duyệt sẽ hỏi quyền micro: ba mẹ bấm <b>Cho phép</b>. Không cho phép thì con bấm nút 👊 thay micro.</p><button class="btn g" type="button">Đã hiểu, bắt đầu 🎤</button>`;
+    ov.querySelector('.modal').appendChild(pane);
+    pane.querySelector('button').onclick = () => { lsSet('m3-mic-ok', true); pane.remove(); go(); }; }
 }
 
 /* Rồng trùm cuối chặng: 5 câu ôn chặng; đúng thì quái vật tung chiêu, sai 3 lần thì rồng thắng (mai đánh lại) */
@@ -468,17 +492,26 @@ function qcBoss(m) {
         setTimeout(() => { rong--; hpR.style.width = (rong / QC.bossQ * 100) + '%'; rImg.src = Q_IMG + 'zoom_rong_choang.webp'; qcFx(rImg, 'r-hit', 600); qcSfx.boom();
           setTimeout(() => { rImg.src = Q_IMG + 'zoom_rong_gian.webp'; k++; rong <= 0 ? win() : show(); }, 1100); }, 650); }
       else { b.classList.add('no'); sfx.no(); qcFx(rImg, 'r-roar', 700);
+        const okB = opts.querySelectorAll('.pc-opt')[q.opts.findIndex(x => x.en === q.t.en)]; if (okB) okB.classList.add('hint'); ans.innerHTML = qcWord(q.t); setTimeout(() => qcSay(q), 700);
         fire.animate([{ transform: 'translate(0,0) scale(.6)', opacity: 1 }, { transform: 'translate(-420%,0) scale(1.8)', opacity: 1, offset: .85 }, { transform: 'translate(-470%,0) scale(2.4)', opacity: 0 }], { duration: 750 });
         setTimeout(() => { mine--; hpM.style.width = (mine / QC.bossHp * 100) + '%'; qcFx(mImg, 'r-hit', 600);
-          setTimeout(() => { k++; mine <= 0 ? lose() : show(); }, 900); }, 650); } }); };
+          setTimeout(() => { k++; mine <= 0 ? lose() : show(); }, 1800); }, 650); } }); };
   ov.querySelector('.pc-say').onclick = () => qcSay(qs[k % qs.length]);
   const win = () => { s.boss = s.boss || {}; s.boss[CHANG] = Date.now(); m.c = (m.c || 0) + QC.bossE; qSave(); sfx.win(); confetti(50); hdSay('Hoan hô! Con đã hạ Rồng trùm!');
     box.innerHTML = `<h3>🏆 Con đã hạ Rồng trùm chặng ${CHANG}!</h3><div class="pc-bo-end"><img src="${Q_IMG}zoom_rong_choang.webp" alt=""><span class="pc-badge won big">🐉<small>C${CHANG}</small></span><img src="${monImg(m)}" alt=""></div>
       <p>Con nhận <b>huy hiệu chặng ${CHANG}</b>, ${esc(qcMonName(m))} được <b>+${QC.bossE} năng lượng</b>.</p><div class="row"><button class="btn g" type="button">Tuyệt vời! 🎉</button></div>`;
     box.querySelector('.btn').onclick = () => { ov.remove(); viewMons(); }; };
-  const lose = () => { if (!TEACHER) { s.bossTry[CHANG] = qToday(); qSave(); } hdSay('Rồng trùm khoẻ quá! Con ôn bài rồi mai đánh lại nhé.');
-    box.innerHTML = `<h3>😤 Rồng trùm khoẻ quá!</h3><div class="pc-bo-end"><img src="${Q_IMG}zoom_rong_gian.webp" alt=""></div><p>Con ôn lại bài của chặng ${CHANG} rồi <b>mai</b> đánh lại nhé. Con làm được mà!</p>
-      <div class="row"><a class="btn y" href="#/g/${qGroup()}">📚 Ôn bài</a><button class="btn g" type="button">Để mai 👍</button></div>`;
-    box.querySelector('button.btn').onclick = () => { ov.remove(); viewMons(); }; box.querySelector('a.btn').onclick = () => ov.remove(); };
+  const lose = () => {
+    if (!TEACHER) { const n = qcBossTries() + 1; s.bossTry[CHANG] = { d: qToday(), n }; qSave(); }
+    const left = TEACHER ? 1 : QC.bossDay - qcBossTries();
+    hdSay(left > 0 ? 'Rồng trùm khoẻ quá! Con nghe lại các từ rồi đánh lại nhé.' : 'Rồng trùm khoẻ quá! Con ôn bài rồi mai đánh lại nhé.');
+    const on = qs.map(q => q.t);
+    box.innerHTML = `<h3>😤 Rồng trùm khoẻ quá!</h3><p>Con nghe lại các từ này nhé:</p>
+      <div class="pc-review">${on.map((c, i) => `<button class="pc-rv" type="button" data-i="${i}"><img src="${esc(c.img)}" alt=""><span>🔊 ${esc(c.en)}</span></button>`).join('')}</div>
+      <p>${left > 0 ? `Con còn <b>${left} lượt</b> đánh hôm nay. Con làm được mà!` : `Hôm nay con đã đánh ${QC.bossDay} lượt. <b>Mai</b> con đánh lại nhé!`}</p>
+      <div class="row">${left > 0 ? '<button class="btn g" type="button" id="pcAgain">⚔️ Đánh lại ngay</button>' : ''}<button class="btn y" type="button" id="pcLater">Để sau 👍</button></div>`;
+    box.querySelectorAll('.pc-rv').forEach(b => b.onclick = () => { const c = on[+b.dataset.i]; voicePlay(c.ae); });
+    box.querySelector('#pcLater').onclick = () => { ov.remove(); viewMons(); };
+    const ag = box.querySelector('#pcAgain'); if (ag) ag.onclick = () => { ov.remove(); qcBoss(m); }; };
   show();
 }
