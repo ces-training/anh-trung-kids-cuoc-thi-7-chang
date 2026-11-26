@@ -28,6 +28,8 @@
   }
 }
 *{box-sizing:border-box}
+.ic-btn.bdk{text-decoration:none;color:inherit;display:inline-flex;align-items:center}
+@media (max-width:520px){ .ic-btn.bdk span{display:none} }
 html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 'Be Vietnam Pro',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-text-size-adjust:100%}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
@@ -429,6 +431,7 @@ td.l,th.l{text-align:left}
 <header>
   <div class="hd">
     <div class="brand">Anh-Trung-Kids · Quản trị<small id="hanInfo"></small></div>
+    <a class="ic-btn bdk" href="../bang-dieu-khien/" title="Bảng điều khiển: cấp PIN, học viên, tiến độ" aria-label="Bảng điều khiển">📊<span> Bảng điều khiển</span></a>
     <button class="ic-btn" id="reload" type="button" aria-label="Tải lại dữ liệu">↻ Tải lại</button>
     <div class="menu">
       <button class="ic-btn" id="meBtn" type="button" aria-haspopup="true" aria-expanded="false">👤 <span id="meName"></span></button>
