@@ -29,8 +29,53 @@ async function vd3Load(force){
   })();
   return VD3.busy;
 }
+/* ---------- cột Góc vinh danh bên phải trang chủ (ẩn/hiện được, máy nhớ lựa chọn) ---------- */
+const VD3_AN = 'm3-vd-an';
+function vd3SideAn(){ try{ return localStorage.getItem(VD3_AN)==='1'; }catch(e){ return false; } }
+function vd3SideHTML(){
+  return `<aside class="vd3-side${vd3SideAn()?' an':''}" id="vd3Side" aria-label="Góc vinh danh">
+    <div class="vd3-sh"><a class="vd3-st" href="#/vinh-danh"><b>🌟 Góc vinh danh</b><small>Video các bạn làm bài tốt</small></a>
+      <button class="vd3-tg" id="vd3Tg" type="button" aria-label="Ẩn Góc vinh danh" title="Ẩn">»</button></div>
+    <div class="vd3-sl" id="vd3Sl"><p class="vd3-sm">Đang tải video…</p></div>
+    <button class="vd3-open" id="vd3Open" type="button" aria-label="Hiện Góc vinh danh" title="Hiện Góc vinh danh"><span class="vd3-oi">«</span><span class="vd3-ot">🌟 Vinh danh</span></button>
+  </aside>`;
+}
+function vd3SideSet(an){
+  try{ localStorage.setItem(VD3_AN, an?'1':'0'); }catch(e){}
+  const a=document.getElementById('vd3Side'); if(a) a.classList.toggle('an', an);
+  const h=a&&a.closest('.home2'); if(h) h.classList.toggle('vd-an', an);
+  try{ sfx.pop(); }catch(e){}
+}
+function vd3SideInit(){
+  const a=document.getElementById('vd3Side'); if(!a) return;
+  const h=a.closest('.home2'); if(h){ h.classList.add('vd-on'); h.classList.toggle('vd-an', vd3SideAn()); }
+  document.getElementById('vd3Tg').onclick=()=>vd3SideSet(true);
+  document.getElementById('vd3Open').onclick=()=>vd3SideSet(false);
+  vd3Dot();
+  vd3Load();
+}
+function vd3SideFill(){
+  const box=document.getElementById('vd3Sl'); if(!box) return;
+  const d=VD3.data;
+  if(!d){ if(!VD3.busy) box.innerHTML=`<p class="vd3-sm">Cô sẽ đăng video các bạn làm bài tốt ở đây. Con chăm làm bài để được lên Góc vinh danh nhé!</p>`; return; }
+  const all=[]; Object.keys(d).forEach(k=>(d[k]||[]).forEach(x=>all.push(Object.assign({k:+k},x))));
+  all.sort((x,y)=>y.t-x.t);
+  const list=all.slice(0,6);
+  if(!list.length){ box.innerHTML=`<p class="vd3-sm">Cô sẽ đăng video các bạn làm bài tốt ở đây mỗi chặng. Con chăm làm bài để được lên Góc vinh danh nhé!</p>`; return; }
+  box.innerHTML=list.map((x,i)=>`<button class="vd3-si${x.con?' me':''}" type="button" data-i="${i}">
+      <span class="vd3-sth" style="background-image:url('https://drive.google.com/thumbnail?id=${encodeURIComponent(x.id)}&sz=w400')"><i>▶</i>
+        ${x.con?'<em class="vd3-tag me">⭐ Của con</em>':vd3IsNew(x)?'<em class="vd3-tag">Mới</em>':''}</span>
+      <b>${esc(x.ten)}</b><small>${esc(x.viec||'Bài làm thật giỏi')} · Chặng ${x.k} · ${vd3Date(x.t)}</small></button>`).join('')
+    +(all.length>list.length?`<a class="vd3-more" href="#/vinh-danh">Xem tất cả ${all.length} video →</a>`:`<a class="vd3-more" href="#/vinh-danh">Mở Góc vinh danh →</a>`);
+  box.querySelectorAll('.vd3-si').forEach(b=>b.onclick=()=>{ try{ sfx.pop(); }catch(e){} vd3Play(list, +b.dataset.i); });
+}
+
 /* chấm đỏ trên nút Vinh danh */
 function vd3Dot(){
+  vd3SideFill();
+  const o=document.getElementById('vd3Open');
+  if(o){ let m=0; if(VD3.data) Object.values(VD3.data).forEach(l=>l.forEach(x=>{ if(vd3IsNew(x)) m++; }));
+    let dd=o.querySelector('.vd3-dot'); if(!m){ if(dd) dd.remove(); } else { if(!dd){ dd=document.createElement('span'); dd.className='vd3-dot'; o.appendChild(dd); } dd.textContent=m>9?'9+':m; } }
   const b=document.getElementById('sdVinh'); if(!b) return;
   let n=0; if(VD3.data) Object.values(VD3.data).forEach(l=>l.forEach(x=>{ if(vd3IsNew(x)) n++; }));
   let dot=b.querySelector('.vd3-dot');
