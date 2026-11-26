@@ -104,7 +104,7 @@ function doGet(e) {
   const p = e.parameter || {};
   if (p.action === 'zoomsao') return json_(zoomSao_(p));        // web học hỏi số sao Zoom đã cộng cho một bé
   if (p.action === 'vinhdanh') return json_(vinhDanh_(p));      // Góc vinh danh: video trong thư mục Drive, chia theo chặng
-  if (p.action === 'ping') return json_({ ok: true, v: 18, mua3: '99 ngày · 7 chặng' });          // v18: Góc vinh danh (?action=vinhdanh, thư mục Drive theo chặng) · v17: mở khóa theo từng chặng (cột Z "Mở chặng") · v16: Lớp Zoom một màn (tab Lớp Zoom 1 màn, Sao Zoom, ?action=zoomsao) · v15: Lớp Zoom (tab Lớp Zoom, Chuẩn bị Zoom, ảnh con vào Drive) · v14: bỏ tích nhiệm vụ · v13: Gọi tuần 1 gộp (4H + thẻ), CTV ghi đủ 6 ô · v12: Gọi sau 3 buổi (báo cáo + ô tích Đã gọi / Đồng ý Zoom) · v11: phân luồng CTV (chưa kích hoạt) / Sale (đã kích hoạt) / Cố vấn (chỉ định) · v3: Bảng Gia đình · v4: mở khóa 99 ngày · v5: trang quản trị có tài khoản · v7: Xếp hạng · v8: việc theo vai trò CTV/Sale/Cố vấn · v9: offer trong Thẻ gia đình · v10: nhiệm vụ theo bản đồ
+  if (p.action === 'ping') return json_({ ok: true, v: 19, mua3: '99 ngày · 7 chặng' });          // v19: đóng phí/đang học chỉ mở chặng đang diễn ra · v18: Góc vinh danh (?action=vinhdanh, thư mục Drive theo chặng) · v17: mở khóa theo từng chặng (cột Z "Mở chặng") · v16: Lớp Zoom một màn (tab Lớp Zoom 1 màn, Sao Zoom, ?action=zoomsao) · v15: Lớp Zoom (tab Lớp Zoom, Chuẩn bị Zoom, ảnh con vào Drive) · v14: bỏ tích nhiệm vụ · v13: Gọi tuần 1 gộp (4H + thẻ), CTV ghi đủ 6 ô · v12: Gọi sau 3 buổi (báo cáo + ô tích Đã gọi / Đồng ý Zoom) · v11: phân luồng CTV (chưa kích hoạt) / Sale (đã kích hoạt) / Cố vấn (chỉ định) · v3: Bảng Gia đình · v4: mở khóa 99 ngày · v5: trang quản trị có tài khoản · v7: Xếp hạng · v8: việc theo vai trò CTV/Sale/Cố vấn · v9: offer trong Thẻ gia đình · v10: nhiệm vụ theo bản đồ
   if (p.action === 'xephang') return json_(xepHang_(p));
   if (p.action === 'access') return json_(access_(p));
   if (p.action === 'visit') return visit_(p);
@@ -401,8 +401,13 @@ function access_(p) {
     return { ok: false, via: 'chua-mo-chang', ch: g.ch };
   }
   if (g && g.khoa) return { ok: false, via: 'da-khoa' };
-  if (h && b.paid[h]) return { ok: true, via: 'da-dong-phi' };
-  if (id && b.cu[id]) return { ok: true, via: 'dang-hoc' };
+  // 26/11/2026: tick đóng phí ở "Đăng ký Web" (hoặc dữ liệu mùa trước) / đã có tiến độ mà chưa có dòng ở tab "Gia đình"
+  // → chỉ mở CHẶNG ĐANG DIỄN RA, không mở cả 7 chặng. Muốn mở thêm chặng: đội tick trên trang quản trị.
+  const nay = changNay_();
+  if ((h && b.paid[h]) || (id && b.cu[id])) {
+    const via = h && b.paid[h] ? 'da-dong-phi' : 'dang-hoc';
+    return (!chang || chang === nay) ? { ok: true, via: via, ch: [nay] } : { ok: false, via: 'chua-mo-chang', ch: [nay] };
+  }
   return { ok: false, known: false };
 }
 

@@ -907,7 +907,10 @@ function lsSet(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){
    đội tick "Mở khóa 21 ngày" trên trang quản trị thì chính link đó mở đủ 21 ngày, giữ nguyên tiến độ.
    lle-mo-khoa = {ok, p: mã băm SĐT/Gmail, id: mã bé, t} — web hỏi lại máy chủ mỗi lần mở để đội khóa/mở được.
    Máy đã đăng nhập bản đầy đủ trước khi có một link (có lle-kid) được xét lại bằng mã bé. */
-const GV_LINK = /[?&]gv=1/.test(location.search) || lsGet('lle3-teacher',false)===true;
+/* Chế độ giáo viên CHỈ bật bằng link có ?gv=1 (26/11/2026): trước đây nút 🔑 hiện cho mọi gia đình và máy nhớ 'lle3-teacher',
+   nên gia đình bấm vào là mở hết 99 ngày. Nay bỏ hẳn 'lle3-teacher' và xoá khỏi máy đã lỡ bật. */
+const GV_LINK = /[?&]gv=1/.test(location.search);
+try{ localStorage.removeItem('lle3-teacher'); }catch(e){}
 const MO_KHOA = lsGet('lle3-mo-khoa', null);
 const MAY_CU_DAY_DU = !MO_KHOA && !!(lsGet('lle3-kid',null)||{}).id;
 /* Mở khóa theo từng chặng (25/11/2026): lle3-mo-khoa.ch = {số chặng: true/false}. Tài khoản đã đăng nhập nhưng chặng này chưa được đội mở → CHANG_CHUA_MO: vào web bình thường, mọi buổi của chặng khóa. */
@@ -948,7 +951,7 @@ const KH_TEN = `chặng ${CHANG} (${CHANG_LEARN} ngày)`;
 const KH_SAU_BUOI = 2, KH_ZALO = "https://zalo.me/0974840845", KH_QR = "../xem-truoc/tai-nguyen/trang/qr-chuyen-khoan.webp";
 const KID_KEY = DEMO ? 'lle3-kid-demo' : 'lle3-kid';
 let TEACHER = !DEMO && GV_LINK;
-function toggleTeacher(){ TEACHER=!TEACHER; lsSet('lle3-teacher',TEACHER); P=lsGet(progKey(),{})||{}; updateStars(); toast(TEACHER?'Đã bật chế độ giáo viên: mở tất cả các ngày':'Đã tắt chế độ giáo viên'); route(); }
+function toggleTeacher(){ if(!GV_LINK) return; TEACHER=!TEACHER; P=lsGet(progKey(),{})||{}; updateStars(); toast(TEACHER?'Đã bật chế độ giáo viên: mở tất cả các ngày':'Đã tắt chế độ giáo viên'); route(); }
 
 /* ---------- hồ sơ bé ---------- */
 let KID = lsGet(KID_KEY, null);   // {name, acct (SĐT/Gmail đã che), id, group}
@@ -1381,7 +1384,7 @@ function viewHome(){
       ${hubTile({href:`#/g/${g}/them/${Math.min(3,Math.max(1,Math.ceil((doneCount(g)+1)/6)))}`, img:'../xem-truoc/tai-nguyen/trang/ls_o_xem.webp', c:'#7B5CD6', t:'Góc khám phá', sub:'Video, trò chơi thêm'})}
     </div>
     ${changDai()}
-    ${DEMO?'':`<button class="tbtn h2-gv" id="tbtn">${TEACHER?'🔓 Tắt chế độ giáo viên':'🔑 Chế độ giáo viên'}</button>`}
+    ${!GV_LINK?'':`<button class="tbtn h2-gv" id="tbtn">${TEACHER?'🔓 Tắt chế độ giáo viên':'🔑 Chế độ giáo viên'}</button>`}
   </div>`;
   const tb=document.getElementById('tbtn'); if(tb) tb.onclick=toggleTeacher;
   document.getElementById('tParent').onclick=()=>{ sfx.pop(); parentPanel(); };
