@@ -52,7 +52,7 @@ async function qZoomPull(){
   try{ const r=await fetch(SCORE_API+'?action=zoomsao&id='+encodeURIComponent(KID.id)); const j=await r.json();
     if(!j || typeof j.sao!=='number') return;
     const old=qZoomSao(); lsSet('lle3-zoomsao',{id:KID.id, n:j.sao, t:Date.now()});
-    if(j.sao>old){ updateStars(); bumpStars(); toast('🎉 Con được cộng '+(j.sao-old)+' ⭐ từ buổi Zoom cùng cô!'); }
+    if(j.sao>old){ updateStars(); bumpStars(); toast('🎉 Cô vừa cộng '+(j.sao-old)+' ⭐ cho con!'); }
     else if(j.sao!==old) updateStars();
   }catch(e){}
 }
@@ -386,7 +386,7 @@ function viewOrders(){
   qFrame('🧾 Phiếu & quy chế', `<div class="q-ords"><h4>Phiếu của con</h4><ul>${rows}</ul>
       ${s.orders.length?'<button class="btn y sm" id="qRefresh" type="button">🔄 Xem trạng thái mới</button>':''}</div>
     <div class="q-rules"><h4>Quy chế đổi sao (tóm tắt)</h4><ol>
-      <li><b>Sao chỉ đến từ việc học.</b> Mỗi buổi làm đủ khoảng 30 ⭐; gửi clip +10, buổi Zoom +20.</li>
+      <li><b>Sao chỉ đến từ việc học.</b> Mỗi buổi làm đủ khoảng 30 ⭐; sao buổi Zoom, buổi Tổng kết và clip do cô cộng sau khi cô xem.</li>
       <li><b>Đổi quà không làm tụt hạng.</b> Bảng vàng tính tổng sao đã kiếm; chỉ sao trong ví bị trừ.</li>
       <li><b>Quà ảo</b> (thú cưng, quái vật, avatar) đổi ngay, không hoàn lại thành sao. Thú cưng không bao giờ ốm hay mất.</li>
       <li><b>Quà thật</b> 120–350 ⭐: mở khi con học xong 6 buổi, tối đa 2 món. <b>Học bổng</b> 350–650 ⭐: theo số buổi đã học, tối đa 1 phiếu.</li>

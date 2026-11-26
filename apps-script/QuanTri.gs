@@ -62,25 +62,25 @@ const QT_TIN_MAU_MAC_DINH = [
   ['chao', 'Gọi chào (vừa để lại Zalo)',
     'Dạ em chào {phu_huynh}, em là {nguoi_ho_tro} ở Anh-Trung-Kids (CES) ạ. Bé {ten_con} vừa học xong buổi đầu khoá {khoa}{hoc_them}. Em gửi ba mẹ một trò ôn 5 phút tối nay: ba mẹ hỏi con một từ con vừa học, con trả lời bằng tiếng nào cũng được, rồi ba mẹ nhắc lại bằng tiếng còn lại. Nếu ba mẹ muốn cô nghe con nói, ba mẹ gửi em một clip ngắn ở đây nhé ạ. Con thích phần nào nhất ạ?'],
   ['moi_nong', 'Mời đăng ký (gia đình nóng – gọi)',
-    'Dạ em chào {phu_huynh} ạ. Bé {ten_con} đã học {so_buoi}/3 buổi đầu và nói thành tiếng {so_lan_noi} lần rồi ạ. Đợt 99 ngày bắt đầu {khai_mac}; con vào kịp sẽ học cùng nhóm cùng trình độ suốt 99 ngày, 7 chặng, mỗi chặng có buổi Zoom và buổi Tổng kết với cô. Ba mẹ xem chi tiết và đăng ký ở đây: {link_dang_ky}. Ba mẹ tiện giờ nào để em gọi trao đổi thêm ạ?'],
+    'Dạ em chào {phu_huynh} ạ. Bé {ten_con} đã học {so_buoi}/2 buổi học thử và nói thành tiếng {so_lan_noi} lần rồi ạ. Cuộc thi 99 ngày bắt đầu {khai_mac}, chia 7 chặng; ba mẹ đăng ký theo từng chặng, phí {phi} mỗi chặng (14 buổi, có buổi Zoom và buổi Tổng kết với cô). Con vào kịp sẽ học cùng nhóm cùng trình độ. Ba mẹ xem chi tiết và đăng ký ở đây: {link_dang_ky}. Ba mẹ tiện giờ nào để em gọi trao đổi thêm ạ?'],
   ['moi_am', 'Mời đăng ký (gia đình ấm – nhắn Zalo)',
-    'Dạ em chào {phu_huynh} ạ. Em thấy bé {ten_con} đã bắt đầu làm quen cả tiếng Anh và tiếng Trung trên web rồi. Đợt 99 ngày bắt đầu {khai_mac}, mỗi ngày chỉ khoảng 15 phút, mỗi chặng có buổi Zoom và buổi Tổng kết cùng cô. Nếu ba mẹ muốn con đi tiếp cả hành trình, ba mẹ đăng ký ở đây trước {han}: {link_dang_ky}. Ba mẹ cần em hỗ trợ gì cứ nhắn em nhé ạ.'],
+    'Dạ em chào {phu_huynh} ạ. Em thấy bé {ten_con} đã bắt đầu làm quen cả tiếng Anh và tiếng Trung trên web rồi. Cuộc thi 99 ngày bắt đầu {khai_mac}, chia 7 chặng, mỗi ngày chỉ khoảng 15 phút, mỗi chặng có buổi Zoom và buổi Tổng kết cùng cô. Ba mẹ đăng ký theo từng chặng, phí {phi} mỗi chặng. Nếu ba mẹ muốn con đi tiếp, ba mẹ đăng ký ở đây trước {han}: {link_dang_ky}. Ba mẹ cần em hỗ trợ gì cứ nhắn em nhé ạ.'],
   ['nhac_phi', 'Nhắc đóng phí',
     'Dạ em chào {phu_huynh} ạ. Em đang giữ chỗ cho bé {ten_con} trong nhóm {khoa}. Ba mẹ chuyển khoản {phi} (nội dung: LLE – {ten_con} – {khoa} – {so_zalo}) giúp em để con kịp vào nhóm trước khai mạc {khai_mac} nhé ạ. Ba mẹ còn băn khoăn gì em hỗ trợ ngay ạ.'],
   ['link_hoc', 'Đã đóng phí: gửi link học chính',
-    'Dạ em đã nhận được phí và mở hành trình 99 ngày cho bé {ten_con} rồi ạ, em cảm ơn {phu_huynh}! Con học tiếp ngay trên link cũ: {link_hoc} . Nếu web chưa tự mở đủ 99 ngày, ba mẹ bấm "Ba mẹ đã đóng phí? Đăng nhập", nhập tên con và số {so_zalo}. Mỗi ngày con học một buổi khoảng 15 phút; lịch Zoom và nhóm Zalo của khoá {khoa} em gửi ngay sau đây ạ.'],
+    'Dạ em đã nhận được phí và mở chặng ba mẹ vừa đăng ký cho bé {ten_con} rồi ạ, em cảm ơn {phu_huynh}! Con học tiếp ngay trên link cũ: {link_hoc} . Nếu web chưa tự mở chặng này, ba mẹ bấm "Ba mẹ đã đóng phí? Đăng nhập", nhập tên con và số {so_zalo}. Mỗi ngày con học một buổi khoảng 15 phút; lịch Zoom và nhóm Zalo của khoá {khoa} em gửi ngay sau đây ạ. Hết chặng này, ba mẹ đóng phí chặng sau là con học tiếp ạ.'],
   ['goi_lai', 'Gọi lại theo hẹn',
     'Dạ em chào {phu_huynh}, em là {nguoi_ho_tro} ở Anh-Trung-Kids (CES) ạ. Em gọi lại như đã hẹn về hành trình 99 ngày của bé {ten_con} ạ.'],
   ['nuoi_duong', 'Chưa đăng ký: mời vào nhóm học liệu',
     'Dạ em cảm ơn {phu_huynh} đã cho bé {ten_con} học thử ạ. Em gửi ba mẹ nhóm chia sẻ học liệu miễn phí theo tuổi của con; khi mở đợt mới em sẽ báo ba mẹ đầu tiên nhé ạ. Nhóm Facebook: https://www.facebook.com/groups/1057551126772261'],
   ['chao_thu', 'Học thử: gọi chào (vừa đăng ký học thử)',
-    'Dạ em chào {phu_huynh}, em là {nguoi_ho_tro} ở Anh-Trung-Kids (CES) ạ. Em cảm ơn ba mẹ đã đăng ký cho bé {ten_con} học thử miễn phí. Con học ngay tại link này: {link_hoc} . Mỗi buổi khoảng 15 phút, ba mẹ chỉ cần mở bài đúng giờ và khen con khi con nói thành tiếng. Con học xong buổi 2 sẽ thấy nút Kích hoạt cuộc thi 99 ngày. Con vướng chỗ nào ba mẹ nhắn em nhé ạ.'],
+    'Dạ em chào {phu_huynh}, em là {nguoi_ho_tro} ở Anh-Trung-Kids (CES) ạ. Em cảm ơn ba mẹ đã đăng ký cho bé {ten_con} học thử miễn phí. Con học ngay tại link này: {link_hoc} . Mỗi chặng con được học thử 2 buổi đầu, mỗi buổi khoảng 15 phút; ba mẹ chỉ cần mở bài đúng giờ và khen con khi con nói thành tiếng. Con học xong buổi 2 sẽ thấy nút Kích hoạt chặng. Con vướng chỗ nào ba mẹ nhắn em nhé ạ.'],
   ['nhac_thu', 'Học thử: đăng ký 1 ngày mà bé chưa vào học',
     'Dạ em chào {phu_huynh} ạ. Hôm qua ba mẹ đã đăng ký cho bé {ten_con} học thử, em chưa thấy con vào buổi đầu ạ. Tối nay ba mẹ mở cho con khoảng 15 phút nhé: {link_hoc} . Ba mẹ nhập đúng tên con đã đăng ký là con học tiếp được ạ.'],
-  ['moi_kich_hoat', 'Học thử: bé xong buổi 2, mời kích hoạt 99 ngày',
-    'Dạ em chào {phu_huynh} ạ. Bé {ten_con} đã học xong 2 buổi học thử{hoc_them} rồi ạ. Để con đi tiếp cả hành trình, ba mẹ đóng giúp em {phi} phí học liệu nhé ạ: con sẽ tham gia 99 ngày, 7 chặng, mỗi chặng có buổi Zoom và buổi Tổng kết với giáo viên cùng các buổi làm bài tập trên web. Ba mẹ bấm nút "Kích hoạt cuộc thi 99 ngày" trên web để quét mã chuyển khoản, rồi gửi em ảnh chuyển khoản là em mở cho con ngay ạ.'],
+  ['moi_kich_hoat', 'Học thử: bé xong buổi 2, mời kích hoạt chặng',
+    'Dạ em chào {phu_huynh} ạ. Bé {ten_con} đã học xong 2 buổi học thử{hoc_them} rồi ạ. Để con học tiếp chặng này, ba mẹ đóng giúp em {phi} phí học liệu của chặng nhé ạ: con học đủ 14 buổi của chặng (chặng 7 có 15 buổi), có buổi Zoom và buổi Tổng kết với giáo viên cùng các buổi làm bài tập trên web. Ba mẹ bấm nút "Kích hoạt chặng" trên web để quét mã chuyển khoản, rồi gửi em ảnh chuyển khoản là em mở cho con ngay ạ.'],
   ['goi_3b', '99 ngày · Sale: gọi sau 3 buổi không gặp, nhắn Zalo',
-    'Dạ em chào {phu_huynh}, em là {nguoi_ho_tro} ở Anh-Trung-Kids (CES) ạ. Em gọi hỏi thăm bé {ten_con} sau 3 buổi đầu mà chưa gặp được ba mẹ. Mấy hôm nay con học thấy thế nào ạ, con thích phần nào nhất? Tối Chủ nhật này có buổi Zoom cuối vòng: phần 1 các con học theo nhóm 6 bạn với cô, phần 2 cô chia sẻ cách đồng hành cùng con ở nhà. Ba mẹ xác nhận giúp em cho con tham gia để cô xếp nhóm nhé ạ. Ba mẹ tiện nghe máy lúc nào để em gọi lại ạ?'],
+    'Dạ em chào {phu_huynh}, em là {nguoi_ho_tro} ở Anh-Trung-Kids (CES) ạ. Em gọi hỏi thăm bé {ten_con} sau 3 buổi đầu mà chưa gặp được ba mẹ. Mấy hôm nay con học thấy thế nào ạ, con thích phần nào nhất? Học xong buổi 6 của chặng, con có buổi Zoom với cô: phần 1 các con học theo nhóm 6 bạn với cô, phần 2 cô chia sẻ cách đồng hành cùng con ở nhà. Ba mẹ xác nhận giúp em cho con tham gia để cô xếp nhóm nhé ạ. Ba mẹ tiện nghe máy lúc nào để em gọi lại ạ?'],
   ['nhac_hoc', 'Bé nghỉ học vài ngày: nhắc nhẹ',
     'Dạ em chào {phu_huynh} ạ. Mấy hôm nay em chưa thấy bé {ten_con} vào bài mới. Hôm nay ba mẹ mở cho con học lại một buổi ngắn khoảng 15 phút nhé ạ, con học tiếp đúng chỗ đang dừng: {link_hoc} . Ba mẹ nhớ khen con khi con nói thành tiếng ạ. Con vướng chỗ nào ba mẹ nhắn em hỗ trợ nhé.'],
   /* ----- các điểm chạm 99 ngày (bản đồ điểm chạm 27/10/2026) ----- */
@@ -97,7 +97,7 @@ const QT_TIN_MAU_MAC_DINH = [
   ['thu_giua', '99 ngày · CTV: thư giữa chặng',
     'Dạ em chào {phu_huynh} ạ. Bé {ten_con} đã đi được nửa hành trình 99 ngày rồi ạ. Cô gửi ba mẹ nhận xét giữa chặng: [dán nhận xét của giáo viên: 2 điểm mạnh của con + 1 gợi ý]. Em hỏi thêm ba mẹ một câu: trước đây ba mẹ đã cho con học ngoại ngữ theo cách nào, chỗ nào ba mẹ thấy chưa ổn ạ?'],
   ['phieu_nhu_cau', '99 ngày · phiếu nhu cầu học tập (tuần 3)',
-    'Dạ em chào {phu_huynh} ạ. Để chuẩn bị cho bé {ten_con} sau thử thách, ba mẹ trả lời giúp em 4 câu ngắn nhé: 1) Ba mẹ muốn con học tiếp theo cách nào: tự học trên web / lớp online / lớp tại trung tâm? 2) Khung giờ nào tiện cho con? 3) Mỗi tuần 2 hay 3 buổi? 4) Ba mẹ có muốn con học cùng các bạn trong thử thách không ạ? Em cảm ơn ba mẹ!'],
+    'Dạ em chào {phu_huynh} ạ. Để chuẩn bị cho bé {ten_con} sau cuộc thi, ba mẹ trả lời giúp em 4 câu ngắn nhé: 1) Ba mẹ muốn con học tiếp theo cách nào: tự học trên web / lớp online / lớp tại trung tâm? 2) Khung giờ nào tiện cho con? 3) Mỗi tuần 2 hay 3 buổi? 4) Ba mẹ có muốn con học cùng các bạn trong cuộc thi không ạ? Em cảm ơn ba mẹ!'],
   ['bao_cao', 'Sau chung kết · CTV: gửi Báo cáo năng lực',
     'Dạ em chào {phu_huynh} ạ. Chúc mừng bé {ten_con} đã hoàn thành hành trình 99 ngày! Em gửi ba mẹ Báo cáo năng lực của con: [dán link hoặc ảnh báo cáo]. Trong báo cáo có phần so sánh ngày đầu và ngày cuối của con. Nếu ba mẹ muốn cô tư vấn lộ trình tiếp theo, ba mẹ trả lời "1" giúp em nhé ạ.'],
   ['vet', 'Sau chung kết · Sale: mời tư vấn lộ trình',
@@ -490,8 +490,9 @@ function qtHoc21Gd_(f, h21) {
   String(f.tenCon || '').split(',').map(x => x.trim()).filter(Boolean).forEach(ten => {
     const sl = qtSlug_(ten), id = hashAcct_(so + '|' + sl), b = h21.be[id] || h21.be[h21.td[qtChe_(so) + '|' + sl]];
     if (!b) return;
-    const buoi = Object.keys(b.ngay).length;
-    if (!out || b.cuoi > out.cuoi) out = { buoi: buoi, cuoi: b.cuoi, diem: b.diem };
+    const ds = Object.keys(b.ngay).map(d => qtNgay99_(+d - 1)).filter(n => n > 0), buoi = ds.length;   // buổi học (không đếm Zoom)
+    const c7 = ds.indexOf(99) >= 0;   // đã học buổi cuối chặng 7 (ngày 99): mới gợi ý lộ trình cao hơn (chị chốt 26/11/2026)
+    if (!out || b.cuoi > out.cuoi) out = { buoi: buoi, cuoi: b.cuoi, diem: b.diem, c7: c7 };
   });
   return out;
 }
