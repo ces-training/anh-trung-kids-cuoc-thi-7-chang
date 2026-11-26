@@ -44,7 +44,7 @@
 .pc-food{width:clamp(56px,9vh,72px);height:clamp(56px,9vh,72px);border:3px solid #F3EAD0;border-radius:18px;background:#FFF8E6;font-size:clamp(30px,5vh,42px);cursor:grab;touch-action:none;transition:transform .12s}
 .pc-food:hover{transform:scale(1.08)}
 .pc-x{border:0;background:none;font-size:18px;font-weight:800;cursor:pointer;color:var(--muted)}
-.pc-ghost{position:fixed;z-index:9999;font-size:52px;transform:translate(-50%,-50%);pointer-events:none;filter:drop-shadow(0 6px 4px rgba(0,0,0,.25))}
+.pc-ghost{position:fixed;z-index:9999;font-size:52px;width:72px;height:72px;transform:translate(-50%,-50%);pointer-events:none;filter:drop-shadow(0 6px 4px rgba(0,0,0,.25))}
 
 /* lớp trò chơi trên sân khấu */
 .pc-game{position:absolute;inset:0;z-index:7;background:rgba(255,255,255,.12);cursor:pointer;overflow:hidden}
@@ -60,9 +60,7 @@
 .pc-bush{position:absolute;bottom:6%;width:28%;height:44%;transform:translateX(-50%);border:0;background:none;cursor:pointer;padding:0}
 .pc-hid{position:absolute;left:50%;bottom:20%;height:70%;transform:translate(-50%,40%);opacity:0;transition:.35s cubic-bezier(.3,1.6,.6,1);filter:drop-shadow(0 4px 3px rgba(0,0,0,.2))}
 .pc-bush.found .pc-hid{opacity:1;transform:translate(-50%,-30%)}
-.pc-leaf{position:absolute;inset:30% 0 0 0;border-radius:50% 50% 18px 18px;
-  background:radial-gradient(circle at 25% 45%,#5DBE4E 0 22%,transparent 23%),radial-gradient(circle at 75% 45%,#5DBE4E 0 22%,transparent 23%),radial-gradient(circle at 50% 25%,#6FD05C 0 26%,transparent 27%),
-    radial-gradient(ellipse at 50% 80%,#3E9E3A 0 55%,transparent 56%);filter:drop-shadow(0 5px 0 rgba(0,0,0,.15));transform-origin:50% 100%}
+.pc-leaf{position:absolute;left:0;bottom:0;width:100%;height:66%;object-fit:contain;object-position:50% 100%;pointer-events:none;filter:drop-shadow(0 5px 0 rgba(0,0,0,.12));transform-origin:50% 100%}
 .pc-leaf.rustle{animation:pcRustle .7s ease}
 @keyframes pcRustle{0%,100%{transform:rotate(0)}20%{transform:rotate(-5deg) scale(1.03)}40%{transform:rotate(5deg)}60%{transform:rotate(-4deg) scale(1.02)}80%{transform:rotate(3deg)}}
 .pc-bush.no{animation:pcNo .5s}
@@ -210,4 +208,28 @@ body .toast{z-index:9500}
 }
 @media (prefers-reduced-motion:reduce){
   .pc-pet img,.pc-pet img.egg,.pc-want,.q-act.pc-boss{animation:none!important}
+}
+
+/* tranh món ăn */
+.pc-food img,.pc-want img,.pc-ghost img{width:80%;height:80%;object-fit:contain;pointer-events:none;display:block;margin:auto}
+.pc-food{display:grid;place-items:center;padding:4px}
+.pc-ghost img{width:100%;height:100%}
+/* huy hiệu rồng vẽ tay */
+.pc-badge.won{background:none;box-shadow:none}
+.pc-badge{min-width:0;overflow:hidden}
+.pc-badge img{height:72%;width:auto;max-width:90%;object-fit:contain;filter:drop-shadow(0 2px 1px rgba(0,0,0,.15))}
+.pc-badge.big{overflow:visible}.pc-badge.big img{height:110px;max-width:none}
+/* đồ trang trí vườn */
+.pc-deco{position:absolute;transform:translateX(-50%);max-width:34%;object-fit:contain;object-position:50% 100%;pointer-events:none;filter:drop-shadow(0 4px 2px rgba(0,0,0,.12))}
+.q-side h4 small{display:block;font-size:11px;font-weight:700;color:var(--muted)}
+.pc-decos{flex:0 0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:2px}
+.pc-dcard{display:flex;flex-direction:column;align-items:center;gap:1px;border:3px solid #F0E2C0;border-radius:14px;background:#FFFBF0;padding:4px 2px;font-family:inherit;color:var(--ink);cursor:pointer;min-width:0;min-height:48px}
+.pc-dcard img{width:100%;height:clamp(34px,6vh,56px);object-fit:contain}
+.pc-dcard b{font-size:11px;line-height:1.1;text-align:center}
+.pc-dcard span{font-size:11px;font-weight:800;color:#F28C00}
+.pc-dcard.on{border-color:#3BB273;background:#E6F7EE}.pc-dcard.on span{color:#3BB273}
+@media (max-height:640px) and (orientation:landscape){
+  .qpet .q-side{overflow-y:auto}
+  .qpet .q-cards{flex:0 0 auto;min-height:min(220px,70vh)}
+  .pc-dcard b{font-size:10px}.pc-dcard span{font-size:10px}
 }

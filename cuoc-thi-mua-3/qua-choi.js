@@ -11,7 +11,21 @@
      không thêm chữ Trung mới.
    ===================================================================== */
 const QC = { hatch: 3, chieu: 3, bossQ: 5, bossHp: 3, bossE: 5, bossDay: 3, album: 30, tkNgay: 12 };
-const QC_FOOD = [['🍎', 'apple'], ['🍌', 'banana'], ['🥕', 'carrot'], ['🍪', 'cookie'], ['🍉', 'watermelon'], ['🥛', 'milk'], ['🧀', 'cheese'], ['🍓', 'strawberry']];
+const QC_FOOD = [['🍎', 'apple', 'an_tao'], ['🍌', 'banana', 'an_chuoi'], ['🥕', 'carrot', 'an_ca_rot'], ['🍪', 'cookie', 'an_banh_quy'], ['🍉', 'watermelon', 'an_dua_hau'], ['🥛', 'milk', 'an_sua'], ['🧀', 'cheese', 'an_pho_mai'], ['🍓', 'strawberry', 'an_dau_tay']];
+/* đồ trang trí vườn: mua bằng sao, bày cố định trên vườn (x: giữa, b: đáy, h: cao, theo % khung vườn) */
+const QC_DECO = [
+  { id: 'hoa_huong_duong', n: 'Chậu hướng dương', p: 10, x: 64, b: 18, h: 17 },
+  { id: 'nha_chim', n: 'Nhà chim', p: 15, x: 29, b: 47, h: 18 },
+  { id: 'ho_nuoc', n: 'Hồ nước', p: 15, x: 17, b: 13, h: 9 },
+  { id: 'cay_tao', n: 'Cây táo', p: 20, x: 10, b: 44, h: 32 },
+  { id: 'den', n: 'Đèn vườn', p: 20, x: 90, b: 42, h: 30 },
+  { id: 'be_cat', n: 'Hố cát', p: 25, x: 84, b: 13, h: 11 },
+  { id: 'xich_du', n: 'Xích đu', p: 25, x: 21, b: 27, h: 24 },
+  { id: 'cau_truot', n: 'Cầu trượt', p: 30, x: 80, b: 25, h: 23 }];
+function qcDecoImg(d) { return `${Q_IMG}vuon_${d.id}.webp`; }
+function qcDecoHTML() { const o = shop().deco || {};
+  return QC_DECO.filter(d => o[d.id] === 1).map(d => `<img class="pc-deco" src="${qcDecoImg(d)}" alt="" draggable="false" style="left:${d.x}%;bottom:${d.b}%;height:${d.h}%">`).join(''); }
+function qcFoodImg(i) { return `<img src="${Q_IMG}${QC_FOOD[i][2]}.webp" alt="${QC_FOOD[i][1]}" draggable="false">`; }
 const QC_STICK = ['⭐', '🌈', '🎈', '🍭', '🌸', '🦋', '🎀', '🍀', '🌟', '🎉', '🧸', '🍦'];
 const QC_SHOT = { lua: '🔥', nuoc: '💧', la: '🍃' };
 const QC_TEN = { lua: ['Lửa Nhỏ', 'Bé Lửa', 'Đốm Đỏ'], nuoc: ['Giọt Nước', 'Bé Mây', 'Tí Xanh'], la: ['Mầm Lá', 'Bé Mầm', 'Lá Non'] };
@@ -84,6 +98,12 @@ function qcMood(p) {
   if (p.fd !== qToday()) return '🤤 Bạn ấy đói bụng';
   return '😊 Bạn ấy đang vui';
 }
+function qcMoodK(p) { if (qDaysSince(p.last) >= 2) return 'nho'; const h = new Date().getHours(); if (h >= 21 || h < 6) return 'ngu'; return p.fd !== qToday() ? 'doi' : 'vui'; }
+function qcPose(p) {   // bạn ấy trưởng thành thì đổi dáng theo tâm trạng
+  if (petStage(p) !== 3) return petImg(p);
+  const k = qcMoodK(p); return k === 'vui' ? petImg(p) : `${Q_IMG}pet_${p.sp}_${k === 'ngu' ? 'ngu' : 'doi'}.webp`;
+}
+function qcJoy(p, img, ms) { if (!img || petStage(p) !== 3) return; img.src = `${Q_IMG}pet_${p.sp}_vui.webp`; if (ms) setTimeout(() => { if (document.body.contains(img)) img.src = qcPose(p); }, ms); }
 function qcCrave(p) { if (!p.th || p.th.d !== qToday()) p.th = { d: qToday(), f: Math.floor(Math.random() * QC_FOOD.length) }; return p.th.f; }
 function qcCareLeft(p) { return Q_RULE.careDay - (p.d === qToday() ? p.n : 0); }
 function qcCanCare(p, cost) {
@@ -109,19 +129,22 @@ function viewPets() {
   let stage;
   if (p) {
     const st = petStage(p), nxt = Q_RULE.petG[st - 1], prev = st === 1 ? 0 : Q_RULE.petG[st - 2], left = qcCareLeft(p);
-    stage = `<div class="q-stage pc-stage" id="pcStage" style="background-image:url('${Q_IMG}bg_vuon.webp')">
+    stage = `<div class="q-stage pc-stage" id="pcStage" style="background-image:url('${Q_IMG}bg_vuon.webp')">${qcDecoHTML()}
       <div class="q-plate"><b>${PET_SP[p.sp].n}</b><span>${petStageName(p)}</span></div>
       <div class="q-meters"><div class="q-meter"><small>Lớn lên</small><i><u style="width:${st === 3 ? 100 : Math.round((p.g - prev) / (nxt - prev) * 100)}%"></u></i></div>
         <div class="q-mood">${qcMood(p)}</div></div>
-      <div class="pc-pet s${st}" id="pcPet"><img src="${petImg(p)}" alt="${PET_SP[p.sp].n}" draggable="false"></div>
+      <div class="pc-pet s${st} m-${qcMoodK(p)}" id="pcPet"><img src="${qcPose(p)}" alt="${PET_SP[p.sp].n}" draggable="false"></div>
       <div class="q-acts"><button class="q-act" id="qFeed" type="button">🍖<b>Cho ăn</b><span>${Q_RULE.feed} ⭐</span></button>
         <button class="q-act" id="qPlay" type="button">🎾<b>Chơi cùng</b><span>${Q_RULE.play} ⭐</span></button></div>
       <button class="pc-album" id="pcAlbum" type="button">📷 Album <b>${s.album.length}</b></button>
       <div class="q-care">Hôm nay còn ${Math.max(0, left)}/${Q_RULE.careDay} lượt chăm</div></div>`;
   } else {
-    stage = `<div class="q-stage empty" style="background-image:url('${Q_IMG}bg_vuon.webp')"><div class="q-empty">🐾 Con chọn một bạn bên phải để nhận nuôi nhé!<br><small>Bạn đầu tiên được tặng miễn phí.</small></div></div>`;
+    stage = `<div class="q-stage empty" style="background-image:url('${Q_IMG}bg_vuon.webp')">${qcDecoHTML()}<div class="q-empty">🐾 Con chọn một bạn bên phải để nhận nuôi nhé!<br><small>Bạn đầu tiên được tặng miễn phí.</small></div></div>`;
   }
+  const dO = s.deco || {}, decos = QC_DECO.map(d => { const own = d.id in dO;
+    return `<button class="pc-dcard ${dO[d.id] === 1 ? 'on' : ''}" data-d="${d.id}" type="button"><img src="${qcDecoImg(d)}" alt=""><b>${d.n}</b><span>${own ? (dO[d.id] === 1 ? '✓ Đang bày' : 'Đã cất') : d.p + ' ⭐'}</span></button>`; }).join('');
   qFrame('🐶 Nuôi thú cưng', `${stage}<div class="q-side"><h4>Các bạn thú cưng</h4><div class="q-cards">${list}</div>
+    <h4>🌻 Trang trí vườn <small>Chạm để mua, chạm lần nữa để cất hoặc bày lại</small></h4><div class="pc-decos">${decos}</div>
     <p class="q-hint">Chạm, vuốt bạn ấy: miễn phí. Cho ăn ${Q_RULE.feed} ⭐ (+1, đúng món bạn ấy thèm +2). Chơi cùng ${Q_RULE.play} ⭐ (+2, mỗi lần một trò, có ảnh vào Album). Đủ ${Q_RULE.petG[0]} điểm bạn ấy lớn, đủ ${Q_RULE.petG[1]} điểm bạn ấy trưởng thành. Mỗi ngày chăm tối đa ${Q_RULE.careDay} lần.</p></div>`, 'qpet');
   app.querySelectorAll('.q-card').forEach(b => b.onclick = () => {
     const sp = b.dataset.sp, k = +b.dataset.k;
@@ -130,6 +153,12 @@ function viewPets() {
     if (price && !qSpend(price)) return;
     s.pets.push({ sp, g: 0, d: '', n: 0, last: qToday() }); s.petSel = s.pets.length - 1; qSave(); sfx.win(); confetti(16);
     toast(`Con đã nhận nuôi ${PET_SP[sp].n}! 🎉`); viewPets(); hdSay('Con chạm vào bạn ấy, cho bạn ấy ăn hoặc chơi cùng bạn ấy nhé.');
+  });
+  app.querySelectorAll('.pc-dcard').forEach(b => b.onclick = () => {
+    const d = QC_DECO.find(x => x.id === b.dataset.d), o = s.deco = s.deco || {};
+    if (!(d.id in o)) { if (!qSpend(d.p)) return; o[d.id] = 1; qSave(); confetti(12); toast(`Con đã mua ${d.n} cho vườn! 🎉`); qcEn('Yay!'); }
+    else { o[d.id] = o[d.id] === 1 ? 0 : 1; qSave(); sfx.pop(); }
+    viewPets();
   });
   if (!p) { qSay('pet', 'Con chọn một bạn thú cưng để nhận nuôi nhé. Bạn đầu tiên được tặng miễn phí!'); return; }
   qcTouch(p);
@@ -154,7 +183,7 @@ function qcTouch(p) {
     if (!down) return; const r = box.getBoundingClientRect(), y = (down.y - r.top) / r.height; down = null; idle();
     if (box.classList.contains('stroking')) { setTimeout(() => box.classList.remove('stroking'), 1600); return; }
     if (y < 0.45) {   // đầu
-      qcFx(img, 'r-head', 900); qFloat(box, '💖'); sfx.ok();
+      qcFx(img, 'r-head', 900); qcJoy(p, img, 1600); qFloat(box, '💖'); sfx.ok();
       if (hiN++ % 2) { qcBubble(stage, '你好! 👋'); voicePlay(QC_HELLO_ZH); } else { qcBubble(stage, 'Hello! 👋'); qcEn('Hello!'); }
     } else {          // bụng
       qcFx(img, 'r-belly', 1000); qFloat(box, '😆'); qcSfx.giggle(); qcBubble(stage, 'Hi hi, nhột quá!');
@@ -170,7 +199,7 @@ function qcFeed(p) {
   const want = qcCrave(p), opts = qcShuffle([want].concat(qcShuffle(QC_FOOD.map((_, i) => i).filter(i => i !== want)).slice(0, 2)));
   stage.classList.add('feeding');
   const tray = document.createElement('div'); tray.className = 'pc-tray';
-  tray.innerHTML = `<span class="pc-tray-t"><span class="pc-want">${QC_FOOD[want][0]}</span>Bạn ấy thèm món này. Kéo món vào bạn ấy nhé!</span>${opts.map(i => `<button class="pc-food" type="button" data-i="${i}" aria-label="${QC_FOOD[i][1]}">${QC_FOOD[i][0]}</button>`).join('')}<button class="pc-x" type="button" aria-label="Thôi">✕</button>`;
+  tray.innerHTML = `<span class="pc-tray-t"><span class="pc-want">${qcFoodImg(want)}</span>Bạn ấy thèm món này. Kéo món vào bạn ấy nhé!</span>${opts.map(i => `<button class="pc-food" type="button" data-i="${i}" aria-label="${QC_FOOD[i][1]}">${qcFoodImg(i)}</button>`).join('')}<button class="pc-x" type="button" aria-label="Thôi">✕</button>`;
   stage.appendChild(tray);
   qcBubble(stage, `Tớ thèm ${QC_FOOD[want][0]} quá!`, 4000); qcEn(QC_FOOD[want][1] + ', please!');
   const close = () => { tray.remove(); stage.classList.remove('feeding'); };
@@ -179,7 +208,7 @@ function qcFeed(p) {
     if (!qSpend(Q_RULE.feed)) { close(); return; }
     close(); p.fd = qToday();
     const good = i === want, img = box.querySelector('img');
-    qcSfx.munch(); qcFx(img, 'r-munch', 1200); qFloat(box, good ? '😋 +2' : '😋 +1');
+    qcSfx.munch(); qcFx(img, 'r-munch', 1200); qcJoy(p, img); qFloat(box, good ? '😋 +2' : '😋 +1');
     qcBubble(stage, good ? 'Đúng món tớ thèm! Ngon quá! 💖' : 'Ngon quá!'); qcEn(good ? 'Yummy! Thank you!' : 'Yummy!');
     const up = qcGrow(p, good ? 2 : 1);
     setTimeout(() => { if (up) qcGrewUp(); else viewPets(); }, 1500);
@@ -188,7 +217,7 @@ function qcFeed(p) {
     let sx = 0, sy = 0, moved = false, ghost = null;
     f.onpointerdown = e => { e.preventDefault(); sx = e.clientX; sy = e.clientY; moved = false; try { f.setPointerCapture(e.pointerId); } catch (er) {} };
     f.onpointermove = e => { if (!sx && !sy) return; const dx = e.clientX - sx, dy = e.clientY - sy;
-      if (!moved && Math.hypot(dx, dy) > 8) { moved = true; ghost = document.createElement('span'); ghost.className = 'pc-ghost'; ghost.textContent = f.textContent; document.body.appendChild(ghost); f.style.opacity = .3; }
+      if (!moved && Math.hypot(dx, dy) > 8) { moved = true; ghost = document.createElement('span'); ghost.className = 'pc-ghost'; ghost.innerHTML = f.innerHTML; document.body.appendChild(ghost); f.style.opacity = .3; }
       if (ghost) { ghost.style.left = e.clientX + 'px'; ghost.style.top = e.clientY + 'px'; } };
     f.onpointerup = e => { const i = +f.dataset.i; sx = sy = 0;
       if (ghost) { ghost.remove(); ghost = null; f.style.opacity = '';
@@ -234,7 +263,7 @@ function qcGameBall(p, layer, end) {
 /* Trò 2 · Trốn tìm: bạn ấy trốn sau 1 trong 3 bụi cây (2 lượt) */
 function qcGameHide(p, layer, end) {
   qcGameHead(layer, '🌳 Trốn tìm', 'Bạn ấy trốn sau bụi cây nào? Bụi cây nào rung là có bạn ấy đấy!');
-  layer.insertAdjacentHTML('beforeend', [0, 1, 2].map(i => `<button class="pc-bush" type="button" data-i="${i}" style="left:${18 + i * 32}%"><img class="pc-hid" src="${petImg(p)}" alt=""><span class="pc-leaf"></span></button>`).join('') + '<div class="pc-count" id="pcCnt">Lượt 1/2</div>');
+  layer.insertAdjacentHTML('beforeend', [0, 1, 2].map(i => `<button class="pc-bush" type="button" data-i="${i}" style="left:${18 + i * 32}%"><img class="pc-hid" src="${petImg(p)}" alt=""><img class="pc-leaf" src="${Q_IMG}bui_cay.webp" alt="" draggable="false"></button>`).join('') + '<div class="pc-count" id="pcCnt">Lượt 1/2</div>');
   const bushes = [...layer.querySelectorAll('.pc-bush')], cnt = layer.querySelector('#pcCnt');
   let round = 0, at = 0, tries = 0, tick = 0;
   const start = () => { at = Math.floor(Math.random() * 3); tries = 0; bushes.forEach(b => b.classList.remove('found', 'no'));
@@ -333,7 +362,7 @@ function viewMons() {
     return `<button class="q-card ${own && k === sel ? 'on' : ''}" data-sp="${sp}" data-k="${k}" type="button" style="--mc:${MON_SP[sp].c}">
       <img src="${own ? monImg(x) : Q_IMG + 'mon_' + sp + '_0.webp'}" alt=""><b>${own ? esc(qcMonName(x)) : MON_SP[sp].n}</b>
       <span class="q-price ${own ? 'own' : ''}">${own ? monStageName(x) : Q_RULE.egg + ' ⭐'}</span></button>`; }).join('');
-  const badges = [1, 2, 3, 4, 5, 6, 7].map(n => `<span class="pc-badge ${qcBossWon(n) ? 'won' : ''}" title="Rồng trùm chặng ${n}">${qcBossWon(n) ? '🐉' : '?'}<small>C${n}</small></span>`).join('');
+  const badges = [1, 2, 3, 4, 5, 6, 7].map(n => `<span class="pc-badge ${qcBossWon(n) ? 'won' : ''}" title="Rồng trùm chặng ${n}">${qcBossWon(n) ? `<img src="${Q_IMG}huy_hieu_rong.webp" alt="">` : '?'}<small>C${n}</small></span>`).join('');
   let stage;
   if (m) {
     const st = monStage(m), e = monEnergy(m), cd = m.d === qToday() ? m.n : 0, since = monSince(m);
@@ -501,7 +530,7 @@ function qcBoss(m) {
           setTimeout(() => { k++; mine <= 0 ? lose() : show(); }, 1800); }, 650); } }); };
   ov.querySelector('.pc-say').onclick = () => qcSay(qs[k % qs.length]);
   const win = () => { s.boss = s.boss || {}; s.boss[CHANG] = Date.now(); m.c = (m.c || 0) + QC.bossE; qSave(); sfx.win(); confetti(50); hdSay('Hoan hô! Con đã hạ Rồng trùm!');
-    box.innerHTML = `<h3>🏆 Con đã hạ Rồng trùm chặng ${CHANG}!</h3><div class="pc-bo-end"><img src="${Q_IMG}zoom_rong_choang.webp" alt=""><span class="pc-badge won big">🐉<small>C${CHANG}</small></span><img src="${monImg(m)}" alt=""></div>
+    box.innerHTML = `<h3>🏆 Con đã hạ Rồng trùm chặng ${CHANG}!</h3><div class="pc-bo-end"><img src="${Q_IMG}zoom_rong_choang.webp" alt=""><span class="pc-badge won big"><img src="${Q_IMG}huy_hieu_rong.webp" alt=""><small>C${CHANG}</small></span><img src="${monImg(m)}" alt=""></div>
       <p>Con nhận <b>huy hiệu chặng ${CHANG}</b>, ${esc(qcMonName(m))} được <b>+${QC.bossE} năng lượng</b>.</p><div class="row"><button class="btn g" type="button">Tuyệt vời! 🎉</button></div>`;
     box.querySelector('.btn').onclick = () => { ov.remove(); viewMons(); }; };
   const lose = () => {
