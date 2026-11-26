@@ -85,7 +85,7 @@ function lsPlay(u){
     if(!u.a) return tts();
     try{ speechSynthesis.cancel(); }catch(e){}
     let fell=false; const fb=()=>{ if(fell) return; fell=true; tts(); };
-    voicePlay(u.a,{ onend:()=>{ if(!fell){ fell=true; res(); } }, onerr:fb });
+    voicePlay(u.a,{ rate:(u.l==='vi'&&typeof HD_RATE!=='undefined')?HD_RATE:1, onend:()=>{ if(!fell){ fell=true; res(); } }, onerr:fb });
   });
 }
 async function lsSeq(list, gap, onstep){ const my=lsRun; for(let k=0;k<list.length;k++){ if(my!==lsRun) return; onstep&&onstep(k); await lsPlay(list[k]); await lsWait(gap||350); } }

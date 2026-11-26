@@ -22,6 +22,21 @@
   try { dayOpen = function () { return true; }; } catch (e) {}
   if (TEN) { try { P.name = TEN; save(); } catch (e) {} try { if (window.lsTen) lsTen(); } catch (e) {} }
 
+  /* 26/11/2026: cô Hươu đọc hướng dẫn tiếng Việt nhanh hơn (các con thấy chậm). Chỉ lời tiếng Việt; tiếng Anh, Trung giữ tốc độ gốc */
+  const HD_RATE = 1.2; let hdTok = 0;
+  try { VOICE.preservesPitch = true; VOICE.webkitPreservesPitch = true; } catch (e) {}
+  try {
+    const _say = say;
+    say = async function (u) {
+      if (!u || u.l !== 'vi') {   // lời tiếng Anh, Trung chen vào: trả tốc độ gốc (không đụng tốc độ riêng web lớp đã đặt)
+        hdTok++; try { if (VOICE.defaultPlaybackRate === HD_RATE) VOICE.defaultPlaybackRate = 1; if (VOICE.playbackRate === HD_RATE) VOICE.playbackRate = 1; } catch (e) {}
+        return _say.apply(this, arguments); }
+      const my = ++hdTok; try { VOICE.defaultPlaybackRate = VOICE.playbackRate = HD_RATE; } catch (e) {}
+      try { return await _say.apply(this, arguments); }
+      finally { if (my === hdTok) { try { VOICE.defaultPlaybackRate = VOICE.playbackRate = 1; } catch (e) {} } }
+    };
+  } catch (e) {}
+
   const stepsOf = () => { try { return Object.assign({}, dayState(N).steps); } catch (e) { return {}; } };
   const tong = () => { try { return (SD.days[N].steps || []).length; } catch (e) { return 0; } };   // số bước thật (web lớp có thể thêm bước khi chạy)
   try {

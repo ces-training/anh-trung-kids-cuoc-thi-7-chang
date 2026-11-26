@@ -73,7 +73,7 @@ def build(src_dir, out_dir, key, data_file, server_file):
     html = REF.sub(ref, html)
     html = rewrite(html, src_dir)
     html = html.replace('<head>', '<head>' + STORE % key, 1)
-    html = html.replace('</body>', '<script src="nhung.js"></script>\n</body>') if '</body>' in html else html + '\n<script src="nhung.js"></script>\n'
+    html = html.replace('</body>', '<script src="nhung.js?v=20261126a"></script>\n</body>') if '</body>' in html else html + '\n<script src="nhung.js?v=20261126a"></script>\n'
     html = re.sub(r'<title>[^<]*</title>', '<title>Bài học · Cuộc thi mùa 3</title>', html, count=1)
     open(os.path.join(dst, 'index.html'), 'w', encoding='utf-8').write(html)
     for rel, name in copied.items():

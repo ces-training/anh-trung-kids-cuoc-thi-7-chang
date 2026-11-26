@@ -88,7 +88,7 @@ function cxSay(t, l, who, onend){
   const tts=()=>cxSpeakTTS(t,l,who,onend);
   if(!f) return tts();
   let fell=false; const fb=()=>{ if(fell) return; fell=true; tts(); };
-  voicePlay(f,{ rate:CX_RATE, onend:()=>onend&&onend(), onerr:fb });
+  voicePlay(f,{ rate:CX_RATE*(l==='vi'&&typeof HD_RATE!=='undefined'?HD_RATE:1), onend:()=>onend&&onend(), onerr:fb });
 }
 /* hội thoại 2 giọng */
 function cxDialog(dlg, onend){
